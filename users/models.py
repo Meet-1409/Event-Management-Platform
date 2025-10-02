@@ -80,6 +80,9 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
     
+    class Meta:
+        db_table = 'users'
+    
     def __str__(self):
         return f"{self.get_full_name()} ({self.email})"
     

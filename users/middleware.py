@@ -73,7 +73,12 @@ class RateLimitMiddleware(MiddlewareMixin):
         current_time = time.time()
         
         # Check if IP is rate limited
-        requests = cache.get(rate_limit_key, [])
+        try:
+            requests = cache.get(rate_limit_key, [])
+        except Exception as e:
+            # If cache fails, skip rate limiting
+            logger.warning(f"Cache error in rate limiting: {e}")
+            requests = []
         
         # Remove requests older than 1 minute
         requests = [req_time for req_time in requests if current_time - req_time < 60]
@@ -85,7 +90,11 @@ class RateLimitMiddleware(MiddlewareMixin):
         
         # Add current request
         requests.append(current_time)
-        cache.set(rate_limit_key, requests, 60)  # Cache for 1 minute
+        try:
+            cache.set(rate_limit_key, requests, 60)  # Cache for 1 minute
+        except Exception as e:
+            # If cache fails, log but continue
+            logger.warning(f"Cache error in rate limiting (set): {e}")
         
         return None
 
