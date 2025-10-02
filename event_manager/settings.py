@@ -62,12 +62,12 @@ INSTALLED_APPS = [
     'channels',
     
     # Security apps
-    'django_ratelimit',
-    'django_security',
-    'csp',
+    # 'django_ratelimit',  # Causing cache issues, using custom middleware instead
+    # 'django_security',  # Package doesn't exist
+    # 'csp',  # Package doesn't exist
     'axes',
-    'defender',
-    'django_ipware',
+    # 'defender',  # Package doesn't exist
+    # 'django_ipware',  # Package doesn't exist
     
     # Local apps
     'users',
@@ -96,8 +96,8 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     # Security packages middleware
     'axes.middleware.AxesMiddleware',
-    'defender.middleware.FailedLoginMiddleware',
-    'csp.middleware.CSPMiddleware',
+    # 'defender.middleware.FailedLoginMiddleware',  # Package doesn't exist
+    # 'csp.middleware.CSPMiddleware',  # Package doesn't exist
     # Custom security middleware
     'users.middleware.SecurityHeadersMiddleware',
     'users.middleware.RateLimitMiddleware',
@@ -227,6 +227,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Django Allauth
 AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',  # Axes must be first
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
@@ -328,28 +329,11 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 AXES_ENABLED = True
 AXES_FAILURE_LIMIT = 10
 AXES_COOLOFF_TIME = 1  # 1 hour
-AXES_LOCKOUT_CALLABLE = 'axes.lockout.database_lockout'
 AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username']
 AXES_VERBOSE = True
 
-# Django Defender Configuration
-DEFENDER_ENABLED = True
-DEFENDER_LOCKOUT_TIME = 3600  # 1 hour
-DEFENDER_FAILURE_LIMIT = 10
-DEFENDER_COOLOFF_TIME = 3600  # 1 hour
-
-# Django Rate Limit Configuration
-RATELIMIT_USE_CACHE = 'default'
-RATELIMIT_VIEW = 'django_ratelimit.views.ratelimit_view'
-
-# Django CSP Configuration
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://checkout.stripe.com")
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com")
-CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com")
-CSP_IMG_SRC = ("'self'", "data:", "https:", "http:")
-CSP_CONNECT_SRC = ("'self'", "https://api.stripe.com", "https://api.openai.com")
-CSP_FRAME_SRC = ("'self'", "https://js.stripe.com", "https://hooks.stripe.com")
+# Django Rate Limit Configuration (using custom middleware instead)
+# RATELIMIT_USE_CACHE = 'default'
 
 # File Upload Security Settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
@@ -378,11 +362,11 @@ INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-# Cache Configuration
+# Cache Configuration - Using database cache for production compatibility
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache_table',
     }
 }
 
