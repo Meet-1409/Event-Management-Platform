@@ -34,6 +34,12 @@ class CustomUserCreationForm(UserCreationForm):
         help_text='Required. Enter your phone number (e.g., +91-9876543210).',
         widget=forms.TextInput(attrs={'placeholder': '+91-9876543210'})
     )
+    user_type = forms.ChoiceField(
+        choices=CustomUser.USER_TYPE_CHOICES,
+        initial='user',
+        help_text='Select your account type. Manager and Admin accounts require approval.',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     password1 = SimplePasswordField(
         label="Password",
         help_text="Enter your password (minimum 3 characters)."
@@ -45,7 +51,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'password1', 'password2')
+        fields = ('username', 'email', 'first_name', 'last_name', 'phone_number', 'user_type', 'password1', 'password2')
     
     def clean_email(self):
         email = self.cleaned_data.get('email')

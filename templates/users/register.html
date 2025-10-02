@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}User Registration | 360° Event Manager{% endblock %}
+{% block title %}Registration | 360° Event Manager{% endblock %}
 
 {% block content %}
-<div class="flex flex-center" style="min-height:60vh;">
+<div class="d-flex justify-content-center align-items-center" style="min-height:60vh;">
   <div class="glass-card shadow" style="max-width:500px;width:100%;">
-    <h2 class="mb-2 text-center">User Registration</h2>
+    <h2 class="mb-2 text-center">Create Account</h2>
     <form method="post">{% csrf_token %}
       {% for field in form %}
       <div class="form-group mb-2">
