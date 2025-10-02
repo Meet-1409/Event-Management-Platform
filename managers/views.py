@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Avg
 from django.utils import timezone
 from .forms import ManagerCreationForm, ManagerAuthenticationForm
-from users.models import CustomUser, EventManagerProfile
+from users.models import CustomUser
 from django.contrib.auth.decorators import login_required
 from users import role_required
 

@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Role Requests | Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .request-card {
+        border-left: 4px solid #007bff;
+        transition: all 0.3s ease;
+    }
+    
+    .request-card:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .request-status {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+    }
+    
+    .request-status.pending {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+    
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .action-buttons {
+        gap: 10px;
+    }
+    
+    .stats-summary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-user-check me-2 text-primary"></i>
+                        Role Requests
+                    </h2>
+                    <p class="text-muted mb-0">Review and approve user role upgrade requests</p>
+                </div>
+                <div>
+                    <a href="{% url 'users:admin_user_management' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-users me-2"></i>User Management
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Statistics Summary -->
+            <div class="stats-summary">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="mb-1">{{ pending_count }}</h3>
+                            <p class="mb-0">Pending Requests</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="mb-1">{{ page_obj.paginator.count }}</h3>
+                            <p class="mb-0">Total Requests</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="mb-1">0</h3>
+                            <p class="mb-0">Approved Today</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="mb-1">0</h3>
+                            <p class="mb-0">Rejected Today</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Role Requests List -->
+            {% if page_obj %}
+                <div class="row">
+                    {% for request in page_obj %}
+                        <div class="col-lg-6 mb-4">
+                            <div class="card request-card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start mb-3">
+                                        <img src="{{ request.user.get_profile_picture_url }}" 
+                                             alt="{{ request.user.get_full_name }}"
+                                             class="user-avatar me-3">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h5 class="mb-1">{{ request.user.get_full_name }}</h5>
+                                                    <p class="text-muted mb-1">{{ request.user.email }}</p>
+                                                    <span class="request-status pending">
+                                                        <i class="fas fa-clock me-1"></i>Pending Approval
+                                                    </span>
+                                                </div>
+                                                <div class="text-end">
+                                                    <small class="text-muted">
+                                                        {{ request.created_at|date:"M d, Y" }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <small class="text-muted">Current Role:</small>
+                                                <div class="fw-bold">{{ request.get_current_role_display }}</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <small class="text-muted">Requested Role:</small>
+                                                <div class="fw-bold text-primary">{{ request.get_requested_role_display }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if request.reason %}
+                                        <div class="mb-3">
+                                            <small class="text-muted">Reason:</small>
+                                            <p class="mb-0">{{ request.reason }}</p>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="d-flex action-buttons">
+                                        <a href="{% url 'users:approve_role_request' request.id %}" 
+                                           class="btn btn-success btn-sm flex-fill">
+                                            <i class="fas fa-check me-1"></i>Approve
+                                        </a>
+                                        <a href="{% url 'users:reject_role_request' request.id %}" 
+                                           class="btn btn-danger btn-sm flex-fill">
+                                            <i class="fas fa-times me-1"></i>Reject
+                                        </a>
+                                        <a href="mailto:{{ request.user.email }}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <nav aria-label="Role requests pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-user-check fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Pending Role Requests</h4>
+                    <p class="text-muted">All role requests have been reviewed.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-refresh pending count every 30 seconds
+    setInterval(function() {
+        fetch('{% url "users:admin_role_requests" %}')
+            .then(response => response.text())
+            .then(html => {
+                // Extract pending count from response
+                // This would need to be implemented as an API endpoint
+            })
+            .catch(error => console.log('Error refreshing data:', error));
+    }, 30000);
+</script>
+{% endblock %}

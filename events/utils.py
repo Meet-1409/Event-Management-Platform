@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from django.db.models import Q, Count, Avg
 from django.contrib.auth import get_user_model
 from .models import Event, EventType, Registration
-from users.models import UserProfile
+from users.models import CustomUser
 
 User = get_user_model()
 

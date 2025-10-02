@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reject Role Request | Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h2 class="mb-1">
+                    <i class="fas fa-user-times me-2 text-danger"></i>
+                    Reject Role Request
+                </h2>
+                <p class="text-muted">Review and reject this role upgrade request</p>
+            </div>
+            
+            <!-- Request Details -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Request Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="{{ role_request.user.get_profile_picture_url }}" 
+                                 alt="{{ role_request.user.get_full_name }}"
+                                 class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                            <h5 class="mb-1">{{ role_request.user.get_full_name }}</h5>
+                            <p class="text-muted mb-0">{{ role_request.user.email }}</p>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Current Role:</strong><br>
+                                    <span class="badge bg-secondary">{{ role_request.get_current_role_display }}</span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Requested Role:</strong><br>
+                                    <span class="badge bg-primary">{{ role_request.get_requested_role_display }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Request Date:</strong><br>
+                                {{ role_request.created_at|date:"F d, Y \a\t g:i A" }}
+                            </div>
+                            
+                            {% if role_request.reason %}
+                                <div class="mb-3">
+                                    <strong>Reason:</strong><br>
+                                    <div class="bg-light p-3 rounded">{{ role_request.reason }}</div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="mb-3">
+                                <strong>User Information:</strong><br>
+                                <small class="text-muted">
+                                    Phone: {{ role_request.user.phone_number|default:"Not provided" }}<br>
+                                    Joined: {{ role_request.user.date_joined|date:"F d, Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rejection Form -->
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-times-circle me-2"></i>
+                        Reject Request
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Note:</strong> This action will deny the role upgrade request. The user will remain as a {{ role_request.get_current_role_display }}.
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Rejection Reason <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="notes" name="notes" rows="4" required
+                                      placeholder="Please provide a reason for rejecting this request..."></textarea>
+                            <div class="form-text">This reason will be provided to the user via email notification.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="notify_user" name="notify_user" checked>
+                                <label class="form-check-label" for="notify_user">
+                                    Send email notification to user about this rejection
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'users:admin_role_requests' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Requests
+                            </a>
+                            
+                            <div>
+                                <a href="{% url 'users:approve_role_request' role_request.id %}" class="btn btn-success me-2">
+                                    <i class="fas fa-check me-2"></i>Approve Instead
+                                </a>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-times me-2"></i>Reject Request
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

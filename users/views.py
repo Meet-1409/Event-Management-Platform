@@ -38,19 +38,32 @@ def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            messages.success(request, f'Account created successfully! Welcome, {user.get_full_name()}!')
+            # Get the requested role before saving
+            requested_role = form.cleaned_data.get('user_type')
             
-            # Redirect based on user type
-            if user.user_type == 'user':
-                return redirect('users:dashboard')
-            elif user.user_type == 'manager':
-                return redirect('users:manager_dashboard')
-            elif user.user_type == 'admin':
-                return redirect('users:admin_dashboard')
+            # Always create as regular user first
+            user = form.save(commit=False)
+            user.user_type = 'user'  # Start as regular user
+            user.save()
+            
+            # If they requested a higher role, create a role request
+            if requested_role in ['manager', 'admin']:
+                from .models import UserRoleRequest
+                UserRoleRequest.objects.create(
+                    user=user,
+                    requested_role=requested_role,
+                    current_role='user',
+                    reason=f"Requesting {requested_role} role during registration"
+                )
+                messages.success(
+                    request, 
+                    f'Account created successfully! Your {requested_role} role request has been submitted for admin approval. You will be notified once reviewed.'
+                )
             else:
-                return redirect('home')
+                messages.success(request, f'Account created successfully! Welcome, {user.get_full_name()}!')
+            
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('users:dashboard')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:

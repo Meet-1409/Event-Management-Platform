@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views import View
 from django.core.paginator import Paginator
-from users.models import CustomUser, EventManagerProfile
+from users.models import CustomUser
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 

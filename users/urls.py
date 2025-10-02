@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, admin_views
 
 app_name = 'users'
 
@@ -24,6 +24,12 @@ urlpatterns = [
     # Admin and Manager dashboards
     path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/manager/', views.manager_dashboard, name='manager_dashboard'),
+    
+    # Admin role management
+    path('admin/role-requests/', admin_views.admin_role_requests, name='admin_role_requests'),
+    path('admin/approve-request/<int:request_id>/', admin_views.approve_role_request, name='approve_role_request'),
+    path('admin/reject-request/<int:request_id>/', admin_views.reject_role_request, name='reject_role_request'),
+    path('admin/user-management/', admin_views.admin_user_management, name='admin_user_management'),
     
     # Password reset
     path('forgot-password/', views.forgot_password, name='forgot_password'),
