@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Successful - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Success Header -->
+            <div class="text-center mb-5">
+                <div class="success-icon mb-4">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h1 class="display-4 fw-bold text-success">Payment Successful!</h1>
+                <p class="lead text-muted">Your event booking has been confirmed</p>
+            </div>
+
+            <!-- Payment Details Card -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-receipt me-2"></i>Payment Confirmation
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if payment %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">Payment ID</h6>
+                            <p class="mb-3">{{ payment.payment_id }}</p>
+                            
+                            <h6 class="fw-bold text-muted">Amount Paid</h6>
+                            <p class="mb-3">₹{{ payment.amount|floatformat:2 }}</p>
+                            
+                            <h6 class="fw-bold text-muted">Payment Method</h6>
+                            <p class="mb-3">{{ payment.payment_method|title }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted">Event</h6>
+                            <p class="mb-3">{{ payment.invoice.event.title }}</p>
+                            
+                            <h6 class="fw-bold text-muted">Date</h6>
+                            <p class="mb-3">{{ payment.invoice.event.start_date|date:"F d, Y" }}</p>
+                            
+                            <h6 class="fw-bold text-muted">Status</h6>
+                            <span class="badge bg-success fs-6">Completed</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <h5>Payment Processing</h5>
+                        <p class="text-muted">Your payment is being processed. You will receive a confirmation email shortly.</p>
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-list-check me-2 text-success"></i>What's Next?
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="step-icon bg-success text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h6>Confirmation Email</h6>
+                            <p class="small text-muted">Check your email for booking confirmation and event details</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="step-icon bg-success text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <h6>Event Ticket</h6>
+                            <p class="small text-muted">Download your event ticket from your bookings page</p>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="step-icon bg-success text-white rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <h6>Event Day</h6>
+                            <p class="small text-muted">Arrive on time and enjoy your event experience</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-4">
+                <a href="/users/my-bookings/" class="btn btn-success btn-lg me-3">
+                    <i class="fas fa-ticket-alt me-2"></i>View My Bookings
+                </a>
+                <a href="/events/" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-calendar me-2"></i>Browse More Events
+                </a>
+            </div>
+
+            <!-- Support Info -->
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <i class="fas fa-question-circle me-1"></i>
+                    Need help? Contact our support team at 
+                    <a href="mailto:support@360eventmanager.com">support@360eventmanager.com</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon {
+    animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.step-icon {
+    transition: transform 0.3s ease;
+}
+
+.step-icon:hover {
+    transform: scale(1.1);
+}
+</style>
+{% endblock %}

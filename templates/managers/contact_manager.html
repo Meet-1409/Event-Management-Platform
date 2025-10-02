@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact {{ manager.get_full_name }} - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        {% if manager.profile_picture %}
+                            <img src="{{ manager.profile_picture.url }}" alt="{{ manager.get_full_name }}" class="rounded-circle mb-3" width="80" height="80">
+                        {% else %}
+                            <div class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x"></i>
+                            </div>
+                        {% endif %}
+                        <h3 class="text-primary">Contact {{ manager.get_full_name }}</h3>
+                        <p class="text-muted">Start a conversation with this professional event manager</p>
+                    </div>
+
+                    <form method="POST" class="text-center">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <p class="text-muted">
+                                <i class="fas fa-comments text-primary me-2"></i>
+                                Click the button below to start a direct conversation with {{ manager.get_full_name }}.
+                                You'll be able to discuss your event requirements, get quotes, and plan your perfect event.
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg px-5 mb-3">
+                            <i class="fas fa-comment-dots me-2"></i>Start Conversation
+                        </button>
+
+                        <div class="text-center">
+                            <a href="{% url 'managers:manager_detail' manager.id %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Profile
+                            </a>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3">Alternative Contact Methods:</h6>
+                        </div>
+                        {% if manager.email %}
+                            <div class="col-12">
+                                <a href="mailto:{{ manager.email }}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-envelope me-2"></i>{{ manager.email }}
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if manager.phone_number %}
+                            <div class="col-12">
+                                <a href="tel:{{ manager.phone_number }}" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-phone me-2"></i>{{ manager.phone_number }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

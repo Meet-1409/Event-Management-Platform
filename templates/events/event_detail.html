@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.title }} | 360° Event Manager{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-gradient-primary text-dark py-5" data-aos="fade-up">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/" class="text-dark">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/events/" class="text-dark">Events</a></li>
+                        <li class="breadcrumb-item active text-dark-50" aria-current="page">{{ event.title }}</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-3">{{ event.title }}</h1>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="badge bg-light text-dark fs-6">{{ event.sub_category }}</span>
+                    <span class="badge bg-warning text-dark fs-6">{{ event.skill_level }}</span>
+                    <span class="badge bg-info text-dark fs-6">{{ event.venue.city }}</span>
+                </div>
+                <p class="lead mb-4">{{ event.description|truncatewords:30 }}</p>
+                <div class="d-flex gap-3">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'events:event_registration' event.id %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-calendar-check me-2"></i>Join for ₹{{ event.total_budget|floatformat:0 }}
+                    </a>
+                    {% else %}
+                    <a href="/users/login/?next={% url 'events:event_registration' event.id %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-calendar-check me-2"></i>Join for ₹{{ event.total_budget|floatformat:0 }}
+                    </a>
+                    {% endif %}
+                    <a href="#venue" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-map-marker-alt me-2"></i>View Venue
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="text-center">
+                    {% if event.event_image %}
+                    <img src="{{ event.event_image.url }}" class="img-fluid rounded-3 shadow-lg" alt="{{ event.title }}" style="max-height: 300px; object-fit: cover;">
+                    {% else %}
+                        {% if event.event_type.name == 'Music' %}
+                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                 class="img-fluid rounded-3 shadow-lg" alt="{{ event.title }}" style="max-height: 300px; object-fit: cover;">
+                        {% elif event.event_type.name == 'Sports' %}
+                            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                 class="img-fluid rounded-3 shadow-lg" alt="{{ event.title }}" style="max-height: 300px; object-fit: cover;">
+                        {% elif event.event_type.name == 'Cooking' %}
+                            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                 class="img-fluid rounded-3 shadow-lg" alt="{{ event.title }}" style="max-height: 300px; object-fit: cover;">
+                        {% elif event.event_type.name == 'Coding' %}
+                            <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                 class="img-fluid rounded-3 shadow-lg" alt="{{ event.title }}" style="max-height: 300px; object-fit: cover;">
+                        {% elif event.event_type.name == 'Adventure' %}
+                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                 class="img-fluid rounded-3 shadow-lg" alt="{{ event.title }}" style="max-height: 300px; object-fit: cover;">
+                        {% elif event.event_type.name == 'Movie' %}
+                            <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                 class="img-fluid rounded-3 shadow-lg" alt="{{ event.title }}" style="max-height: 300px; object-fit: cover;">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                 class="img-fluid rounded-3 shadow-lg" alt="{{ event.title }}" style="max-height: 300px; object-fit: cover;">
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Event Details -->
+<div class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Event Information -->
+                <div class="card border-0 shadow-sm mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header bg-transparent border-0">
+                        <h3 class="fw-bold text-dark mb-0">Event Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                        <i class="fas fa-calendar text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Date & Time</h6>
+                                        <p class="text-muted mb-0">{{ event.start_date|date:"F d, Y" }}{% if event.start_time %}<br>{{ event.start_time|time:"g:i A" }}{% endif %}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                        <i class="fas fa-map-marker-alt text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Location</h6>
+                                        <p class="text-muted mb-0">{{ event.venue.name }}<br>{{ event.venue.address }}, {{ event.venue.city }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
+                                        <i class="fas fa-users text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Capacity</h6>
+                                        <p class="text-muted mb-0">{{ event.expected_guests }} guests<br>Limited seats available</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-info bg-opacity-10 rounded-circle p-3 me-3">
+                                        <i class="fas fa-user-tie text-info"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Organizer</h6>
+                                        <p class="text-muted mb-0">{{ event.organizer.get_full_name|default:event.organizer.username }}<br>Professional Event Manager</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                        <i class="fas fa-tag text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Join Price</h6>
+                                        <p class="text-success fw-bold mb-0">₹{{ event.total_budget|floatformat:0 }}<br><small class="text-muted">Affordable public event</small></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Description -->
+                <div class="card border-0 shadow-sm mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header bg-transparent border-0">
+                        <h3 class="fw-bold text-dark mb-0">About This Event</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead mb-4">{{ event.description }}</p>
+                        
+                        <h5 class="fw-bold mb-3">What's Included:</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professional event coordination</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Venue setup and decoration</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Catering services</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Audio-visual equipment</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Event photography</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Security services</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Parking facilities</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>24/7 support</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Venue Details -->
+                <div id="venue" class="card border-0 shadow-sm mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-header bg-transparent border-0">
+                        <h3 class="fw-bold text-dark mb-0">Venue Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <h5 class="fw-bold mb-3">{{ event.venue.name }}</h5>
+                                <p class="text-muted mb-3">{{ event.venue.address }}, {{ event.venue.city }}, Gujarat</p>
+                                
+                                <h6 class="fw-bold mb-2">Venue Features:</h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-wifi text-primary me-2"></i>Free Wi-Fi</li>
+                                    <li class="mb-2"><i class="fas fa-parking text-primary me-2"></i>Parking Available</li>
+                                    <li class="mb-2"><i class="fas fa-utensils text-primary me-2"></i>Catering Kitchen</li>
+                                    <li class="mb-2"><i class="fas fa-wheelchair text-primary me-2"></i>Accessible</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bg-light rounded-3 p-3">
+                                    <h6 class="fw-bold mb-2">Venue Capacity:</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-1">• Seated: {{ event.venue.capacity|default:200 }} people</li>
+                                        <li class="mb-1">• Standing: {{ event.venue.capacity|default:300 }} people</li>
+                                        <li class="mb-1">• Parking: {{ event.venue.parking_capacity|default:50 }} vehicles</li>
+                                    </ul>
+                                    
+                                    <h6 class="fw-bold mb-2 mt-3">Amenities:</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <span class="badge bg-light text-dark">AC</span>
+                                        <span class="badge bg-light text-dark">Sound System</span>
+                                        <span class="badge bg-light text-dark">Projector</span>
+                                        <span class="badge bg-light text-dark">Stage</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Pricing Card -->
+                <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 2rem;" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="card-header bg-primary text-dark border-0">
+                        <h4 class="mb-0 fw-bold">Event Pricing</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <div class="display-4 fw-bold text-primary mb-2">₹{{ event.total_budget|floatformat:0 }}</div>
+                            <p class="text-muted mb-0">per person</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Package Includes:</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Event entry</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Welcome drinks</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Buffet dinner</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Event materials</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Certificate</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'events:event_registration' event.id %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                            {% else %}
+                            <a href="/users/login/?next={% url 'events:event_registration' event.id %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Secure payment • Free cancellation
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Contact -->
+                <div class="card border-0 shadow-sm" data-aos="fade-up" data-aos-delay="500">
+                    <div class="card-header bg-transparent border-0">
+                        <h5 class="fw-bold text-dark mb-0">Need Help?</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-phone text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Call Us</h6>
+                                <p class="text-muted mb-0">+91 98765 43210</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-envelope text-success"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Email Us</h6>
+                                <p class="text-muted mb-0">info@360eventmanager.com</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                                <i class="fas fa-clock text-warning"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Support Hours</h6>
+                                <p class="text-muted mb-0">Mon-Sat: 9 AM - 8 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Section -->
+<section id="booking" class="py-5 bg-light" data-aos="fade-up">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Ready to Book?</h2>
+            <p class="lead text-muted">Secure your spot for this amazing event in {{ event.venue.city }}</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <h4 class="fw-bold text-dark">Event Registration</h4>
+                            <p class="text-muted">Complete your booking in just a few steps</p>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <a href="{% url 'events:event_registration' event.id %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calendar-check me-2"></i>Proceed to Registration
+                            </a>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-lock me-1"></i>
+                                Your information is secure and encrypted
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Similar Events -->
+<section class="py-5" data-aos="fade-up">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Similar Events</h2>
+            <p class="lead text-muted">Discover more events in {{ event.venue.city }}</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                         class="card-img-top" alt="Indian Similar Event" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <span class="badge bg-primary mb-2">Corporate</span>
+                        <h5 class="card-title fw-bold">Business Networking Event</h5>
+                        <p class="card-text text-muted">Connect with industry leaders and expand your professional network.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹1,800</span>
+                            <a href="{% url 'events:event_detail' event.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                         class="card-img-top" alt="Indian Similar Event" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <span class="badge bg-success mb-2">Wedding</span>
+                        <h5 class="card-title fw-bold">Wedding Planning Workshop</h5>
+                        <p class="card-text text-muted">Learn from experts how to plan your perfect wedding celebration.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹3,200</span>
+                            <a href="{% url 'events:event_detail' event.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                         class="card-img-top" alt="Indian Similar Event" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <span class="badge bg-warning mb-2">Celebration</span>
+                        <h5 class="card-title fw-bold">Birthday Party Planning</h5>
+                        <p class="card-text text-muted">Create unforgettable birthday celebrations with our expert team.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹250</span>
+                            <a href="{% url 'events:event_detail' event.id %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.sticky-top {
+    z-index: 1020;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+}
+
+.bg-opacity-10 {
+    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+    
+    .sticky-top {
+        position: relative !important;
+        top: 0 !important;
+    }
+}
+</style>
+{% endblock %} 

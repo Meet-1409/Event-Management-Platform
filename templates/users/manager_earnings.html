@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Earnings & Reports - Manager Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-primary">
+                        <i class="fas fa-chart-line me-2"></i>Earnings & Reports
+                    </h2>
+                    <p class="text-muted">Track your revenue and performance metrics</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-download me-1"></i>Export Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Earnings Overview -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="text-success">₹{{ total_earnings|default:0 }}</h3>
+                            <p class="text-muted mb-0">Total Earnings</p>
+                            <small class="text-success">+{{ earnings_growth|default:0 }}% this month</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="text-primary">₹{{ this_month|default:0 }}</h3>
+                            <p class="text-muted mb-0">This Month</p>
+                            <small class="text-info">{{ monthly_events|default:0 }} events</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="text-info">₹{{ avg_per_event|default:0 }}</h3>
+                            <p class="text-muted mb-0">Avg per Event</p>
+                            <small class="text-muted">Revenue per event</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="text-warning">{{ pending_payments|default:0 }}</h3>
+                            <p class="text-muted mb-0">Pending Payments</p>
+                            <small class="text-warning">₹{{ pending_amount|default:0 }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Recent Earnings -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fas fa-money-bill-wave me-2"></i>Recent Earnings
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Event</th>
+                                            <th>Client</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for earning in recent_earnings %}
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold">{{ earning.event.title }}</div>
+                                                <small class="text-muted">{{ earning.event.event_type.name }}</small>
+                                            </td>
+                                            <td>{{ earning.event.organizer.get_full_name }}</td>
+                                            <td>{{ earning.event.start_date|date:"M d, Y" }}</td>
+                                            <td>
+                                                <span class="fw-bold text-success">₹{{ earning.event.manager_fee|default:0 }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{{ earning.event.payment_status|default:'secondary' }}">
+                                                    {{ earning.event.get_payment_status_display }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4">
+                                                <i class="fas fa-chart-line fa-2x text-muted mb-2"></i>
+                                                <div>No earnings data yet</div>
+                                                <small class="text-muted">Complete events to see earnings</small>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Performance Metrics -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fas fa-trophy me-2"></i>Performance
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="metric-item d-flex justify-content-between mb-3">
+                                <span>Client Satisfaction</span>
+                                <span class="fw-bold text-success">{{ client_satisfaction|default:95 }}%</span>
+                            </div>
+                            <div class="metric-item d-flex justify-content-between mb-3">
+                                <span>On-Time Delivery</span>
+                                <span class="fw-bold text-info">{{ on_time_delivery|default:98 }}%</span>
+                            </div>
+                            <div class="metric-item d-flex justify-content-between mb-3">
+                                <span>Repeat Clients</span>
+                                <span class="fw-bold text-warning">{{ repeat_clients|default:45 }}%</span>
+                            </div>
+                            <div class="metric-item d-flex justify-content-between">
+                                <span>Average Rating</span>
+                                <span class="fw-bold text-primary">{{ average_rating|default:4.8 }}/5.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

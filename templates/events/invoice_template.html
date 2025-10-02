@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice - {{ event.title }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 20px;
+        }
+        .company-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .invoice-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .invoice-details {
+            display: table;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .invoice-details > div {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+        }
+        .invoice-info {
+            text-align: right;
+        }
+        .invoice-info table {
+            margin-left: auto;
+        }
+        .invoice-info td {
+            padding: 3px 10px;
+        }
+        .invoice-info td:first-child {
+            font-weight: bold;
+        }
+        .client-info {
+            margin-bottom: 30px;
+        }
+        .client-info h3 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+        }
+        .client-info p {
+            margin: 5px 0;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .items-table th,
+        .items-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .items-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .items-table .amount {
+            text-align: right;
+        }
+        .total-section {
+            text-align: right;
+            margin-bottom: 30px;
+        }
+        .total-section table {
+            margin-left: auto;
+        }
+        .total-section td {
+            padding: 5px 15px;
+        }
+        .total-section .total-row {
+            font-weight: bold;
+            font-size: 14px;
+            border-top: 2px solid #667eea;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .payment-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .payment-info h4 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+        }
+        .payment-info p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-logo">360° Event Manager</div>
+        <div>Ahmedabad, Gujarat, India</div>
+        <div>Phone: +91 98765 43210 | Email: info@360eventmanager.com</div>
+    </div>
+
+    <div class="invoice-title">INVOICE</div>
+
+    <div class="invoice-details">
+        <div class="client-info">
+            <h3>Bill To:</h3>
+            <p><strong>{{ user.get_full_name|default:user.username }}</strong></p>
+            <p>{{ user.email }}</p>
+            {% if user.phone %}
+                <p>Phone: {{ user.phone }}</p>
+            {% endif %}
+        </div>
+        <div class="invoice-info">
+            <table>
+                <tr>
+                    <td>Invoice Number:</td>
+                    <td>{{ invoice_number }}</td>
+                </tr>
+                <tr>
+                    <td>Invoice Date:</td>
+                    <td>{{ invoice_date }}</td>
+                </tr>
+                <tr>
+                    <td>Due Date:</td>
+                    <td>{{ due_date }}</td>
+                </tr>
+                <tr>
+                    <td>Event Date:</td>
+                    <td>{{ event.start_date|date:"F d, Y" }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Details</th>
+                <th class="amount">Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>{{ event.title }}</strong></td>
+                <td>
+                    Event Type: {{ event.event_type.name }}<br>
+                    Venue: {{ event.venue.name }}<br>
+                    Expected Guests: {{ event.expected_guests }}
+                </td>
+                <td class="amount">{{ event.total_budget|floatformat:2 }}</td>
+            </tr>
+            {% if event.venue_package %}
+            <tr>
+                <td>Venue Package</td>
+                <td>{{ event.venue_package.name }}</td>
+                <td class="amount">{{ event.venue_package.price|floatformat:2 }}</td>
+            </tr>
+            {% endif %}
+            {% if event.vendor_costs %}
+            <tr>
+                <td>Vendor Services</td>
+                <td>Catering, decoration, and other services</td>
+                <td class="amount">{{ event.vendor_costs|floatformat:2 }}</td>
+            </tr>
+            {% endif %}
+            {% if event.manager_fee %}
+            <tr>
+                <td>Event Management Fee</td>
+                <td>Professional event coordination</td>
+                <td class="amount">{{ event.manager_fee|floatformat:2 }}</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <table>
+            <tr>
+                <td>Subtotal:</td>
+                <td class="amount">₹{{ event.total_budget|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td>GST (18%):</td>
+                <td class="amount">₹{{ event.total_budget|multiply:0.18|floatformat:2 }}</td>
+            </tr>
+            <tr class="total-row">
+                <td>Total Amount:</td>
+                <td class="amount">₹{{ event.total_budget|multiply:1.18|floatformat:2 }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="payment-info">
+        <h4>Payment Information</h4>
+        <p><strong>Bank Transfer:</strong></p>
+        <p>Account Name: 360° Event Manager</p>
+        <p>Account Number: 1234567890</p>
+        <p>IFSC Code: SBIN0001234</p>
+        <p>Bank: State Bank of India</p>
+        <p><strong>UPI:</strong> 360eventmanager@upi</p>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for choosing 360° Event Manager!</p>
+        <p>For any queries, please contact us at info@360eventmanager.com</p>
+        <p>This is a computer-generated invoice. No signature required.</p>
+    </div>
+</body>
+</html> 

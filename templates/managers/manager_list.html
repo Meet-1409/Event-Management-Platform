@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}Event Managers - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-primary mb-1">Professional Event Managers</h2>
+                    <p class="text-muted mb-0">Connect with verified event management professionals</p>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-primary fs-6">{{ total_managers }} Managers Available</span>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" name="search" placeholder="Search managers..." value="{{ search_query }}">
+                        </div>
+                        <div class="col-md-2">
+                            <select name="city" class="form-select">
+                                <option value="">All Cities</option>
+                                {% for city in cities %}
+                                    <option value="{{ city }}" {% if city == city_filter %}selected{% endif %}>{{ city }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select name="verified" class="form-select">
+                                <option value="">All Managers</option>
+                                <option value="yes" {% if verification_filter == 'yes' %}selected{% endif %}>Verified Only</option>
+                                <option value="no" {% if verification_filter == 'no' %}selected{% endif %}>Unverified</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="specialization" class="form-select">
+                                <option value="">All Specializations</option>
+                                {% for spec in specializations %}
+                                    <option value="{{ spec }}" {% if spec == specialization_filter %}selected{% endif %}>{{ spec }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-1"></i>Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Managers Grid -->
+            <div class="row g-4">
+                {% for manager in managers %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 manager-card">
+                        <div class="card-body p-4">
+                            <!-- Manager Header -->
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="avatar-circle bg-primary text-white me-3">
+                                    {% if manager.profile_picture %}
+                                        <img src="{{ manager.profile_picture.url }}" alt="{{ manager.get_full_name }}" class="rounded-circle" width="50" height="50">
+                                    {% else %}
+                                        <i class="fas fa-user"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-1">
+                                        <a href="{% url 'managers:manager_detail' manager.id %}" class="text-decoration-none text-dark">
+                                            {{ manager.get_full_name }}
+                                        </a>
+                                    </h5>
+                                    <div class="d-flex align-items-center">
+                                        {% if manager.manager_profile.is_verified %}
+                                            <span class="badge bg-success me-2">
+                                                <i class="fas fa-check-circle me-1"></i>Verified
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock me-1"></i>Pending
+                                            </span>
+                                        {% endif %}
+                                        <small class="text-muted">{{ manager.city }}</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Manager Stats -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-4 text-center">
+                                    <div class="stat-item">
+                                        <div class="fw-bold text-primary">{{ manager.manager_profile.total_events_managed|default:0 }}</div>
+                                        <small class="text-muted">Events</small>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div class="stat-item">
+                                        <div class="fw-bold text-warning">
+                                            {% if manager.manager_profile.average_rating > 0 %}
+                                                {{ manager.manager_profile.average_rating }} <i class="fas fa-star"></i>
+                                            {% else %}
+                                                New
+                                            {% endif %}
+                                        </div>
+                                        <small class="text-muted">Rating</small>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div class="stat-item">
+                                        <div class="fw-bold text-info">{{ manager.manager_profile.years_of_experience|default:0 }}y</div>
+                                        <small class="text-muted">Experience</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Company Info -->
+                            {% if manager.manager_profile.company_name %}
+                                <p class="text-muted small mb-2">
+                                    <i class="fas fa-building me-1"></i>{{ manager.manager_profile.company_name }}
+                                </p>
+                            {% endif %}
+
+                            <!-- Specializations -->
+                            {% if manager.manager_profile.specializations %}
+                                <div class="mb-3">
+                                    {% for spec in manager.manager_profile.specializations|slice:":3" %}
+                                        <span class="badge bg-light text-dark me-1 mb-1">{{ spec }}</span>
+                                    {% endfor %}
+                                    {% if manager.manager_profile.specializations|length > 3 %}
+                                        <span class="badge bg-light text-dark">+{{ manager.manager_profile.specializations|length|add:"-3" }} more</span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            <!-- Actions -->
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'managers:manager_detail' manager.id %}" class="btn btn-outline-primary btn-sm flex-grow-1">
+                                    <i class="fas fa-eye me-1"></i>View Profile
+                                </a>
+                                <a href="{% url 'managers:contact_manager' manager.id %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-comment me-1"></i>Contact
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h4>No Managers Found</h4>
+                        <p class="text-muted">Try adjusting your search criteria or browse all managers.</p>
+                        <a href="{% url 'managers:manager_list' %}" class="btn btn-primary">
+                            <i class="fas fa-refresh me-1"></i>Show All Managers
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if managers.has_other_pages %}
+                <nav aria-label="Managers pagination" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if managers.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if city_filter %}&city={{ city_filter }}{% endif %}{% if verification_filter %}&verified={{ verification_filter }}{% endif %}{% if specialization_filter %}&specialization={{ specialization_filter }}{% endif %}">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ managers.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if city_filter %}&city={{ city_filter }}{% endif %}{% if verification_filter %}&verified={{ verification_filter }}{% endif %}{% if specialization_filter %}&specialization={{ specialization_filter }}{% endif %}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">Page {{ managers.number }} of {{ managers.paginator.num_pages }}</span>
+                        </li>
+
+                        {% if managers.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ managers.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if city_filter %}&city={{ city_filter }}{% endif %}{% if verification_filter %}&verified={{ verification_filter }}{% endif %}{% if specialization_filter %}&specialization={{ specialization_filter }}{% endif %}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ managers.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if city_filter %}&city={{ city_filter }}{% endif %}{% if verification_filter %}&verified={{ verification_filter }}{% endif %}{% if specialization_filter %}&specialization={{ specialization_filter }}{% endif %}">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.manager-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.manager-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.stat-item {
+    padding: 0.5rem;
+}
+</style>
+{% endblock %}

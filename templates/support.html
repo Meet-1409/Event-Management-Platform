@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+
+{% block title %}Support | 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-primary mb-3">
+                    <i class="fas fa-headset me-3"></i>Support Center
+                </h1>
+                <p class="lead text-muted">
+                    We're here to help you succeed with your event management needs
+                </p>
+            </div>
+
+            <!-- Support Options -->
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100 text-center">
+                        <div class="card-body p-4">
+                            <i class="fas fa-phone fa-3x text-primary mb-3"></i>
+                            <h5 class="fw-bold">Phone Support</h5>
+                            <p class="text-muted">Speak directly with our support team</p>
+                            <p class="fw-bold text-primary">+91 98765 43210</p>
+                            <small class="text-muted">Mon-Sun, 9:00 AM - 8:00 PM IST</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100 text-center">
+                        <div class="card-body p-4">
+                            <i class="fas fa-envelope fa-3x text-success mb-3"></i>
+                            <h5 class="fw-bold">Email Support</h5>
+                            <p class="text-muted">Send us a detailed message</p>
+                            <p class="fw-bold text-success">support@360eventmanager.com</p>
+                            <small class="text-muted">Response within 24 hours</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100 text-center">
+                        <div class="card-body p-4">
+                            <i class="fas fa-comments fa-3x text-info mb-3"></i>
+                            <h5 class="fw-bold">Live Chat</h5>
+                            <p class="text-muted">Get instant help via chat</p>
+                            <button class="btn btn-info" onclick="openLiveChat()">
+                                Start Chat
+                            </button>
+                            <small class="text-muted d-block mt-2">Available 24/7</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Categories -->
+            <div class="row mb-5">
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-calendar me-2"></i>Event Management Support
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Creating and managing events
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Event registration and ticketing
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Event promotion and marketing
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Attendee management
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Event analytics and reporting
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-building me-2"></i>Venue Booking Support
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Venue search and selection
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Booking process and payments
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Venue requirements and setup
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Cancellation and modifications
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Venue reviews and ratings
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-credit-card me-2"></i>Payment & Billing Support
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Payment methods and security
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Invoice and receipt generation
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Refund processing
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Billing disputes
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Tax and compliance
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-users me-2"></i>Account & Technical Support
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Account setup and management
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Password and security issues
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Platform navigation and features
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Mobile app support
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Browser compatibility
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="card border-0 shadow-sm mb-5">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-paper-plane me-2"></i>Send us a Message
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form id="supportForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">Support Category *</label>
+                                <select class="form-select" id="category" required>
+                                    <option value="">Select a category</option>
+                                    <option value="events">Event Management</option>
+                                    <option value="venues">Venue Booking</option>
+                                    <option value="payments">Payments & Billing</option>
+                                    <option value="technical">Technical Support</option>
+                                    <option value="account">Account Issues</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject *</label>
+                            <input type="text" class="form-control" id="subject" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message *</label>
+                            <textarea class="form-control" id="message" rows="5" required 
+                                      placeholder="Please describe your issue in detail..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Priority Level</label>
+                            <select class="form-select" id="priority">
+                                <option value="low">Low - General inquiry</option>
+                                <option value="medium" selected>Medium - Standard support</option>
+                                <option value="high">High - Urgent issue</option>
+                                <option value="critical">Critical - System down</option>
+                            </select>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Additional Resources -->
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-book fa-2x text-primary mb-3"></i>
+                            <h6 class="fw-bold">Knowledge Base</h6>
+                            <p class="text-muted small">Browse our comprehensive documentation and guides.</p>
+                            <a href="/help-center/" class="btn btn-outline-primary btn-sm">Browse Articles</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-video fa-2x text-success mb-3"></i>
+                            <h6 class="fw-bold">Video Tutorials</h6>
+                            <p class="text-muted small">Watch step-by-step tutorials and demos.</p>
+                            <a href="#" class="btn btn-outline-success btn-sm">Watch Videos</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-robot fa-2x text-info mb-3"></i>
+                            <h6 class="fw-bold">AI Assistant</h6>
+                            <p class="text-muted small">Get instant help from our AI chatbot.</p>
+                            <a href="/ai-chatbot/" class="btn btn-outline-info btn-sm">Chat Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openLiveChat() {
+    // Open live chat widget or redirect to chat page
+    window.open('/communications/inbox/', '_blank');
+}
+
+document.getElementById('supportForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        category: document.getElementById('category').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value,
+        priority: document.getElementById('priority').value
+    };
+    
+    // Show success message
+    alert('Thank you for your message! We will get back to you within 24 hours.');
+    
+    // Reset form
+    document.getElementById('supportForm').reset();
+});
+
+// Auto-fill user info if logged in
+document.addEventListener('DOMContentLoaded', function() {
+    // You can add logic here to auto-fill user information if they're logged in
+    console.log('Support page loaded');
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.card {
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.fa-2x {
+    font-size: 2rem;
+}
+
+.fa-3x {
+    font-size: 3rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
+{% endblock %} 

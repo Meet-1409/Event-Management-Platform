@@ -1,0 +1,691 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Process Payment - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .payment-method-card {
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .payment-method-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+    }
+    
+    .payment-method-card.selected {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+    }
+    
+    .payment-method-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: 15px;
+    }
+    
+    .method-stripe {
+        background: linear-gradient(135deg, #6772e5, #8b6ff7);
+    }
+    
+    .method-razorpay {
+        background: linear-gradient(135deg, #3399cc, #66b3ff);
+    }
+    
+    .method-bank {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
+    .method-cash {
+        background: linear-gradient(135deg, #6c757d, #adb5bd);
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .card-input {
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .card-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .card-element {
+        padding: 12px 15px;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        background: white;
+    }
+    
+    .loading-spinner {
+        display: none;
+    }
+    
+    .loading-spinner.show {
+        display: inline-block;
+    }
+    
+    .security-badges {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .security-badge {
+        background: #f8f9fa;
+        color: #6c757d;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .amount-breakdown {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .amount-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    .amount-row.total {
+        border-top: 1px solid #dee2e6;
+        padding-top: 10px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="payment-container">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="fw-bold mb-3">
+                <i class="fas fa-credit-card me-3 text-primary"></i>
+                Complete Payment
+            </h1>
+            <p class="text-muted">Secure payment processing for your event booking</p>
+        </div>
+
+        <!-- Amount Breakdown -->
+        <div class="amount-breakdown">
+            <h5 class="fw-bold mb-3">Payment Summary</h5>
+            <div class="amount-row">
+                <span>Event Fee:</span>
+                <span>₹{{ event.total_budget|floatformat:2 }}</span>
+            </div>
+            <div class="amount-row">
+                <span>Service Fee (5%):</span>
+                <span>₹{{ service_fee|floatformat:2 }}</span>
+            </div>
+            <div class="amount-row">
+                <span>GST (18%):</span>
+                <span>₹{{ gst_amount|floatformat:2 }}</span>
+            </div>
+            <div class="amount-row total">
+                <span>Total Amount:</span>
+                <span class="text-primary">₹{{ total_amount|floatformat:2 }}</span>
+            </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="mb-4">
+            <h5 class="fw-bold mb-3">Select Payment Method</h5>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="payment-method-card" data-method="stripe">
+                        <div class="payment-method-icon method-stripe">
+                            <i class="fab fa-stripe"></i>
+                        </div>
+                        <h6 class="fw-bold">Credit/Debit Card</h6>
+                        <p class="text-muted small mb-2">Pay securely with your card</p>
+                        <div class="security-badges">
+                            <span class="security-badge">
+                                <i class="fas fa-lock"></i>
+                                Secure
+                            </span>
+                            <span class="security-badge">
+                                <i class="fas fa-shield-alt"></i>
+                                Encrypted
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="payment-method-card" data-method="razorpay">
+                        <div class="payment-method-icon method-razorpay">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h6 class="fw-bold">UPI & Digital Wallets</h6>
+                        <p class="text-muted small mb-2">Pay with UPI, Paytm, PhonePe</p>
+                        <div class="security-badges">
+                            <span class="security-badge">
+                                <i class="fas fa-mobile-alt"></i>
+                                Instant
+                            </span>
+                            <span class="security-badge">
+                                <i class="fas fa-check-circle"></i>
+                                Verified
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="payment-method-card" data-method="bank_transfer">
+                        <div class="payment-method-icon method-bank">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <h6 class="fw-bold">Bank Transfer</h6>
+                        <p class="text-muted small mb-2">Direct bank transfer</p>
+                        <div class="security-badges">
+                            <span class="security-badge">
+                                <i class="fas fa-university"></i>
+                                Direct
+                            </span>
+                            <span class="security-badge">
+                                <i class="fas fa-clock"></i>
+                                1-2 days
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="payment-method-card" data-method="cash">
+                        <div class="payment-method-icon method-cash">
+                            <i class="fas fa-money-bill"></i>
+                        </div>
+                        <h6 class="fw-bold">Cash Payment</h6>
+                        <p class="text-muted small mb-2">Pay at our office</p>
+                        <div class="security-badges">
+                            <span class="security-badge">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Office
+                            </span>
+                            <span class="security-badge">
+                                <i class="fas fa-receipt"></i>
+                                Receipt
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Forms -->
+        <form id="paymentForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="event_id" value="{{ event.id }}">
+            <input type="hidden" name="amount" value="{{ total_amount }}">
+            <input type="hidden" name="currency" value="INR">
+            <input type="hidden" name="payment_method" id="selectedMethod">
+            
+            <!-- Stripe Payment Form -->
+            <div id="stripeForm" class="payment-form" style="display: none;">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">
+                            <i class="fab fa-stripe me-2 text-primary"></i>
+                            Card Details
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Card Number</label>
+                                <div id="card-number" class="card-element"></div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-semibold">Expiry Date</label>
+                                <div id="card-expiry" class="card-element"></div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label fw-semibold">CVC</label>
+                                <div id="card-cvc" class="card-element"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Cardholder Name</label>
+                                <input type="text" class="form-control" id="cardholderName" placeholder="Name on card">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Billing Address</label>
+                                <input type="text" class="form-control" id="billingAddress" placeholder="Billing address">
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Your payment is secured with SSL encryption. We never store your card details.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Razorpay Payment Form -->
+            <div id="razorpayForm" class="payment-form" style="display: none;">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">
+                            <i class="fas fa-credit-card me-2 text-primary"></i>
+                            UPI & Digital Payment
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">UPI ID</label>
+                                <input type="text" class="form-control" id="upiId" placeholder="yourname@upi">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Mobile Number</label>
+                                <input type="tel" class="form-control" id="mobileNumber" placeholder="+91 98765 43210">
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Instant payment confirmation. No additional charges.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Transfer Form -->
+            <div id="bankForm" class="payment-form" style="display: none;">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">
+                            <i class="fas fa-university me-2 text-primary"></i>
+                            Bank Transfer Details
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Account Name</label>
+                                <input type="text" class="form-control" value="360° Event Manager" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Account Number</label>
+                                <input type="text" class="form-control" value="1234567890" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">IFSC Code</label>
+                                <input type="text" class="form-control" value="SBIN0001234" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Bank Name</label>
+                                <input type="text" class="form-control" value="State Bank of India" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <i class="fas fa-clock me-2"></i>
+                            Please transfer the amount and upload the receipt. Payment will be confirmed within 1-2 business days.
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Upload Transfer Receipt</label>
+                            <input type="file" class="form-control" id="receiptFile" accept="image/*,.pdf">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Payment Form -->
+            <div id="cashForm" class="payment-form" style="display: none;">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">
+                            <i class="fas fa-money-bill me-2 text-primary"></i>
+                            Cash Payment
+                        </h5>
+                        
+                        <div class="alert alert-info">
+                            <h6 class="fw-bold">Office Address:</h6>
+                            <p class="mb-2">360° Event Manager<br>
+                            123, Business Park, Ahmedabad<br>
+                            Gujarat - 380001</p>
+                            
+                            <h6 class="fw-bold">Office Hours:</h6>
+                            <p class="mb-0">Monday - Saturday: 9:00 AM - 6:00 PM</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Preferred Visit Date</label>
+                            <input type="date" class="form-control" id="visitDate" min="{{ today|date:'Y-m-d' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Preferred Time</label>
+                            <select class="form-select" id="visitTime">
+                                <option value="">Select time</option>
+                                <option value="09:00">9:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                                <option value="16:00">4:00 PM</option>
+                                <option value="17:00">5:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-lg px-5" id="submitBtn">
+                    <span class="loading-spinner me-2">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                    <span class="btn-text">Pay ₹{{ total_amount|floatformat:2 }}</span>
+                </button>
+                
+                <div class="mt-3">
+                    <a href="{% url 'events:event_detail' event.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Back to Event
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+// Initialize Stripe
+const stripe = Stripe('{{ stripe_publishable_key }}');
+const elements = stripe.elements();
+
+// Card elements
+const cardNumber = elements.create('cardNumber');
+const cardExpiry = elements.create('cardExpiry');
+const cardCvc = elements.create('cardCvc');
+
+cardNumber.mount('#card-number');
+cardExpiry.mount('#card-expiry');
+cardCvc.mount('#card-cvc');
+
+// Payment method selection
+const paymentMethodCards = document.querySelectorAll('.payment-method-card');
+const paymentForms = document.querySelectorAll('.payment-form');
+const selectedMethodInput = document.getElementById('selectedMethod');
+
+paymentMethodCards.forEach(card => {
+    card.addEventListener('click', function() {
+        // Remove selected class from all cards
+        paymentMethodCards.forEach(c => c.classList.remove('selected'));
+        
+        // Add selected class to clicked card
+        this.classList.add('selected');
+        
+        // Get selected method
+        const method = this.getAttribute('data-method');
+        selectedMethodInput.value = method;
+        
+        // Hide all forms
+        paymentForms.forEach(form => form.style.display = 'none');
+        
+        // Show selected form
+        const formId = method + 'Form';
+        const selectedForm = document.getElementById(formId);
+        if (selectedForm) {
+            selectedForm.style.display = 'block';
+        }
+        
+        // Update button text
+        updateButtonText(method);
+    });
+});
+
+function updateButtonText(method) {
+    const btnText = document.querySelector('.btn-text');
+    const amount = '{{ total_amount|floatformat:2 }}';
+    
+    switch(method) {
+        case 'stripe':
+            btnText.textContent = `Pay ₹${amount}`;
+            break;
+        case 'razorpay':
+            btnText.textContent = `Pay ₹${amount}`;
+            break;
+        case 'bank_transfer':
+            btnText.textContent = 'Submit Transfer Details';
+            break;
+        case 'cash':
+            btnText.textContent = 'Schedule Office Visit';
+            break;
+    }
+}
+
+// Form submission
+const paymentForm = document.getElementById('paymentForm');
+const submitBtn = document.getElementById('submitBtn');
+const loadingSpinner = document.querySelector('.loading-spinner');
+
+paymentForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const selectedMethod = selectedMethodInput.value;
+    
+    if (!selectedMethod) {
+        alert('Please select a payment method');
+        return;
+    }
+    
+    // Show loading
+    submitBtn.disabled = true;
+    loadingSpinner.classList.add('show');
+    
+    try {
+        if (selectedMethod === 'stripe') {
+            await processStripePayment();
+        } else if (selectedMethod === 'razorpay') {
+            await processRazorpayPayment();
+        } else {
+            await processOtherPayment();
+        }
+    } catch (error) {
+        console.error('Payment error:', error);
+        alert('Payment failed. Please try again.');
+    } finally {
+        // Hide loading
+        submitBtn.disabled = false;
+        loadingSpinner.classList.remove('show');
+    }
+});
+
+async function processStripePayment() {
+    const formData = new FormData(paymentForm);
+    
+    // Create payment intent
+    const response = await fetch('/api/payments/process/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+        // Confirm payment with Stripe
+        const { error } = await stripe.confirmCardPayment(result.client_secret, {
+            payment_method: {
+                card: cardNumber,
+                billing_details: {
+                    name: document.getElementById('cardholderName').value,
+                    address: {
+                        line1: document.getElementById('billingAddress').value
+                    }
+                }
+            }
+        });
+        
+        if (error) {
+            throw new Error(error.message);
+        }
+        
+        // Redirect to success page
+        window.location.href = `/payments/success/?payment_id=${result.payment_id}`;
+    } else {
+        throw new Error(result.error);
+    }
+}
+
+async function processRazorpayPayment() {
+    const formData = new FormData(paymentForm);
+    
+    const response = await fetch('/api/payments/process/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+        // Initialize Razorpay
+        const options = {
+            key: '{{ razorpay_key_id }}',
+            amount: result.amount,
+            currency: result.currency,
+            name: '360° Event Manager',
+            description: 'Event Booking Payment',
+            order_id: result.order_id,
+            handler: function(response) {
+                window.location.href = `/payments/success/?payment_id=${result.payment_id}`;
+            },
+            prefill: {
+                name: '{{ user.get_full_name }}',
+                email: '{{ user.email }}',
+                contact: document.getElementById('mobileNumber').value
+            },
+            theme: {
+                color: '#667eea'
+            }
+        };
+        
+        const rzp = new Razorpay(options);
+        rzp.open();
+    } else {
+        throw new Error(result.error);
+    }
+}
+
+async function processOtherPayment() {
+    const formData = new FormData(paymentForm);
+    
+    const response = await fetch('/api/payments/process/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+        alert(result.message);
+        window.location.href = `/payments/success/?payment_id=${result.payment_id}`;
+    } else {
+        throw new Error(result.error);
+    }
+}
+
+// Form validation
+function validateForm() {
+    const selectedMethod = selectedMethodInput.value;
+    
+    if (selectedMethod === 'stripe') {
+        // Stripe validation is handled by Stripe Elements
+        return true;
+    } else if (selectedMethod === 'razorpay') {
+        const upiId = document.getElementById('upiId').value;
+        const mobileNumber = document.getElementById('mobileNumber').value;
+        
+        if (!upiId || !mobileNumber) {
+            alert('Please fill in all required fields');
+            return false;
+        }
+        
+        return true;
+    } else if (selectedMethod === 'bank_transfer') {
+        const receiptFile = document.getElementById('receiptFile').value;
+        
+        if (!receiptFile) {
+            alert('Please upload the transfer receipt');
+            return false;
+        }
+        
+        return true;
+    } else if (selectedMethod === 'cash') {
+        const visitDate = document.getElementById('visitDate').value;
+        const visitTime = document.getElementById('visitTime').value;
+        
+        if (!visitDate || !visitTime) {
+            alert('Please select visit date and time');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    return true;
+}
+
+// Auto-select first payment method
+if (paymentMethodCards.length > 0) {
+    paymentMethodCards[0].click();
+}
+</script>
+{% endblock %} 

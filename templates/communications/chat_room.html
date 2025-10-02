@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Chat Room | 360° Event Manager{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="chat-room">
+    <h3 class="mb-2">Chat with {% if conversation.participant1 == user %}{{ conversation.participant2.get_full_name|default:conversation.participant2.username }}{% else %}{{ conversation.participant1.get_full_name|default:conversation.participant1.username }}{% endif %}</h3>
+    <div class="messages mb-2">
+      {% for msg in messages %}
+      <div class="message-row {% if msg.sender == user %}user{% endif %} flex">
+        <div class="message-avatar">{{ msg.sender.get_full_name|default:msg.sender.username|slice:':1'|upper }}</div>
+        <div>
+          <div class="message-bubble">{{ msg.content }}</div>
+          <div class="message-meta">{{ msg.sender.get_full_name|default:msg.sender.username }} &middot; {{ msg.created_at|date:'M d, H:i' }}</div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-muted text-center">No messages yet. Start the conversation!</div>
+      {% endfor %}
+    </div>
+    <form method="post" class="chat-input-row mt-2">{% csrf_token %}
+      <input type="text" name="content" class="chat-input" placeholder="Type your message..." autocomplete="off" required>
+      <button type="submit" class="send-btn"><i class="fa fa-paper-plane"></i></button>
+    </form>
+  </div>
+</div>
+{% endblock %} 

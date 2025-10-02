@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Manager Management - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-primary">
+                        <i class="fas fa-user-tie me-2"></i>Manager Management
+                    </h2>
+                    <p class="text-muted">Oversee and verify event managers</p>
+                </div>
+                <a href="{% url 'managers:manager_verification' %}" class="btn btn-warning">
+                    <i class="fas fa-user-check me-1"></i>Pending Verifications
+                </a>
+            </div>
+
+            <!-- Manager Stats -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-success">{{ verified_managers|default:0 }}</h4>
+                            <small class="text-muted">Verified</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-warning">{{ pending_managers|default:0 }}</h4>
+                            <small class="text-muted">Pending</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-info">{{ active_managers|default:0 }}</h4>
+                            <small class="text-muted">Active</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-primary">{{ total_managers|default:0 }}</h4>
+                            <small class="text-muted">Total</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Managers Table -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>All Event Managers
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Manager</th>
+                                    <th>Company</th>
+                                    <th>Experience</th>
+                                    <th>Events Managed</th>
+                                    <th>Rating</th>
+                                    <th>Verification</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for manager in managers %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-success text-dark rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                                {{ manager.first_name|first }}{{ manager.last_name|first }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ manager.get_full_name }}</div>
+                                                <small class="text-muted">{{ manager.email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ manager.manager_profile.company_name|default:"Individual" }}</td>
+                                    <td>{{ manager.manager_profile.years_of_experience|default:0 }} years</td>
+                                    <td>{{ manager.manager_profile.total_events_managed|default:0 }}</td>
+                                    <td>
+                                        {% if manager.manager_profile.average_rating > 0 %}
+                                            <span class="text-warning">{{ manager.manager_profile.average_rating }}/5.0</span>
+                                        {% else %}
+                                            <span class="text-muted">No ratings</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if manager.manager_profile.is_verified %}
+                                            <span class="badge bg-success">Verified</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'managers:manager_detail' manager.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'communications:start_chat' manager.id %}" class="btn btn-sm btn-outline-success">
+                                                <i class="fas fa-comment"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <i class="fas fa-user-tie fa-2x text-muted mb-2"></i>
+                                        <div>No managers found</div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

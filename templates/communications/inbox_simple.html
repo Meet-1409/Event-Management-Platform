@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-dark">
+                        <i class="fas fa-comments me-2 text-success"></i>Messages
+                    </h2>
+                    <p class="text-muted">Stay connected with your event community</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" onclick="refreshChats()">
+                        <i class="fas fa-sync me-1"></i>Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="startNewConversation()">
+                        <i class="fas fa-plus me-1"></i>New Chat
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Chat List -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>Conversations
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            {% if conversations %}
+                                <div class="list-group list-group-flush">
+                                    {% for conversation in conversations %}
+                                    <a href="{% url 'communications:chat_room' conversation.id %}" class="list-group-item list-group-item-action">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-success text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                                {% if conversation.participant1 == user %}
+                                                    {{ conversation.participant2.first_name|first }}
+                                                {% else %}
+                                                    {{ conversation.participant1.first_name|first }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold">
+                                                    {% if conversation.participant1 == user %}
+                                                        {{ conversation.participant2.get_full_name }}
+                                                    {% else %}
+                                                        {{ conversation.participant1.get_full_name }}
+                                                    {% endif %}
+                                                </div>
+                                                <small class="text-muted">{{ conversation.conversation_type|title }}</small>
+                                            </div>
+                                            <div class="text-end">
+                                                <small class="text-muted">{{ conversation.updated_at|date:"M d" }}</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                    <h5>No Conversations Yet</h5>
+                                    <p class="text-muted">Start a conversation with an event manager or contact support</p>
+                                    <button class="btn btn-primary" onclick="startNewConversation()">
+                                        <i class="fas fa-plus me-1"></i>Start New Chat
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Chat Rooms -->
+                    {% if chat_rooms %}
+                    <div class="card border-0 shadow-sm mt-4">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fas fa-users me-2"></i>Group Chats
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% for room in chat_rooms %}
+                                <a href="{% url 'communications:group_chat_room' room.id %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-bold">{{ room.name }}</div>
+                                            <small class="text-muted">{{ room.members.count }} members</small>
+                                        </div>
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-8">
+                    <!-- Chat Area -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-comment-dots fa-4x text-success mb-4"></i>
+                            <h4>Select a conversation</h4>
+                            <p class="text-muted">Choose a conversation from the sidebar to start messaging</p>
+                            
+                            <div class="mt-4">
+                                <button class="btn btn-primary me-2" onclick="startNewConversation()">
+                                    <i class="fas fa-plus me-1"></i>New Conversation
+                                </button>
+                                <a href="/managers/" class="btn btn-outline-primary">
+                                    <i class="fas fa-user-tie me-1"></i>Find Event Managers
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshChats() {
+    // Simple refresh without loading animation
+    window.location.reload();
+}
+
+function startNewConversation() {
+    // Redirect to managers page to start a conversation
+    window.location.href = '/managers/';
+}
+
+// Remove any loading animations on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide any loading spinners
+    const loadingElements = document.querySelectorAll('.loading, .spinner, .fa-spinner');
+    loadingElements.forEach(el => el.style.display = 'none');
+    
+    // Remove loading classes
+    document.body.classList.remove('loading');
+});
+</script>
+
+<style>
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+}
+
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,550 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics Dashboard | 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-card {
+        transition: transform 0.2s ease-in-out;
+    }
+    .analytics-card:hover {
+        transform: translateY(-2px);
+    }
+    .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    .metric-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    .growth-positive {
+        color: #28a745;
+    }
+    .growth-negative {
+        color: #dc3545;
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin-bottom: 2rem;
+    }
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+    }
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0">Analytics Dashboard</h1>
+                    <p class="text-muted">Real-time insights and performance metrics</p>
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <a href="{% url 'analytics:export_analytics' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-download"></i> Export
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading">
+        <div class="spinner"></div>
+        <span class="ms-3">Loading analytics data...</span>
+    </div>
+
+    <!-- Main Content -->
+    <div id="dashboardContent" style="display: none;">
+        <!-- Key Metrics -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card analytics-card h-100">
+                    <div class="card-body text-center">
+                        <div class="metric-value text-primary" id="totalUsers">-</div>
+                        <div class="metric-label">Total Users</div>
+                        <small class="text-muted">
+                            <span id="newUsers">-</span> new this month
+                            <span id="userGrowth" class="ms-2"></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card analytics-card h-100">
+                    <div class="card-body text-center">
+                        <div class="metric-value text-success" id="totalEvents">-</div>
+                        <div class="metric-label">Total Events</div>
+                        <small class="text-muted">
+                            <span id="activeEvents">-</span> active events
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card analytics-card h-100">
+                    <div class="card-body text-center">
+                        <div class="metric-value text-info" id="totalBookings">-</div>
+                        <div class="metric-label">Total Bookings</div>
+                        <small class="text-muted">
+                            <span id="confirmedBookings">-</span> confirmed
+                            (<span id="conversionRate">-</span>% conversion)
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card analytics-card h-100">
+                    <div class="card-body text-center">
+                        <div class="metric-value text-warning" id="totalRevenue">₹-</div>
+                        <div class="metric-label">Total Revenue</div>
+                        <small class="text-muted">
+                            ₹<span id="monthlyRevenue">-</span> this month
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Monthly Events</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="monthlyEventsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Monthly Revenue</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="monthlyRevenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Analytics -->
+        <div class="row mb-4">
+            <div class="col-lg-4 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Venue Performance</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="venuePerformanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Event Categories</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="eventCategoriesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Payment Methods</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="paymentMethodsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication Stats -->
+        <div class="row">
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Communication Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="metric-value text-primary" id="totalConversations">-</div>
+                                <div class="metric-label">Conversations</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="metric-value text-info" id="totalMessages">-</div>
+                                <div class="metric-label">Messages</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Venue Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="metric-value text-success" id="totalVenues">-</div>
+                                <div class="metric-label">Total Venues</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="metric-value text-warning" id="activeVenues">-</div>
+                                <div class="metric-label">Active Venues</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let charts = {};
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardData();
+});
+
+function loadDashboardData() {
+    fetch('{% url "analytics:dashboard_data" %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateDashboard(data.data);
+                loadEventAnalytics();
+                loadRevenueAnalytics();
+            } else {
+                console.error('Error loading dashboard data:', data.error);
+                showError('Failed to load dashboard data');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Failed to load dashboard data');
+        });
+}
+
+function updateDashboard(data) {
+    // Update metrics
+    document.getElementById('totalUsers').textContent = data.users.total;
+    document.getElementById('newUsers').textContent = data.users.new_this_month;
+    updateGrowthRate('userGrowth', data.users.growth_rate);
+    
+    document.getElementById('totalEvents').textContent = data.events.total;
+    document.getElementById('activeEvents').textContent = data.events.active;
+    
+    document.getElementById('totalBookings').textContent = data.bookings.total;
+    document.getElementById('confirmedBookings').textContent = data.bookings.confirmed;
+    document.getElementById('conversionRate').textContent = data.bookings.conversion_rate;
+    
+    document.getElementById('totalRevenue').textContent = '₹' + data.revenue.total.toLocaleString();
+    document.getElementById('monthlyRevenue').textContent = data.revenue.monthly.toLocaleString();
+    
+    document.getElementById('totalConversations').textContent = data.communications.conversations;
+    document.getElementById('totalMessages').textContent = data.communications.messages;
+    
+    document.getElementById('totalVenues').textContent = data.venues.total;
+    document.getElementById('activeVenues').textContent = data.venues.active;
+    
+    // Update charts
+    updateMonthlyEventsChart(data.events.monthly_data);
+    updateMonthlyRevenueChart(data.revenue.monthly_data);
+    
+    // Hide loading, show content
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('dashboardContent').style.display = 'block';
+}
+
+function updateGrowthRate(elementId, rate) {
+    const element = document.getElementById(elementId);
+    if (rate > 0) {
+        element.innerHTML = `<i class="fas fa-arrow-up"></i> +${rate}%`;
+        element.className = 'growth-positive';
+    } else if (rate < 0) {
+        element.innerHTML = `<i class="fas fa-arrow-down"></i> ${rate}%`;
+        element.className = 'growth-negative';
+    } else {
+        element.innerHTML = `<i class="fas fa-minus"></i> 0%`;
+        element.className = 'text-muted';
+    }
+}
+
+function updateMonthlyEventsChart(monthlyData) {
+    const ctx = document.getElementById('monthlyEventsChart').getContext('2d');
+    
+    if (charts.monthlyEvents) {
+        charts.monthlyEvents.destroy();
+    }
+    
+    charts.monthlyEvents = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: monthlyData.labels,
+            datasets: [{
+                label: 'Events',
+                data: monthlyData.data,
+                backgroundColor: '#4facfe',
+                borderColor: '#4facfe',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function updateMonthlyRevenueChart(monthlyData) {
+    const ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
+    
+    if (charts.monthlyRevenue) {
+        charts.monthlyRevenue.destroy();
+    }
+    
+    charts.monthlyRevenue = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthlyData.labels,
+            datasets: [{
+                label: 'Revenue',
+                data: monthlyData.data,
+                borderColor: '#43e97b',
+                backgroundColor: 'rgba(67, 233, 123, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function loadEventAnalytics() {
+    fetch('{% url "analytics:event_analytics" %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateEventCharts(data.data);
+            }
+        })
+        .catch(error => console.error('Error loading event analytics:', error));
+}
+
+function loadRevenueAnalytics() {
+    fetch('{% url "analytics:revenue_analytics" %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateRevenueCharts(data.data);
+            }
+        })
+        .catch(error => console.error('Error loading revenue analytics:', error));
+}
+
+function updateEventCharts(data) {
+    // Event Categories Chart
+    const categoriesCtx = document.getElementById('eventCategoriesChart').getContext('2d');
+    if (charts.eventCategories) {
+        charts.eventCategories.destroy();
+    }
+    
+    const categoryLabels = data.categories.map(cat => cat.event_type);
+    const categoryData = data.categories.map(cat => cat.count);
+    
+    charts.eventCategories = new Chart(categoriesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                data: categoryData,
+                backgroundColor: [
+                    '#667eea',
+                    '#f093fb',
+                    '#4facfe',
+                    '#43e97b',
+                    '#ffecd2'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+    
+    // Venue Performance Chart
+    const venueCtx = document.getElementById('venuePerformanceChart').getContext('2d');
+    if (charts.venuePerformance) {
+        charts.venuePerformance.destroy();
+    }
+    
+    const venueLabels = data.top_venues.map(venue => venue.name);
+    const venueData = data.top_venues.map(venue => venue.bookings);
+    
+    charts.venuePerformance = new Chart(venueCtx, {
+        type: 'bar',
+        data: {
+            labels: venueLabels,
+            datasets: [{
+                label: 'Bookings',
+                data: venueData,
+                backgroundColor: '#667eea'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function updateRevenueCharts(data) {
+    // Payment Methods Chart
+    const paymentCtx = document.getElementById('paymentMethodsChart').getContext('2d');
+    if (charts.paymentMethods) {
+        charts.paymentMethods.destroy();
+    }
+    
+    const paymentLabels = data.payment_methods.map(pm => pm.payment_method);
+    const paymentData = data.payment_methods.map(pm => pm.count);
+    
+    charts.paymentMethods = new Chart(paymentCtx, {
+        type: 'pie',
+        data: {
+            labels: paymentLabels,
+            datasets: [{
+                data: paymentData,
+                backgroundColor: [
+                    '#667eea',
+                    '#f093fb',
+                    '#4facfe',
+                    '#43e97b'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function refreshData() {
+    // Show loading state
+    document.getElementById('loadingState').style.display = 'flex';
+    document.getElementById('dashboardContent').style.display = 'none';
+    
+    // Reload all data
+    loadDashboardData();
+}
+
+function showError(message) {
+    // Hide loading
+    document.getElementById('loadingState').style.display = 'none';
+    
+    // Show error message
+    const content = document.getElementById('dashboardContent');
+    content.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> ${message}
+        </div>
+    `;
+    content.style.display = 'block';
+}
+
+// Auto-refresh every 5 minutes
+setInterval(refreshData, 300000);
+</script>
+{% endblock %} 

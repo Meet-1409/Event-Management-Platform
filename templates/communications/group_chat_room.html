@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Group Chat | 360° Event Manager{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="chat-room">
+    <div class="flex flex-center mb-2" style="justify-content: space-between;">
+      <h3>Group: {{ room.name }}</h3>
+      {% if member_role in 'admin moderator' %}
+      <a href="{% url 'communications:add_users_to_group' room.id %}" class="btn btn-primary" title="Add users to group"><i class="fa fa-plus"></i></a>
+      {% endif %}
+    </div>
+    <div class="messages mb-2">
+      {% for msg in messages %}
+      <div class="message-row {% if msg.sender == user %}user{% endif %} flex">
+        <div class="message-avatar">{{ msg.sender.get_full_name|default:msg.sender.username|slice:':1'|upper }}</div>
+        <div>
+          <div class="message-bubble">{{ msg.content }}</div>
+          <div class="message-meta">{{ msg.sender.get_full_name|default:msg.sender.username }} &middot; {{ msg.created_at|date:'M d, H:i' }}</div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-muted text-center">No messages yet. Start the conversation!</div>
+      {% endfor %}
+    </div>
+    <form method="post" class="chat-input-row mt-2">{% csrf_token %}
+      <input type="text" name="content" class="chat-input" placeholder="Type your message..." autocomplete="off" required>
+      <button type="submit" class="send-btn"><i class="fa fa-paper-plane"></i></button>
+    </form>
+  </div>
+</div>
+{% endblock %} 

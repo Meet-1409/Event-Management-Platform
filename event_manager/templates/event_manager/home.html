@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.main-content, .main-content * {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: #fff !important;
+    background: none !important;
+    border: 2px solid #e11d48 !important;
+    min-height: 20px !important;
+    min-width: 20px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    position: static !important;
+    float: none !important;
+    z-index: 1000 !important;
+}
+body, html {
+    min-height: 100vh !important;
+    height: auto !important;
+    width: 100% !important;
+    background: #10172a !important;
+}
+</style>
+
+<h1 style="color:red">HOMEPAGE TEST</h1>
+
+<h1>TEST: HOMEPAGE CONTENT IS RENDERED</h1>
+<p>Premier Event Management in <span>Ahmedabad & Gandhinagar</span></p>
+<p>From corporate conferences to dream weddings, we bring your vision to life. Trusted by 500+ clients across Gujarat with venues and services tailored for local excellence.</p>
+<img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Event Management" style="max-width: 400px; border-radius: 20px; box-shadow: 0 4px 24px #0008; margin: 40px auto;">
+
+<h2>Why Choose 360° Event Manager?</h2>
+<ul>
+  <li>Effortless Planning: Streamlined event planning with intuitive tools, real-time collaboration, and comprehensive project management.</li>
+  <li>360° Venue Tours: Experience venues virtually before booking. Make informed decisions with immersive 360-degree tours.</li>
+  <li>Unified Communication: Connect with managers, vendors, and clients in real-time. All conversations in one centralized platform.</li>
+  <li>Analytics & Insights: Track event performance, analyze trends, and make data-driven decisions with comprehensive analytics.</li>
+  <li>Secure & Reliable: Enterprise-grade security with encrypted data, secure payments, and reliable infrastructure.</li>
+  <li>Mobile Ready: Access your events anywhere, anytime with our responsive mobile-optimized platform.</li>
+</ul>
+
+<h2>Stats</h2>
+<ul>
+  <li>500+ Events Managed</li>
+  <li>50+ Premium Venues</li>
+  <li>1000+ Happy Clients</li>
+  <li>24/7 Support Available</li>
+</ul>
+
+<h2>Ready to Start Your Event Journey?</h2>
+<p>Join thousands of event professionals who trust our platform</p>
+<a href="/users/register/">Get Started Free</a> | <a href="/contact/">Contact Sales</a>
+{% endblock %} 

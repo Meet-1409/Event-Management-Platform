@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Payments - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 fw-bold mb-4">
+                <i class="fas fa-credit-card me-2 text-primary"></i>
+                My Payments
+            </h1>
+
+            {% if payments %}
+                <div class="row">
+                    {% for payment in payments %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title fw-bold">{{ payment.invoice.event.title }}</h5>
+                                    <span class="badge bg-{% if payment.status == 'completed' %}success{% elif payment.status == 'pending' %}warning{% elif payment.status == 'failed' %}danger{% else %}secondary{% endif %}">
+                                        {{ payment.get_status_display }}
+                                    </span>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {{ payment.created_at|date:"M d, Y" }}
+                                        </small>
+                                        <small class="text-muted d-block">
+                                            <i class="fas fa-clock me-1"></i>
+                                            {{ payment.created_at|time:"g:i A" }}
+                                        </small>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">
+                                            <i class="fas fa-credit-card me-1"></i>
+                                            {{ payment.payment_method.name }}
+                                        </small>
+                                        <small class="text-muted d-block">
+                                            <i class="fas fa-receipt me-1"></i>
+                                            #{{ payment.payment_id }}
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="bg-light p-3 rounded mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">Amount:</span>
+                                        <span class="h5 text-primary mb-0">₹{{ payment.amount }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted">Currency:</span>
+                                        <span class="text-muted">{{ payment.currency }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        {% if payment.payment_date %}
+                                            <small class="text-muted d-block">
+                                                Paid on: {{ payment.payment_date|date:"M d, Y" }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="{% url 'payments:invoice_detail' payment.invoice.id %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-file-invoice me-1"></i>View Invoice
+                                        </a>
+                                        {% if payment.status == 'completed' %}
+                                            <a href="{% url 'payments:download_invoice' payment.invoice.id %}" class="btn btn-outline-success btn-sm">
+                                                <i class="fas fa-download me-1"></i>Download
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold mb-3">Payment Summary</h5>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h4 class="text-success">{{ payments|length }}</h4>
+                                            <small class="text-muted">Total Payments</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h4 class="text-primary">₹{{ total_paid|default:"0" }}</h4>
+                                            <small class="text-muted">Total Paid</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h4 class="text-warning">{{ pending_payments|default:"0" }}</h4>
+                                            <small class="text-muted">Pending</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <h4 class="text-success">{{ completed_payments|default:"0" }}</h4>
+                                            <small class="text-muted">Completed</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-credit-card fa-4x text-muted"></i>
+                    </div>
+                    <h3 class="text-muted mb-3">No Payments Yet</h3>
+                    <p class="text-muted mb-4">You haven't made any payments yet. Book an event to see your payment history!</p>
+                    <a href="{% url 'events:event_list' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-calendar-alt me-2"></i>Browse Events
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

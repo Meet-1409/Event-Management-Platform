@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ manager.get_full_name }} - Event Manager{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Manager Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center">
+                                <div class="manager-avatar me-4">
+                                    {% if manager.profile_picture %}
+                                        <img src="{{ manager.profile_picture.url }}" alt="{{ manager.get_full_name }}" class="rounded-circle" width="80" height="80">
+                                    {% else %}
+                                        <div class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                            <i class="fas fa-user fa-2x"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h2 class="display-6 fw-bold mb-2">{{ manager.get_full_name }}</h2>
+                                    <div class="d-flex align-items-center mb-2">
+                                        {% if manager_profile.is_verified %}
+                                            <span class="badge bg-success me-2">
+                                                <i class="fas fa-check-circle me-1"></i>Verified Professional
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock me-1"></i>Verification Pending
+                                            </span>
+                                        {% endif %}
+                                        {% if stats.avg_rating > 0 %}
+                                            <span class="text-warning me-2">
+                                                {% for i in "12345" %}
+                                                    {% if forloop.counter <= stats.avg_rating %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% else %}
+                                                        <i class="far fa-star"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <span class="ms-1 text-dark">{{ stats.avg_rating }}</span>
+                                            </span>
+                                        {% endif %}
+                                        <span class="text-muted">({{ stats.total_reviews }} reviews)</span>
+                                    </div>
+                                    {% if manager_profile.company_name %}
+                                        <p class="text-muted mb-1">
+                                            <i class="fas fa-building me-1"></i>{{ manager_profile.company_name }}
+                                        </p>
+                                    {% endif %}
+                                    {% if manager_profile.job_title %}
+                                        <p class="text-muted mb-1">
+                                            <i class="fas fa-briefcase me-1"></i>{{ manager_profile.job_title }}
+                                        </p>
+                                    {% endif %}
+                                    <p class="text-muted mb-0">
+                                        <i class="fas fa-map-marker-alt me-1"></i>{{ manager.city }}, {{ manager.state }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="d-flex flex-column gap-2">
+                                <a href="{% url 'managers:contact_manager' manager.id %}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-comment me-2"></i>Start Conversation
+                                </a>
+                                {% if manager.phone_number %}
+                                    <a href="tel:{{ manager.phone_number }}" class="btn btn-outline-success">
+                                        <i class="fas fa-phone me-2"></i>{{ manager.phone_number }}
+                                    </a>
+                                {% endif %}
+                                {% if manager.email %}
+                                    <a href="mailto:{{ manager.email }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-envelope me-2"></i>Email
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- About Section -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h4 class="card-title mb-3">
+                                <i class="fas fa-user-circle text-primary me-2"></i>About
+                            </h4>
+                            {% if manager_profile %}
+                                <p class="text-muted">{{ manager_profile.bio|default:"Professional event manager with extensive experience in planning and executing successful events." }}</p>
+                                
+                                <div class="row g-3 mt-3">
+                                    <div class="col-md-6">
+                                        <strong>Experience:</strong> {{ stats.years_experience }} years
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Events Managed:</strong> {{ stats.total_events }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Completed Events:</strong> {{ stats.completed_events }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Upcoming Events:</strong> {{ stats.upcoming_events }}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">Professional event manager ready to help you plan your perfect event.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Specializations -->
+                    {% if stats.specializations %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4">
+                                <h4 class="card-title mb-3">
+                                    <i class="fas fa-star text-primary me-2"></i>Specializations
+                                </h4>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for spec in stats.specializations %}
+                                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 fs-6">{{ spec }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Service Areas -->
+                    {% if stats.service_areas %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4">
+                                <h4 class="card-title mb-3">
+                                    <i class="fas fa-map text-primary me-2"></i>Service Areas
+                                </h4>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for area in stats.service_areas %}
+                                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">{{ area }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Recent Events -->
+                    {% if managed_events %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4">
+                                <h4 class="card-title mb-3">
+                                    <i class="fas fa-calendar-alt text-primary me-2"></i>Recent Events
+                                </h4>
+                                <div class="row g-3">
+                                    {% for event in managed_events %}
+                                        <div class="col-md-6">
+                                            <div class="border rounded p-3">
+                                                <h6 class="mb-2">
+                                                    <a href="{% url 'events:event_detail' event.id %}" class="text-decoration-none">
+                                                        {{ event.title }}
+                                                    </a>
+                                                </h6>
+                                                <div class="small text-muted">
+                                                    <div><i class="fas fa-calendar me-1"></i>{{ event.start_date }}</div>
+                                                    {% if event.venue %}
+                                                        <div><i class="fas fa-map-marker-alt me-1"></i>{{ event.venue.name }}</div>
+                                                    {% endif %}
+                                                    <div><i class="fas fa-users me-1"></i>{{ event.expected_guests }} guests</div>
+                                                    <span class="badge bg-{{ event.status|default:'secondary' }} mt-1">{{ event.get_status_display }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Recent Reviews -->
+                    {% if recent_reviews %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4">
+                                <h4 class="card-title mb-3">
+                                    <i class="fas fa-comments text-primary me-2"></i>Recent Reviews
+                                </h4>
+                                {% for review in recent_reviews %}
+                                    <div class="border-bottom pb-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <strong>{{ review.user.get_full_name }}</strong>
+                                                <div class="text-warning small">
+                                                    {% for i in "12345" %}
+                                                        {% if forloop.counter <= review.rating %}
+                                                            <i class="fas fa-star"></i>
+                                                        {% else %}
+                                                            <i class="far fa-star"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                                        </div>
+                                        <h6>{{ review.title }}</h6>
+                                        <p class="text-muted mb-0">{{ review.comment|truncatewords:20 }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Quick Stats -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-chart-bar text-primary me-2"></i>Quick Stats
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-6 text-center">
+                                    <div class="stat-box p-3 bg-primary bg-opacity-10 rounded">
+                                        <h3 class="text-primary mb-1">{{ stats.total_events }}</h3>
+                                        <small class="text-muted">Total Events</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="stat-box p-3 bg-success bg-opacity-10 rounded">
+                                        <h3 class="text-success mb-1">{{ stats.completed_events }}</h3>
+                                        <small class="text-muted">Completed</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="stat-box p-3 bg-warning bg-opacity-10 rounded">
+                                        <h3 class="text-warning mb-1">{{ stats.avg_rating }}</h3>
+                                        <small class="text-muted">Avg Rating</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <div class="stat-box p-3 bg-info bg-opacity-10 rounded">
+                                        <h3 class="text-info mb-1">{{ stats.years_experience }}y</h3>
+                                        <small class="text-muted">Experience</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-address-card text-primary me-2"></i>Contact Information
+                            </h5>
+                            <div class="contact-info">
+                                {% if manager.email %}
+                                    <div class="mb-2">
+                                        <i class="fas fa-envelope text-muted me-2"></i>
+                                        <a href="mailto:{{ manager.email }}" class="text-decoration-none">{{ manager.email }}</a>
+                                    </div>
+                                {% endif %}
+                                {% if manager.phone_number %}
+                                    <div class="mb-2">
+                                        <i class="fas fa-phone text-muted me-2"></i>
+                                        <a href="tel:{{ manager.phone_number }}" class="text-decoration-none">{{ manager.phone_number }}</a>
+                                    </div>
+                                {% endif %}
+                                <div class="mb-2">
+                                    <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                    {{ manager.city }}{% if manager.state %}, {{ manager.state }}{% endif %}
+                                </div>
+                                {% if manager.facebook_url or manager.linkedin_url or manager.twitter_url or manager.instagram_url %}
+                                    <div class="mt-3">
+                                        <strong class="small text-muted">Social Links:</strong>
+                                        <div class="mt-2">
+                                            {% if manager.facebook_url %}
+                                                <a href="{{ manager.facebook_url }}" target="_blank" class="text-decoration-none me-2">
+                                                    <i class="fab fa-facebook text-primary"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if manager.linkedin_url %}
+                                                <a href="{{ manager.linkedin_url }}" target="_blank" class="text-decoration-none me-2">
+                                                    <i class="fab fa-linkedin text-primary"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if manager.twitter_url %}
+                                                <a href="{{ manager.twitter_url }}" target="_blank" class="text-decoration-none me-2">
+                                                    <i class="fab fa-twitter text-info"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if manager.instagram_url %}
+                                                <a href="{{ manager.instagram_url }}" target="_blank" class="text-decoration-none">
+                                                    <i class="fab fa-instagram text-danger"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Member Since -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <i class="fas fa-calendar-check text-primary fa-2x mb-2"></i>
+                            <h6 class="mb-1">Member Since</h6>
+                            <p class="text-muted mb-0">{{ manager.date_joined|date:"F Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1039 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inbox | 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+<style>
+    .chat-container {
+        height: calc(100vh - 200px);
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .chat-sidebar {
+        background: #f8f9fa;
+        border-right: 1px solid #e9ecef;
+        height: 100%;
+        overflow-y: auto;
+    }
+    
+    .chat-main {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .chat-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #000000;
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: #f8f9fa;
+    }
+    
+    .chat-input {
+        background: white;
+        border-top: 1px solid #e9ecef;
+        padding: 20px;
+    }
+    
+    .message {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .message.sent {
+        justify-content: flex-end;
+    }
+    
+    .message.received {
+        justify-content: flex-start;
+    }
+    
+    .message-content {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        position: relative;
+    }
+    
+    .message.sent .message-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #000000;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .message.received .message-content {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-bottom-left-radius: 4px;
+    }
+    
+    .message-time {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-top: 5px;
+    }
+    
+    .conversation-item {
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    
+    .conversation-item:hover {
+        background-color: #e9ecef;
+    }
+    
+    .conversation-item.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #000000;
+    }
+    
+    .conversation-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #000000;
+        font-weight: bold;
+        margin-right: 15px;
+    }
+    
+    .conversation-info {
+        flex: 1;
+    }
+    
+    .conversation-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .conversation-preview {
+        font-size: 0.875rem;
+        opacity: 0.7;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .conversation-meta {
+        text-align: right;
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+    
+    .unread-badge {
+        background: #dc3545;
+        color: #000000;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        margin-left: 10px;
+    }
+    
+    .typing-indicator {
+        padding: 10px 20px;
+        font-style: italic;
+        opacity: 0.7;
+    }
+    
+    .chat-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .action-btn {
+        background: none;
+        border: none;
+        color: #6c757d;
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+    
+    .action-btn:hover {
+        background: #e9ecef;
+        color: #495057;
+    }
+    
+    .file-upload {
+        display: none;
+    }
+    
+    .emoji-picker {
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+    
+    .emoji-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 5px;
+    }
+    
+    .emoji-item {
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 5px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .emoji-item:hover {
+        background: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-comments me-2 text-primary"></i>
+                        Messages
+                    </h1>
+                    <p class="text-muted">Stay connected with your event community</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshConversations()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="startNewHumanChat()">
+                        <i class="fas fa-plus me-2"></i>New Chat
+        </button>
+      </div>
+            </div>
+            </div>
+    </div>
+
+    <div class="chat-container">
+        <div class="row h-100">
+            <!-- Sidebar -->
+            <div class="col-md-4 col-lg-3">
+                <div class="chat-sidebar">
+                    <div class="p-3 border-bottom">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0" 
+                                   placeholder="Search conversations..." 
+                                   id="searchConversations">
+        </div>
+      </div>
+      
+                    <div class="conversations-list" id="conversationsList">
+                        <!-- Conversations will be loaded here -->
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="col-md-8 col-lg-9">
+                <div class="chat-main">
+                    <!-- Chat Header -->
+                    <div class="chat-header" id="chatHeader">
+                        <div class="d-flex align-items-center">
+                            <div class="conversation-avatar me-3" id="currentUserAvatar">
+                                <i class="fas fa-user"></i>
+            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1" id="currentUserName">Select a conversation</h5>
+                                <small id="currentUserStatus">Choose a chat to start messaging</small>
+          </div>
+                            <div class="chat-actions">
+                                <button class="action-btn" onclick="startNewHumanChat()" title="New Chat">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button class="action-btn" onclick="clearChat()" title="Clear Chat">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="action-btn" onclick="toggleVoice()" title="Voice Chat">
+                                    <i class="fas fa-microphone" id="voice-icon"></i>
+                                </button>
+                                <button class="chat-close" onclick="toggleChat()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+          </div>
+        </div>
+
+        <!-- Messages Area -->
+                    <div class="chat-messages" id="messagesContainer">
+                        <div class="text-center py-5">
+                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No conversation selected</h5>
+                            <p class="text-muted">Choose a conversation from the sidebar to start messaging</p>
+                        </div>
+                    </div>
+
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <i class="fas fa-circle fa-xs me-1"></i>
+                        <i class="fas fa-circle fa-xs me-1"></i>
+                        <i class="fas fa-circle fa-xs"></i>
+                        <span class="ms-2">Someone is typing...</span>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="chat-input" id="chatInput" style="display: none;">
+                        <div class="d-flex align-items-end gap-2">
+                            <div class="flex-grow-1 position-relative">
+                                <textarea class="form-control" rows="2" 
+                                          placeholder="Type your message..." 
+                                          id="messageInput"
+                                          onkeypress="handleKeyPress(event)"></textarea>
+                                
+                                <!-- Emoji Picker -->
+                                <div class="emoji-picker" id="emojiPicker" style="display: none;">
+                                    <div class="emoji-grid">
+                                        <span class="emoji-item" onclick="addEmoji('😊')">😊</span>
+                                        <span class="emoji-item" onclick="addEmoji('😂')">😂</span>
+                                        <span class="emoji-item" onclick="addEmoji('❤️')">❤️</span>
+                                        <span class="emoji-item" onclick="addEmoji('👍')">👍</span>
+                                        <span class="emoji-item" onclick="addEmoji('🎉')">🎉</span>
+                                        <span class="emoji-item" onclick="addEmoji('🔥')">🔥</span>
+                                        <span class="emoji-item" onclick="addEmoji('💯')">💯</span>
+                                        <span class="emoji-item" onclick="addEmoji('✨')">✨</span>
+                                        <span class="emoji-item" onclick="addEmoji('🎯')">🎯</span>
+                                        <span class="emoji-item" onclick="addEmoji('🚀')">🚀</span>
+                                        <span class="emoji-item" onclick="addEmoji('💪')">💪</span>
+                                        <span class="emoji-item" onclick="addEmoji('👏')">👏</span>
+                                        <span class="emoji-item" onclick="addEmoji('🙌')">🙌</span>
+                                        <span class="emoji-item" onclick="addEmoji('🤝')">🤝</span>
+                                        <span class="emoji-item" onclick="addEmoji('💡')">💡</span>
+                                    </div>
+          </div>
+        </div>
+
+                            <div class="d-flex gap-1">
+                                <button class="action-btn" onclick="toggleEmojiPicker()">
+                                    <i class="fas fa-smile"></i>
+                                </button>
+                                <button class="action-btn" onclick="attachFile()">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                                <button class="action-btn" onclick="takePhoto()">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                                <button class="btn btn-primary" onclick="sendMessage()">
+                                    <i class="fas fa-paper-plane"></i>
+            </button>
+                            </div>
+                        </div>
+                        
+                        <!-- File Upload Input -->
+                        <input type="file" class="file-upload" id="fileUpload" 
+                               accept="image/*,video/*,audio/*,.pdf,.doc,.docx">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Chat Modal -->
+<div class="modal fade" id="newChatModal" tabindex="-1">
+    <div class="modal-dialog">
+  <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Start New Chat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Search Users</label>
+                    <input type="text" class="form-control" id="userSearch" 
+                           placeholder="Search by name or email...">
+                </div>
+                <div id="userSearchResults">
+                    <!-- Search results will appear here -->
+      </div>
+      </div>
+      </div>
+  </div>
+</div>
+
+<!-- User Info Modal -->
+<div class="modal fade" id="userInfoModal" tabindex="-1">
+    <div class="modal-dialog">
+  <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userInfoContent">
+                <!-- User info will be loaded here -->
+      </div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+let currentConversation = null;
+let conversations = [];
+let messages = {};
+
+// Initialize chat
+document.addEventListener('DOMContentLoaded', function() {
+    loadConversations();
+    setupWebSocket();
+});
+
+    // Load conversations
+    function loadConversations() {
+        const container = document.getElementById('conversationsList');
+        
+        // Show loading state
+        container.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="text-muted mt-2">Loading conversations...</p>
+            </div>
+        `;
+        
+        fetch('/communications/api/conversations/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                conversations = data.conversations || [];
+                renderConversations();
+            })
+            .catch(error => {
+                console.error('Error loading conversations:', error);
+                // Show empty state instead of error for better UX
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-comments text-muted fa-2x mb-3"></i>
+                        <h6 class="text-muted">No conversations yet</h6>
+                        <p class="text-muted small">Start a new chat to connect with others</p>
+                        <button class="btn btn-sm btn-primary" onclick="startNewHumanChat()">
+                            <i class="fas fa-plus me-1"></i>Start New Chat
+                        </button>
+                    </div>
+                `;
+            });
+    }
+
+// Render conversations list
+function renderConversations() {
+    const container = document.getElementById('conversationsList');
+    container.innerHTML = '';
+    
+    if (conversations.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-comments text-muted fa-2x mb-3"></i>
+                <h6 class="text-muted">No conversations yet</h6>
+                <p class="text-muted small">Start a new chat to connect with others</p>
+                <button class="btn btn-sm btn-primary" onclick="startNewHumanChat()">
+                    <i class="fas fa-plus me-1"></i>Start New Chat
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    conversations.forEach(conversation => {
+        const item = document.createElement('div');
+        item.className = 'conversation-item';
+        item.onclick = () => selectConversation(conversation.id);
+        
+        item.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div class="conversation-avatar">
+                    ${conversation.other_user.first_name ? conversation.other_user.first_name[0].toUpperCase() : 'U'}
+                </div>
+                <div class="conversation-info">
+                    <div class="conversation-name">${conversation.other_user.get_full_name}</div>
+                    <div class="conversation-preview">${conversation.last_message || 'No messages yet'}</div>
+                </div>
+                <div class="conversation-meta">
+                    <div>${conversation.last_message_time || ''}</div>
+                    ${conversation.unread_count > 0 ? `<div class="unread-badge">${conversation.unread_count}</div>` : ''}
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(item);
+    });
+}
+
+// Select conversation
+function selectConversation(conversationId) {
+    currentConversation = conversationId;
+    
+    // Update active state
+    document.querySelectorAll('.conversation-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Find and activate the clicked item
+    const clickedItem = event.currentTarget;
+    if (clickedItem) {
+        clickedItem.classList.add('active');
+    }
+    
+    loadMessages(conversationId);
+    updateChatHeader(conversationId);
+    showChatInput();
+}
+
+// Load messages for conversation
+function loadMessages(conversationId) {
+    const container = document.getElementById('messagesContainer');
+    
+    // Show loading state
+    container.innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading messages...</span>
+            </div>
+            <p class="text-muted mt-2">Loading messages...</p>
+        </div>
+    `;
+    
+    fetch(`/communications/api/conversations/${conversationId}/messages/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            messages[conversationId] = data.messages || [];
+            renderMessages(conversationId);
+        })
+        .catch(error => {
+            console.error('Error loading messages:', error);
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle text-warning fa-2x mb-3"></i>
+                    <h6 class="text-muted">Failed to load messages</h6>
+                    <p class="text-muted small">Please try again</p>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadMessages(${conversationId})">
+                        <i class="fas fa-sync-alt me-1"></i>Retry
+                    </button>
+                </div>
+            `;
+        });
+}
+
+// Render messages
+function renderMessages(conversationId) {
+    const container = document.getElementById('messagesContainer');
+    const conversationMessages = messages[conversationId] || [];
+    
+    if (conversationMessages.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-comment text-muted fa-2x mb-3"></i>
+                <h6 class="text-muted">No messages yet</h6>
+                <p class="text-muted small">Start the conversation by sending a message</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    conversationMessages.forEach(message => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${message.is_sent ? 'sent' : 'received'}`;
+        
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <div>${message.content}</div>
+                <div class="message-time">${message.created_at}</div>
+            </div>
+        `;
+        
+        container.appendChild(messageDiv);
+    });
+    
+    // Scroll to bottom
+    container.scrollTop = container.scrollHeight;
+}
+
+// Update chat header
+function updateChatHeader(conversationId) {
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (!conversation) return;
+    
+    document.getElementById('currentUserName').textContent = conversation.other_user.get_full_name;
+    document.getElementById('currentUserStatus').textContent = 'Online';
+    document.getElementById('currentUserAvatar').innerHTML = 
+        conversation.other_user.first_name ? conversation.other_user.first_name[0].toUpperCase() : 'U';
+}
+
+// Show chat input
+// Update chat header with conversation info
+function updateChatHeader(conversationId) {
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (!conversation) return;
+    
+    document.getElementById('currentUserName').textContent = conversation.other_user.get_full_name;
+    document.getElementById('currentUserStatus').textContent = 'Online';
+    document.getElementById('currentUserAvatar').innerHTML = `
+        ${conversation.other_user.first_name ? conversation.other_user.first_name[0].toUpperCase() : 'U'}
+    `;
+}
+
+// Show chat input area
+function showChatInput() {
+    const chatInput = document.querySelector('.chat-input');
+    if (chatInput) {
+        chatInput.style.display = 'block';
+    }
+    document.getElementById('messageInput').focus();
+}
+
+// Send message
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const content = input.value.trim();
+    
+    if (!content || !currentConversation) return;
+    
+    fetch(`/communications/api/conversations/${currentConversation}/messages/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+        body: JSON.stringify({ content: content })
+    })
+    .then(response => response.json())
+    .then(data => {
+        input.value = '';
+        // Add message to local state
+        if (!messages[currentConversation]) messages[currentConversation] = [];
+        messages[currentConversation].push(data.message);
+        renderMessages(currentConversation);
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
+    });
+}
+
+// Handle key press
+function handleKeyPress(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+// Toggle emoji picker
+function toggleEmojiPicker() {
+    const picker = document.getElementById('emojiPicker');
+    picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
+}
+
+// Add emoji
+function addEmoji(emoji) {
+    const input = document.getElementById('messageInput');
+    input.value += emoji;
+    input.focus();
+    toggleEmojiPicker();
+}
+
+// Attach file
+function attachFile() {
+    document.getElementById('fileUpload').click();
+}
+
+// Take photo
+function takePhoto() {
+    // Implementation for camera functionality
+    alert('Camera functionality will be implemented here');
+}
+
+// Start new chat
+function startNewHumanChat() {
+    const modal = new bootstrap.Modal(document.getElementById('newChatModal'));
+    modal.show();
+    
+    // Clear previous search results
+    document.getElementById('userSearchResults').innerHTML = '';
+    document.getElementById('userSearch').value = '';
+    
+    // Add event listener for user search
+    document.getElementById('userSearch').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.trim();
+        if (searchTerm.length >= 2) {
+            searchUsers(searchTerm);
+        } else {
+            document.getElementById('userSearchResults').innerHTML = '';
+        }
+    });
+}
+
+// Search users for new chat
+function searchUsers(searchTerm) {
+    const resultsContainer = document.getElementById('userSearchResults');
+    
+    // Show loading state
+    resultsContainer.innerHTML = `
+        <div class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Searching...</span>
+            </div>
+            <small class="text-muted">Searching users...</small>
+        </div>
+    `;
+    
+    fetch(`/communications/api/search-users/?q=${encodeURIComponent(searchTerm)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.users && data.users.length > 0) {
+                renderUserSearchResults(data.users);
+            } else {
+                resultsContainer.innerHTML = `
+                    <div class="text-center py-3">
+                        <i class="fas fa-search text-muted fa-2x mb-2"></i>
+                        <p class="text-muted small">No users found</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error searching users:', error);
+            resultsContainer.innerHTML = `
+                <div class="text-center py-3">
+                    <i class="fas fa-exclamation-triangle text-warning fa-2x mb-2"></i>
+                    <p class="text-muted small">Failed to search users</p>
+                    <button class="btn btn-sm btn-outline-primary" onclick="searchUsers(document.getElementById('userSearch').value)">
+                        <i class="fas fa-sync-alt me-1"></i>Retry
+                    </button>
+                </div>
+            `;
+        });
+}
+
+// Render user search results
+function renderUserSearchResults(users) {
+    const resultsContainer = document.getElementById('userSearchResults');
+    
+    resultsContainer.innerHTML = users.map(user => `
+        <div class="user-search-item p-2 border-bottom" onclick="startConversationWithUser(${user.id})">
+            <div class="d-flex align-items-center">
+                <div class="conversation-avatar me-3">
+                    ${user.first_name ? user.first_name[0].toUpperCase() : 'U'}
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-semibold">${user.get_full_name}</div>
+                    <small class="text-muted">${user.email}</small>
+                </div>
+                <button class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-comment me-1"></i>Start Chat
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Start conversation with selected user
+function startConversationWithUser(userId) {
+    fetch('/communications/api/start-conversation/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            user_id: userId
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Close modal and refresh conversations
+            const modal = bootstrap.Modal.getInstance(document.getElementById('newChatModal'));
+            modal.hide();
+            
+            // Refresh conversations list
+            loadConversations();
+            
+            // Select the new conversation
+            setTimeout(() => {
+                selectConversation(data.conversation_id);
+            }, 500);
+        } else {
+            alert('Failed to start conversation. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error starting conversation:', error);
+        alert('Failed to start conversation. Please try again.');
+    });
+}
+
+// Refresh conversations
+function refreshConversations() {
+    loadConversations();
+}
+
+// Toggle user info
+function toggleUserInfo() {
+    if (!currentConversation) return;
+    
+    const modal = new bootstrap.Modal(document.getElementById('userInfoModal'));
+    modal.show();
+    
+    // Load user info
+    const conversation = conversations.find(c => c.id === currentConversation);
+    if (conversation) {
+        document.getElementById('userInfoContent').innerHTML = `
+            <div class="text-center">
+                <div class="conversation-avatar mx-auto mb-3" style="width: 80px; height: 80px;">
+                    ${conversation.other_user.first_name ? conversation.other_user.first_name[0].toUpperCase() : 'U'}
+                </div>
+                <h5>${conversation.other_user.get_full_name}</h5>
+                <p class="text-muted">${conversation.other_user.email}</p>
+                <p class="text-muted">User since ${conversation.other_user.date_joined}</p>
+            </div>
+        `;
+    }
+}
+
+// Toggle call
+function toggleCall() {
+    if (!currentConversation) return;
+    
+    // Initialize WebRTC for voice call
+    if (!window.voiceCall) {
+        window.voiceCall = {
+            localStream: null,
+            peerConnection: null,
+            isActive: false
+        };
+    }
+    
+    if (window.voiceCall.isActive) {
+        // End call
+        endVoiceCall();
+    } else {
+        // Start call
+        startVoiceCall();
+    }
+}
+
+// Toggle video
+function toggleVideo() {
+    if (!currentConversation) return;
+    
+    // Initialize WebRTC for video call
+    if (!window.videoCall) {
+        window.videoCall = {
+            localStream: null,
+            peerConnection: null,
+            isActive: false
+        };
+    }
+    
+    if (window.videoCall.isActive) {
+        // End call
+        endVideoCall();
+    } else {
+        // Start call
+        startVideoCall();
+    }
+}
+
+function startVoiceCall() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            window.voiceCall.localStream = stream;
+            window.voiceCall.isActive = true;
+            
+            // Update UI
+            document.getElementById('callBtn').innerHTML = '<i class="fas fa-phone-slash"></i>';
+            document.getElementById('callBtn').classList.remove('btn-success');
+            document.getElementById('callBtn').classList.add('btn-danger');
+            
+            // Show call status
+            showCallStatus('Voice call active');
+            
+            // Send call notification to other user
+            sendCallNotification('voice');
+        })
+        .catch(error => {
+            console.error('Error accessing microphone:', error);
+            alert('Unable to access microphone. Please check permissions.');
+        });
+}
+
+function startVideoCall() {
+    navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+        .then(stream => {
+            window.videoCall.localStream = stream;
+            window.videoCall.isActive = true;
+            
+            // Update UI
+            document.getElementById('videoBtn').innerHTML = '<i class="fas fa-video-slash"></i>';
+            document.getElementById('videoBtn').classList.remove('btn-success');
+            document.getElementById('videoBtn').classList.add('btn-danger');
+            
+            // Show call status
+            showCallStatus('Video call active');
+            
+            // Send call notification to other user
+            sendCallNotification('video');
+        })
+        .catch(error => {
+            console.error('Error accessing camera:', error);
+            alert('Unable to access camera. Please check permissions.');
+        });
+}
+
+function endVoiceCall() {
+    if (window.voiceCall.localStream) {
+        window.voiceCall.localStream.getTracks().forEach(track => track.stop());
+    }
+    window.voiceCall.isActive = false;
+    
+    // Update UI
+    document.getElementById('callBtn').innerHTML = '<i class="fas fa-phone"></i>';
+    document.getElementById('callBtn').classList.remove('btn-danger');
+    document.getElementById('callBtn').classList.add('btn-success');
+    
+    // Hide call status
+    hideCallStatus();
+}
+
+function endVideoCall() {
+    if (window.videoCall.localStream) {
+        window.videoCall.localStream.getTracks().forEach(track => track.stop());
+    }
+    window.videoCall.isActive = false;
+    
+    // Update UI
+    document.getElementById('videoBtn').innerHTML = '<i class="fas fa-video"></i>';
+    document.getElementById('videoBtn').classList.remove('btn-danger');
+    document.getElementById('videoBtn').classList.add('btn-success');
+    
+    // Hide call status
+    hideCallStatus();
+}
+
+function sendCallNotification(callType) {
+    // Send call notification via WebSocket or AJAX
+    const notification = {
+        type: 'call_notification',
+        callType: callType,
+        conversationId: currentConversation,
+        timestamp: new Date().toISOString()
+    };
+    
+    // This would be sent via WebSocket in a real implementation
+    console.log('Call notification sent:', notification);
+}
+
+function showCallStatus(status) {
+    const statusElement = document.getElementById('callStatus');
+    if (statusElement) {
+        statusElement.textContent = status;
+        statusElement.style.display = 'block';
+    }
+}
+
+function hideCallStatus() {
+    const statusElement = document.getElementById('callStatus');
+    if (statusElement) {
+        statusElement.style.display = 'none';
+    }
+}
+
+// Setup WebSocket for real-time updates
+function setupWebSocket() {
+    // WebSocket implementation for real-time messaging
+    console.log('WebSocket connection will be established here');
+}
+
+// Utility function to get CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+// Search conversations
+document.getElementById('searchConversations').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.conversation-item');
+    
+    items.forEach(item => {
+        const name = item.querySelector('.conversation-name').textContent.toLowerCase();
+        if (name.includes(searchTerm)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %} 

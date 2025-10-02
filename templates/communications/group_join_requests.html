@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Group Join Requests | 360° Event Manager{% endblock %}
+{% block content %}
+<div class="page-container">
+  <h2 class="mb-3">Pending Group Join Requests</h2>
+  {% if requests %}
+    <div class="card shadow p-3">
+      <ul class="list-group">
+        {% for req in requests %}
+        <li class="list-group-item d-flex justify-content-between align-items-center mb-2">
+          <span>
+            <strong>{{ req.requested_by.get_full_name|default:req.requested_by.username }}</strong> wants to add you to group <strong>{{ req.room.name }}</strong>.
+            <span class="text-muted">({{ req.created_at|date:'M d, H:i' }})</span>
+          </span>
+          <span>
+            <a href="{% url 'communications:handle_join_request' req.id 'accept' %}" class="btn btn-success btn-sm">Accept</a>
+            <a href="{% url 'communications:handle_join_request' req.id 'decline' %}" class="btn btn-danger btn-sm">Decline</a>
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="alert alert-info">No pending requests.</div>
+  {% endif %}
+</div>
+{% endblock %} 

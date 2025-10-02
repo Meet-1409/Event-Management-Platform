@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Manager Registration | 360° Event Manager{% endblock %}
+{% block content %}
+<div class="flex flex-center" style="min-height:60vh;">
+  <div class="glass-card shadow" style="max-width:500px;width:100%;">
+    <h2 class="mb-2 text-center">Manager Registration</h2>
+    <form method="post">{% csrf_token %}
+      {% for field in form %}
+      <div class="form-group mb-2">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}<div class="help-text">{{ field.help_text }}</div>{% endif %}
+        {% for error in field.errors %}<div class="error-message">{{ error }}</div>{% endfor %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary w-100 mt-2">Register</button>
+    </form>
+    <div class="text-center mt-2">
+      <a href="/managers/login/" class="text-muted">Already have an account? Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %} 

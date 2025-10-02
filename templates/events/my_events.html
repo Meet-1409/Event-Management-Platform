@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}My Events - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-primary">My Events</h2>
+                    <p class="text-muted">Events you have organized</p>
+                </div>
+                {% if user.user_type in 'admin,manager' %}
+                <a href="{% url 'events:add_event' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Create New Event
+                </a>
+                {% endif %}
+            </div>
+
+            {% if events %}
+                <div class="row g-4">
+                    {% for event in events %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            {% if event.event_image %}
+                                <img src="{{ event.event_image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-{{ event.status|default:'secondary' }}">{{ event.get_status_display }}</span>
+                                    <small class="text-muted">{{ event.event_type.name }}</small>
+                                </div>
+                                <h5 class="card-title">{{ event.title }}</h5>
+                                <p class="card-text text-muted">{{ event.description|truncatewords:20 }}</p>
+                                <div class="event-details small text-muted mb-3">
+                                    <div><i class="fas fa-calendar me-1"></i>{{ event.start_date }}</div>
+                                    <div><i class="fas fa-clock me-1"></i>{{ event.start_time }}</div>
+                                    <div><i class="fas fa-users me-1"></i>{{ event.expected_guests }} guests</div>
+                                    {% if event.venue %}
+                                        <div><i class="fas fa-map-marker-alt me-1"></i>{{ event.venue.name }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-primary fw-bold">₹{{ event.total_cost }}</span>
+                                    <div class="btn-group">
+                                        <a href="{% url 'events:event_detail' event.id %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if event.status == 'draft' %}
+                                            <a href="{% url 'events:edit_event' event.id %}" class="btn btn-outline-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+                    <h4>No Events Yet</h4>
+                    <p class="text-muted">You haven't organized any events yet.</p>
+                    {% if user.user_type in 'admin,manager' %}
+                        <a href="{% url 'events:add_event' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Create Your First Event
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

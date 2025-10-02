@@ -1,0 +1,465 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Availability - {{ venue.name }} - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .availability-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .availability-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        margin: 30px 0;
+    }
+    
+    .calendar-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .calendar-nav-btn {
+        background: #f8f9fa;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .calendar-nav-btn:hover {
+        background: #667eea;
+        color: white;
+    }
+    
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+    }
+    
+    .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+    
+    .calendar-day:hover {
+        background: #667eea;
+        color: white;
+    }
+    
+    .calendar-day.available {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .calendar-day.booked {
+        background: #f8d7da;
+        color: #721c24;
+        cursor: not-allowed;
+    }
+    
+    .calendar-day.today {
+        background: #667eea;
+        color: white;
+    }
+    
+    .calendar-day.selected {
+        background: #28a745;
+        color: white;
+    }
+    
+    .availability-stats {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-weight: 600;
+    }
+    
+    .time-slots {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .time-slot {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .time-slot:hover {
+        background: #e9ecef;
+    }
+    
+    .time-slot.available {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+    }
+    
+    .time-slot.booked {
+        background: #f8d7da;
+        border-left: 4px solid #dc3545;
+        cursor: not-allowed;
+    }
+    
+    .booking-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 15px 30px;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .booking-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="availability-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-calendar-check me-3"></i>Check Availability
+                </h1>
+                <p class="lead mb-4">Find the perfect date and time for your event at {{ venue.name }}</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'venues:venue_detail' venue.id %}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Venue
+                    </a>
+                    <a href="{% url 'venues:venue_booking' venue.id %}" class="btn btn-light">
+                        <i class="fas fa-calendar-plus me-2"></i>Book Now
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-calendar-check" style="font-size: 6rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Availability Stats -->
+<section class="py-5">
+    <div class="container">
+        <div class="availability-stats">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">85%</div>
+                        <div class="stat-label">Available Days</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Booked This Month</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Available This Week</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">₹{{ venue.base_price }}</div>
+                        <div class="stat-label">Starting Price</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Calendar and Time Slots -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Calendar -->
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="calendar-nav-btn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 class="fw-bold mb-0">December 2024</h3>
+                        <button class="calendar-nav-btn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="calendar-grid">
+                        <!-- Day headers -->
+                        <div class="calendar-day" style="background: none; cursor: default;">Sun</div>
+                        <div class="calendar-day" style="background: none; cursor: default;">Mon</div>
+                        <div class="calendar-day" style="background: none; cursor: default;">Tue</div>
+                        <div class="calendar-day" style="background: none; cursor: default;">Wed</div>
+                        <div class="calendar-day" style="background: none; cursor: default;">Thu</div>
+                        <div class="calendar-day" style="background: none; cursor: default;">Fri</div>
+                        <div class="calendar-day" style="background: none; cursor: default;">Sat</div>
+                        
+                        <!-- Calendar days -->
+                        <div class="calendar-day">1</div>
+                        <div class="calendar-day available">2</div>
+                        <div class="calendar-day booked">3</div>
+                        <div class="calendar-day available">4</div>
+                        <div class="calendar-day today">5</div>
+                        <div class="calendar-day available">6</div>
+                        <div class="calendar-day booked">7</div>
+                        <div class="calendar-day available">8</div>
+                        <div class="calendar-day available">9</div>
+                        <div class="calendar-day booked">10</div>
+                        <div class="calendar-day available">11</div>
+                        <div class="calendar-day available">12</div>
+                        <div class="calendar-day booked">13</div>
+                        <div class="calendar-day available">14</div>
+                        <div class="calendar-day available">15</div>
+                        <div class="calendar-day booked">16</div>
+                        <div class="calendar-day available">17</div>
+                        <div class="calendar-day available">18</div>
+                        <div class="calendar-day booked">19</div>
+                        <div class="calendar-day available">20</div>
+                        <div class="calendar-day available">21</div>
+                        <div class="calendar-day booked">22</div>
+                        <div class="calendar-day available">23</div>
+                        <div class="calendar-day available">24</div>
+                        <div class="calendar-day booked">25</div>
+                        <div class="calendar-day available">26</div>
+                        <div class="calendar-day available">27</div>
+                        <div class="calendar-day booked">28</div>
+                        <div class="calendar-day available">29</div>
+                        <div class="calendar-day available">30</div>
+                        <div class="calendar-day">31</div>
+                    </div>
+                </div>
+
+                <!-- Time Slots -->
+                <div class="time-slots">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-clock me-2 text-primary"></i>Available Time Slots
+                    </h3>
+                    <p class="text-muted mb-4">Select a date above to see available time slots</p>
+                    
+                    <div class="time-slot available">
+                        <div>
+                            <h6 class="fw-bold mb-1">Morning Session</h6>
+                            <small class="text-muted">9:00 AM - 2:00 PM</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold text-success">Available</div>
+                            <small class="text-muted">₹{{ venue.base_price }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="time-slot booked">
+                        <div>
+                            <h6 class="fw-bold mb-1">Afternoon Session</h6>
+                            <small class="text-muted">2:00 PM - 7:00 PM</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold text-danger">Booked</div>
+                            <small class="text-muted">Corporate Event</small>
+                        </div>
+                    </div>
+                    
+                    <div class="time-slot available">
+                        <div>
+                            <h6 class="fw-bold mb-1">Evening Session</h6>
+                            <small class="text-muted">7:00 PM - 12:00 AM</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold text-success">Available</div>
+                            <small class="text-muted">₹{{ venue.base_price }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="time-slot available">
+                        <div>
+                            <h6 class="fw-bold mb-1">Full Day</h6>
+                            <small class="text-muted">9:00 AM - 12:00 AM</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold text-success">Available</div>
+                            <small class="text-muted">₹{{ venue.base_price|add:"5000" }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Quick Booking -->
+                <div class="availability-container">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-bolt me-2 text-primary"></i>Quick Booking
+                    </h3>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Selected Date</label>
+                        <div class="form-control bg-light">December 5, 2024</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Selected Time</label>
+                        <div class="form-control bg-light">Morning Session (9:00 AM - 2:00 PM)</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Total Price</label>
+                        <div class="h4 fw-bold text-primary">₹{{ venue.base_price }}</div>
+                    </div>
+                    
+                    <button class="booking-btn w-100">
+                        <i class="fas fa-calendar-check me-2"></i>Book This Slot
+                    </button>
+                </div>
+
+                <!-- Legend -->
+                <div class="availability-container">
+                    <h4 class="fw-bold mb-3">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Legend
+                    </h4>
+                    
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="calendar-day available me-3" style="width: 30px; height: 30px;"></div>
+                        <span>Available</span>
+                    </div>
+                    
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="calendar-day booked me-3" style="width: 30px; height: 30px;"></div>
+                        <span>Booked</span>
+                    </div>
+                    
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="calendar-day today me-3" style="width: 30px; height: 30px;"></div>
+                        <span>Today</span>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="calendar-day selected me-3" style="width: 30px; height: 30px;"></div>
+                        <span>Selected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Calendar day selection
+    const calendarDays = document.querySelectorAll('.calendar-day:not([style*="background: none"])');
+    
+    calendarDays.forEach(day => {
+        day.addEventListener('click', function() {
+            if (this.classList.contains('booked')) {
+                return; // Don't allow selection of booked days
+            }
+            
+            // Remove selected class from all days
+            calendarDays.forEach(d => d.classList.remove('selected'));
+            // Add selected class to clicked day
+            this.classList.add('selected');
+            
+            // Update selected date display
+            updateSelectedDate(this.textContent);
+        });
+    });
+    
+    // Time slot selection
+    const timeSlots = document.querySelectorAll('.time-slot.available');
+    
+    timeSlots.forEach(slot => {
+        slot.addEventListener('click', function() {
+            // Remove selected class from all slots
+            timeSlots.forEach(s => s.classList.remove('selected'));
+            // Add selected class to clicked slot
+            this.classList.add('selected');
+            
+            // Update selected time display
+            const timeText = this.querySelector('h6').textContent;
+            updateSelectedTime(timeText);
+        });
+    });
+});
+
+function updateSelectedDate(day) {
+    const dateDisplay = document.querySelector('.form-control.bg-light');
+    if (dateDisplay) {
+        dateDisplay.textContent = `December ${day}, 2024`;
+    }
+}
+
+function updateSelectedTime(timeSlot) {
+    const timeDisplay = document.querySelectorAll('.form-control.bg-light')[1];
+    if (timeDisplay) {
+        timeDisplay.textContent = timeSlot;
+    }
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,372 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Invoice Details - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .invoice-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .invoice-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .invoice-details {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .status-paid {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-overdue {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .amount-breakdown {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .amount-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 5px 0;
+    }
+    
+    .amount-row.total {
+        border-top: 2px solid #dee2e6;
+        padding-top: 15px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #667eea;
+    }
+    
+    .payment-history {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .payment-item {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .payment-item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .refund-item {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        background: #f8f9fa;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .qr-code {
+        text-align: center;
+        margin: 20px 0;
+    }
+    
+    .qr-code img {
+        max-width: 150px;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="invoice-container">
+        <!-- Invoice Header -->
+        <div class="invoice-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="fw-bold mb-2">
+                        <i class="fas fa-file-invoice me-3"></i>
+                        Invoice #{{ invoice.invoice_number }}
+                    </h1>
+                    <p class="mb-0 opacity-75">{{ invoice.event.title }}</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="status-badge status-{{ invoice.status }}">
+                        {{ invoice.status|title }}
+                    </div>
+                    <p class="mt-2 mb-0 opacity-75">
+                        Due: {{ invoice.due_date|date:"M d, Y" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoice Details -->
+        <div class="invoice-details">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="fw-bold mb-3">Bill To</h5>
+                    <p class="mb-1"><strong>{{ invoice.user.get_full_name|default:invoice.user.username }}</strong></p>
+                    <p class="mb-1">{{ invoice.user.email }}</p>
+                    {% if invoice.user.phone_number %}
+                        <p class="mb-1">Phone: {{ invoice.user.phone_number }}</p>
+                    {% endif %}
+                    {% if invoice.user.address_line1 %}
+                        <p class="mb-1">{{ invoice.user.address_line1 }}</p>
+                        {% if invoice.user.address_line2 %}
+                            <p class="mb-1">{{ invoice.user.address_line2 }}</p>
+                        {% endif %}
+                        <p class="mb-1">{{ invoice.user.city }}, {{ invoice.user.state }} {{ invoice.user.postal_code }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h5 class="fw-bold mb-3">Event Details</h5>
+                    <p class="mb-1"><strong>{{ invoice.event.title }}</strong></p>
+                    <p class="mb-1">Date: {{ invoice.event.start_date|date:"M d, Y" }}</p>
+                    <p class="mb-1">Venue: {{ invoice.event.venue.name }}</p>
+                    <p class="mb-1">Type: {{ invoice.event.event_type.name }}</p>
+                    <p class="mb-1">Expected Guests: {{ invoice.event.expected_guests }}</p>
+                </div>
+            </div>
+
+            <!-- Amount Breakdown -->
+            <div class="amount-breakdown">
+                <h6 class="fw-bold mb-3">Amount Breakdown</h6>
+                <div class="amount-row">
+                    <span>Event Fee:</span>
+                    <span>₹{{ invoice.subtotal|floatformat:2 }}</span>
+                </div>
+                <div class="amount-row">
+                    <span>Tax (18% GST):</span>
+                    <span>₹{{ invoice.tax_amount|floatformat:2 }}</span>
+                </div>
+                {% if invoice.discount_amount > 0 %}
+                <div class="amount-row">
+                    <span>Discount:</span>
+                    <span class="text-success">-₹{{ invoice.discount_amount|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+                <div class="amount-row total">
+                    <span>Total Amount:</span>
+                    <span>₹{{ invoice.total_amount|floatformat:2 }}</span>
+                </div>
+                {% if invoice.paid_amount > 0 %}
+                <div class="amount-row">
+                    <span>Amount Paid:</span>
+                    <span class="text-success">₹{{ invoice.paid_amount|floatformat:2 }}</span>
+                </div>
+                <div class="amount-row">
+                    <span>Balance Due:</span>
+                    <span class="text-danger">₹{{ invoice.total_amount|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- QR Code -->
+            <div class="qr-code">
+                <h6 class="fw-bold mb-3">Payment QR Code</h6>
+                <img src="data:image/png;base64,{{ qr_code }}" alt="Payment QR Code">
+                <p class="text-muted mt-2">Scan to pay via UPI</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'payments:download_invoice' invoice.id %}" class="btn btn-primary">
+                    <i class="fas fa-download me-2"></i>
+                    Download PDF
+                </a>
+                {% if invoice.status != 'paid' %}
+                <a href="{% url 'payments:process_payment' %}?event_id={{ invoice.event.id }}" class="btn btn-success">
+                    <i class="fas fa-credit-card me-2"></i>
+                    Pay Now
+                </a>
+                {% endif %}
+                <a href="{% url 'events:event_detail' invoice.event.id %}" class="btn btn-outline-primary">
+                    <i class="fas fa-calendar me-2"></i>
+                    View Event
+                </a>
+                <button class="btn btn-outline-secondary" onclick="printInvoice()">
+                    <i class="fas fa-print me-2"></i>
+                    Print
+                </button>
+            </div>
+        </div>
+
+        <!-- Payment History -->
+        {% if payments %}
+        <div class="payment-history">
+            <h5 class="fw-bold mb-4">
+                <i class="fas fa-history me-2"></i>
+                Payment History
+            </h5>
+            
+            {% for payment in payments %}
+            <div class="payment-item">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-1">{{ payment.payment_method.name }}</h6>
+                        <small class="text-muted">{{ payment.payment_method.payment_type|title }}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-1">₹{{ payment.amount|floatformat:2 }}</h6>
+                        <small class="text-muted">{{ payment.currency }}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="status-badge status-{{ payment.status }}">
+                            {{ payment.status|title }}
+                        </span>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <small class="text-muted">{{ payment.created_at|date:"M d, Y H:i" }}</small>
+                        {% if payment.status == 'completed' %}
+                        <br>
+                        <a href="{% url 'payments:request_refund' payment.payment_id %}" class="btn btn-sm btn-outline-warning mt-1">
+                            <i class="fas fa-undo me-1"></i>
+                            Refund
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if payment.transaction_id %}
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <strong>Transaction ID:</strong> {{ payment.transaction_id }}
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Refund History -->
+        {% if refunds %}
+        <div class="payment-history">
+            <h5 class="fw-bold mb-4">
+                <i class="fas fa-undo me-2"></i>
+                Refund History
+            </h5>
+            
+            {% for refund in refunds %}
+            <div class="refund-item">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-1">Refund #{{ refund.refund_id }}</h6>
+                        <small class="text-muted">{{ refund.reason }}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="fw-bold mb-1">₹{{ refund.amount|floatformat:2 }}</h6>
+                        <small class="text-muted">Refund Amount</small>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="status-badge status-{{ refund.status }}">
+                            {{ refund.status|title }}
+                        </span>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <small class="text-muted">{{ refund.created_at|date:"M d, Y H:i" }}</small>
+                        {% if refund.refund_date %}
+                        <br>
+                        <small class="text-muted">Processed: {{ refund.refund_date|date:"M d, Y" }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if refund.transaction_id %}
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <strong>Refund ID:</strong> {{ refund.transaction_id }}
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Invoice Notes -->
+        {% if invoice.notes %}
+        <div class="invoice-details">
+            <h5 class="fw-bold mb-3">Notes</h5>
+            <p class="mb-0">{{ invoice.notes }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Terms and Conditions -->
+        {% if invoice.terms_conditions %}
+        <div class="invoice-details">
+            <h5 class="fw-bold mb-3">Terms & Conditions</h5>
+            <p class="mb-0">{{ invoice.terms_conditions }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Generate QR code for UPI payment
+    function generateQRCode() {
+        const upiId = '360eventmanager@upi';
+        const amount = '{{ invoice.total_amount }}';
+        const name = '{{ invoice.user.get_full_name|default:invoice.user.username }}';
+        const note = 'Invoice #{{ invoice.invoice_number }}';
+        
+        const qrData = `upi://pay?pa=${upiId}&am=${amount}&tn=${name}&tn=${note}`;
+        
+        // You can use a QR code library like qrcode.js to generate the QR code
+        // For now, we'll use a placeholder
+        console.log('QR Code data:', qrData);
+    }
+    
+    generateQRCode();
+    
+    // Print functionality
+    function printInvoice() {
+        window.print();
+    }
+});
+</script>
+{% endblock %} 

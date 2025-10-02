@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Management - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-primary">
+                        <i class="fas fa-credit-card me-2"></i>Payment Management
+                    </h2>
+                    <p class="text-muted">Monitor all payment transactions and revenue</p>
+                </div>
+            </div>
+
+            <!-- Payment Stats -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-success">₹{{ total_revenue|default:0 }}</h4>
+                            <small class="text-muted">Total Revenue</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-primary">{{ completed_payments|default:0 }}</h4>
+                            <small class="text-muted">Completed</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-warning">{{ pending_payments|default:0 }}</h4>
+                            <small class="text-muted">Pending</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-danger">{{ failed_payments|default:0 }}</h4>
+                            <small class="text-muted">Failed</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Table -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Payment ID</th>
+                                    <th>User</th>
+                                    <th>Event</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td>
+                                        <code>{{ payment.payment_id }}</code>
+                                    </td>
+                                    <td>{{ payment.user.get_full_name }}</td>
+                                    <td>{{ payment.invoice.event.title|default:"N/A" }}</td>
+                                    <td class="fw-bold">₹{{ payment.amount }}</td>
+                                    <td>{{ payment.payment_method }}</td>
+                                    <td>{{ payment.created_at|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ payment.status|default:'secondary' }}">
+                                            {{ payment.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            {% if payment.invoice %}
+                                                <a href="{% url 'payments:invoice_detail' payment.invoice.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-file-invoice"></i>
+                                                </a>
+                                            {% endif %}
+                                            <a href="/admin/payments/payment/{{ payment.id }}/change/" class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        <i class="fas fa-credit-card fa-2x text-muted mb-2"></i>
+                                        <div>No payments found</div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

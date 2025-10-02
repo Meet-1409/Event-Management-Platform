@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Event Categories | 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Hero Section -->
+    <div class="hero-section text-center mb-5" data-aos="fade-up">
+        <h1 class="hero-title">Explore Event Categories</h1>
+        <p class="hero-subtitle">Discover amazing events across all categories - from sports and adventure to music, cooking, coding, and movies</p>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="categories-grid">
+        <!-- Sports Events -->
+        <div class="category-card sports-card" data-aos="zoom-in" data-aos-delay="100">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fa fa-futbol"></i>
+                    <i class="fa fa-trophy"></i>
+                </div>
+                <h3 class="category-title">Sports Events</h3>
+            </div>
+            <div class="category-content">
+                <p class="category-description">Tournaments, leagues, and training for all sports lovers</p>
+                <div class="category-features">
+                    <span class="feature-tag">Football</span>
+                    <span class="feature-tag">Box Cricket</span>
+                    <span class="feature-tag">Pickleball</span>
+                    <span class="feature-tag">Volleyball</span>
+                    <span class="feature-tag">Basketball</span>
+                    <span class="feature-tag">Badminton</span>
+                </div>
+                <a href="/events/sports/" class="category-link">
+                    Explore Sports Events
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Adventure Events -->
+        <div class="category-card adventure-card" data-aos="zoom-in" data-aos-delay="200">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fa fa-mountain"></i>
+                    <i class="fa fa-compass"></i>
+                </div>
+                <h3 class="category-title">Adventure Events</h3>
+            </div>
+            <div class="category-content">
+                <p class="category-description">Thrilling outdoor activities and expeditions</p>
+                <div class="category-features">
+                    <span class="feature-tag">Rock Climbing</span>
+                    <span class="feature-tag">River Rafting</span>
+                    <span class="feature-tag">Hiking</span>
+                    <span class="feature-tag">Camping</span>
+                    <span class="feature-tag">Kayaking</span>
+                    <span class="feature-tag">Adventure Races</span>
+                </div>
+                <a href="/events/adventure/" class="category-link">
+                    Explore Adventure Events
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Music Events -->
+        <div class="category-card music-card" data-aos="zoom-in" data-aos-delay="300">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fa fa-music"></i>
+                    <i class="fa fa-microphone"></i>
+                </div>
+                <h3 class="category-title">Music Events</h3>
+            </div>
+            <div class="category-content">
+                <p class="category-description">Concerts, open mics, and music workshops</p>
+                <div class="category-features">
+                    <span class="feature-tag">Concerts</span>
+                    <span class="feature-tag">Open Mic</span>
+                    <span class="feature-tag">Guitar Workshops</span>
+                    <span class="feature-tag">Piano Workshops</span>
+                    <span class="feature-tag">Orchestra</span>
+                    <span class="feature-tag">Music Festivals</span>
+                </div>
+                <a href="/events/music/" class="category-link">
+                    Explore Music Events
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Cooking Events -->
+        <div class="category-card cooking-card" data-aos="zoom-in" data-aos-delay="400">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fa fa-utensils"></i>
+                    <i class="fa fa-chef-hat"></i>
+                </div>
+                <h3 class="category-title">Cooking Events</h3>
+            </div>
+            <div class="category-content">
+                <p class="category-description">Classes, competitions, and food tastings</p>
+                <div class="category-features">
+                    <span class="feature-tag">Cooking Classes</span>
+                    <span class="feature-tag">Baking Classes</span>
+                    <span class="feature-tag">Cooking Competitions</span>
+                    <span class="feature-tag">Baking Competitions</span>
+                    <span class="feature-tag">Food Tasting</span>
+                    <span class="feature-tag">Wine Pairing</span>
+                </div>
+                <a href="/events/cooking/" class="category-link">
+                    Explore Cooking Events
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Coding Events -->
+        <div class="category-card coding-card" data-aos="zoom-in" data-aos-delay="500">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fa fa-code"></i>
+                    <i class="fa fa-laptop-code"></i>
+                </div>
+                <h3 class="category-title">Coding Events</h3>
+            </div>
+            <div class="category-content">
+                <p class="category-description">Workshops, hackathons, and programming challenges</p>
+                <div class="category-features">
+                    <span class="feature-tag">Java Workshops</span>
+                    <span class="feature-tag">C Programming</span>
+                    <span class="feature-tag">Python Workshops</span>
+                    <span class="feature-tag">HTML/CSS</span>
+                    <span class="feature-tag">Hackathons</span>
+                    <span class="feature-tag">JavaScript</span>
+                </div>
+                <a href="/events/coding/" class="category-link">
+                    Explore Coding Events
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Movie Events -->
+        <div class="category-card movie-card" data-aos="zoom-in" data-aos-delay="600">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fa fa-film"></i>
+                    <i class="fa fa-popcorn"></i>
+                </div>
+                <h3 class="category-title">Movie Events</h3>
+            </div>
+            <div class="category-content">
+                <p class="category-description">Screenings, drive-ins, and film festivals</p>
+                <div class="category-features">
+                    <span class="feature-tag">Movie Screening 1</span>
+                    <span class="feature-tag">Movie Screening 2</span>
+                    <span class="feature-tag">Movie Screening 3</span>
+                    <span class="feature-tag">Drive-Through Movie</span>
+                    <span class="feature-tag">Film Discussions</span>
+                    <span class="feature-tag">Movie Trivia</span>
+                </div>
+                <a href="/events/movies/" class="category-link">
+                    Explore Movie Events
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="cta-section text-center mt-5" style="background: #232b3e; border-radius: 2rem; padding: 3rem 1rem; color: #fff;" data-aos="fade-up">
+        <h3 style="color: #fff;">Can't find what you're looking for?</h3>
+        <p style="color: #fff;">Browse all events or contact us to suggest new categories</p>
+        <div class="cta-buttons">
+            <a href="/events/" class="btn btn-primary">Browse All Events</a>
+            <a href="/contact/" class="btn btn-outline-primary">Contact Us</a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Hero Section */
+.hero-section {
+    padding: 3rem 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 1rem;
+    margin-bottom: 3rem;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Categories Grid */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.category-card {
+    background: #232b3e; /* Dark background for category cards */
+    border-radius: 2rem; /* Increased border-radius */
+    padding: 2.5rem 1.5rem; /* Adjusted padding */
+    box-shadow: none; /* Removed box-shadow */
+    border: none; /* Removed border */
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--category-color-1), var(--category-color-2));
+}
+
+.category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+}
+
+/* Category Headers */
+.category-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.category-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--category-color-1);
+}
+
+.category-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #333;
+}
+
+/* Category Content */
+.category-content {
+    text-align: center;
+}
+
+.category-description {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.category-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.feature-tag {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid #e9ecef;
+}
+
+.category-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--category-color-1), var(--category-color-2));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.category-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    color: white;
+    text-decoration: none;
+}
+
+/* Category-specific colors */
+.sports-card {
+    --category-color-1: #43cea2;
+    --category-color-2: #185a9d;
+}
+
+.adventure-card {
+    --category-color-1: #f7971e;
+    --category-color-2: #ffd200;
+}
+
+.music-card {
+    --category-color-1: #ff512f;
+    --category-color-2: #dd2476;
+}
+
+.cooking-card {
+    --category-color-1: #f093fb;
+    --category-color-2: #f5576c;
+}
+
+.coding-card {
+    --category-color-1: #11998e;
+    --category-color-2: #38ef7d;
+}
+
+.movie-card {
+    --category-color-1: #614385;
+    --category-color-2: #516395;
+}
+
+/* CTA Section */
+.cta-section {
+    background: #f8f9fa;
+    padding: 3rem;
+    border-radius: 1rem;
+    border: 1px solid #e9ecef;
+}
+
+.cta-section h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.cta-section p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .category-card {
+        padding: 1.5rem;
+    }
+    
+    .category-icon {
+        font-size: 2.5rem;
+    }
+    
+    .category-title {
+        font-size: 1.3rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        padding: 2rem 1rem;
+    }
+    
+    .category-card {
+        padding: 1rem;
+    }
+    
+    .category-features {
+        gap: 0.25rem;
+    }
+    
+    .feature-tag {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.6rem;
+    }
+}
+</style>
+{% endblock %} 

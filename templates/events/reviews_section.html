@@ -1,0 +1,769 @@
+{% load static %}
+
+<div class="reviews-section" id="reviews">
+    <div class="reviews-header">
+        <h2 class="section-title">
+            <i class="fa fa-star"></i>
+            Reviews & Ratings
+        </h2>
+        
+        {% if not user_review %}
+            <button class="btn btn-primary" id="writeReviewBtn">
+                <i class="fa fa-pen"></i>
+                Write a Review
+            </button>
+        {% endif %}
+        </div>
+
+    <!-- Review Form Modal -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Write Your Review</h3>
+                <button class="modal-close" id="closeReviewModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm" method="post" action="{% url 'events:submit_review' event.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Rating *</label>
+                        <div class="star-rating">
+                            {% for i in "12345" %}
+                                <input type="radio" name="rating" value="{{ forloop.counter }}" id="star{{ forloop.counter }}" required>
+                                <label for="star{{ forloop.counter }}" class="star-label">
+                                    <i class="fa fa-star"></i>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        <small class="form-text text-muted">Click on a star to rate this event</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Review Title *</label>
+                        <input type="text" name="title" class="form-control" required maxlength="200" placeholder="Review Title (e.g., 'Amazing Event Experience')">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Your Review *</label>
+                        <textarea name="comment" class="form-control" rows="4" required maxlength="1000" placeholder="Share your experience and thoughts about this event..."></textarea>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                        <button type="button" class="btn btn-secondary" id="cancelReview">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="reviews-container">
+        {% if reviews %}
+            <div class="reviews-list" id="reviewsList">
+                {% for review in reviews %}
+                    <div class="review-item" data-review-id="{{ review.id }}">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    {% if review.user.profile_picture %}
+                                        <img src="{{ review.user.profile_picture.url }}" alt="{{ review.user.get_full_name }}">
+                                    {% else %}
+                                        <div class="avatar-placeholder">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="reviewer-details">
+                                    <h4 class="reviewer-name">{{ review.user.get_full_name|default:review.user.username }}</h4>
+                                    <div class="review-rating">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="fa fa-star filled" style="color: #ffc107;"></i>
+                                            {% else %}
+                                                <i class="fa fa-star" style="color: #ddd;"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <span class="review-date">{{ review.created_at|date:"F d, Y" }}</span>
+                                </div>
+                            </div>
+                            
+                            {% if review.user == user %}
+                                <div class="review-actions">
+                                    <button class="btn btn-sm btn-outline-primary edit-review-btn" data-review-id="{{ review.id }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-review-btn" data-review-id="{{ review.id }}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="review-content">
+                            <h5 class="review-title">{{ review.title }}</h5>
+                            <p class="review-comment">{{ review.comment }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if reviews.has_other_pages %}
+                <nav aria-label="Reviews pagination" class="reviews-pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if reviews.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ reviews.previous_page_number }}#reviews">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in reviews.paginator.page_range %}
+                            {% if reviews.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > reviews.number|add:'-3' and num < reviews.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}#reviews">{{ num }}</a>
+                                </li>
+                {% endif %}
+            {% endfor %}
+                        
+                        {% if reviews.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ reviews.next_page_number }}#reviews">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="no-reviews">
+                <div class="no-reviews-icon">
+                    <i class="fa fa-star-o"></i>
+                </div>
+                <h3>No Reviews Yet</h3>
+                <p>Be the first to share your experience with this event!</p>
+                {% if not user_review %}
+                    <button class="btn btn-primary" id="writeFirstReviewBtn">
+                        <i class="fa fa-pen"></i>
+                        Write the First Review
+                    </button>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Edit Review Modal -->
+<div class="modal" id="editReviewModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Your Review</h3>
+            <button class="modal-close" id="closeEditModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="editReviewForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Rating *</label>
+                    <div class="star-rating" id="editStarRating">
+                        {% for i in "12345" %}
+                            <input type="radio" name="edit_rating" value="{{ forloop.counter }}" id="edit_star{{ forloop.counter }}" required>
+                            <label for="edit_star{{ forloop.counter }}" class="star-label">
+                                <i class="fa fa-star"></i>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Review Title *</label>
+                    <input type="text" name="edit_title" class="form-control" required maxlength="200">
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Review *</label>
+                    <textarea name="edit_comment" class="form-control" rows="4" required maxlength="1000"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update Review</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal" id="deleteReviewModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Delete Review</h3>
+            <button class="modal-close" id="closeDeleteModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete your review? This action cannot be undone.</p>
+            <div class="form-actions">
+                <button class="btn btn-danger" id="confirmDelete">Delete Review</button>
+                <button class="btn btn-secondary" id="cancelDelete">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Reviews Section */
+.reviews-section {
+    margin-bottom: 3rem;
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #333;
+}
+
+.reviews-container {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Review Form */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 0.25rem;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-label {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #ddd;
+    transition: color 0.2s ease;
+}
+
+.star-rating input[type="radio"]:checked ~ .star-label,
+.star-label:hover,
+.star-label:hover ~ .star-label {
+    color: #ffc107;
+}
+
+/* Review Items */
+.review-item {
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background: white;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.reviewer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+.reviewer-details h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.review-rating {
+    margin-bottom: 0.25rem;
+}
+
+.review-rating .fa-star {
+    color: #ddd;
+    font-size: 0.9rem;
+    margin-right: 0.1rem;
+}
+
+.review-rating .fa-star.filled {
+    color: #ffc107;
+}
+
+.review-date {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.review-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.review-content h5 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.review-comment {
+    margin: 0;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* No Reviews */
+.no-reviews {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.no-reviews-icon {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.no-reviews h3 {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.no-reviews p {
+    color: #999;
+    margin-bottom: 1.5rem;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+/* Pagination */
+.reviews-pagination {
+    margin-top: 2rem;
+}
+
+.pagination .page-link {
+    color: #667eea;
+    border-color: #e9ecef;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .reviews-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal functionality
+    const reviewModal = document.getElementById('reviewModal');
+    const editReviewModal = document.getElementById('editReviewModal');
+    const deleteReviewModal = document.getElementById('deleteReviewModal');
+    
+    // Open review modal
+    document.getElementById('writeReviewBtn')?.addEventListener('click', () => {
+        reviewModal.style.display = 'block';
+    });
+    
+    document.getElementById('writeFirstReviewBtn')?.addEventListener('click', () => {
+        reviewModal.style.display = 'block';
+    });
+    
+    // Close modals
+    document.getElementById('closeReviewModal')?.addEventListener('click', () => {
+        reviewModal.style.display = 'none';
+    });
+    
+    document.getElementById('closeEditModal')?.addEventListener('click', () => {
+        editReviewModal.style.display = 'none';
+    });
+    
+    document.getElementById('closeDeleteModal')?.addEventListener('click', () => {
+        deleteReviewModal.style.display = 'none';
+    });
+    
+    // Cancel buttons
+    document.getElementById('cancelReview')?.addEventListener('click', () => {
+        reviewModal.style.display = 'none';
+    });
+    
+    document.getElementById('cancelEdit')?.addEventListener('click', () => {
+        editReviewModal.style.display = 'none';
+    });
+    
+    document.getElementById('cancelDelete')?.addEventListener('click', () => {
+        deleteReviewModal.style.display = 'none';
+    });
+
+// Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === reviewModal) reviewModal.style.display = 'none';
+        if (event.target === editReviewModal) editReviewModal.style.display = 'none';
+        if (event.target === deleteReviewModal) deleteReviewModal.style.display = 'none';
+    });
+    
+    // Review form submission
+    document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.disabled = true;
+    
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+                showToast(data.message, 'success');
+                reviewModal.style.display = 'none';
+                this.reset();
+            // Reload page to show new review
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(data.error, 'error');
+                // Show form errors
+                if (data.form_errors) {
+                    Object.keys(data.form_errors).forEach(field => {
+                        const input = this.querySelector(`[name="${field}"]`);
+                        if (input) {
+                            input.classList.add('is-invalid');
+                            const feedback = input.parentNode.querySelector('.invalid-feedback');
+                            if (feedback) {
+                                feedback.textContent = data.form_errors[field][0];
+                            }
+                        }
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            showToast('An error occurred. Please try again.', 'error');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+    
+    // Edit review functionality
+    document.querySelectorAll('.edit-review-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const reviewId = this.dataset.reviewId;
+            const reviewItem = this.closest('.review-item');
+            
+            // Populate edit form
+            const filledStars = reviewItem.querySelectorAll('.review-rating .fa-star.filled');
+            const rating = filledStars.length;
+            const title = reviewItem.querySelector('.review-title').textContent;
+            const comment = reviewItem.querySelector('.review-comment').textContent;
+            
+            document.querySelector('#editReviewForm [name="edit_rating"]').value = rating;
+            document.querySelector('#editReviewForm [name="edit_title"]').value = title;
+            document.querySelector('#editReviewForm [name="edit_comment"]').value = comment;
+            
+            // Set star rating
+            document.querySelectorAll('#editStarRating input').forEach((input, index) => {
+                if (index < rating) {
+                    input.checked = true;
+                } else {
+                    input.checked = false;
+                }
+            });
+            
+            // Store review ID for submission
+            document.getElementById('editReviewForm').dataset.reviewId = reviewId;
+            
+            editReviewModal.style.display = 'block';
+        });
+    });
+    
+    // Edit review form submission
+    document.getElementById('editReviewForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const reviewId = this.dataset.reviewId;
+        const formData = new FormData(this);
+        formData.append('rating', document.querySelector('#editStarRating input:checked').value);
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Updating...';
+        submitBtn.disabled = true;
+        
+        fetch(`/events/edit-review/${reviewId}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                editReviewModal.style.display = 'none';
+                // Reload page to show updated review
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showToast(data.error, 'error');
+            }
+        })
+        .catch(error => {
+            showToast('An error occurred. Please try again.', 'error');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+    
+    // Delete review functionality
+    document.querySelectorAll('.delete-review-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const reviewId = this.dataset.reviewId;
+            document.getElementById('confirmDelete').dataset.reviewId = reviewId;
+            deleteReviewModal.style.display = 'block';
+        });
+    });
+    
+    // Confirm delete
+    document.getElementById('confirmDelete')?.addEventListener('click', function() {
+        const reviewId = this.dataset.reviewId;
+        
+        this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Deleting...';
+        this.disabled = true;
+        
+        fetch(`/events/delete-review/${reviewId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                deleteReviewModal.style.display = 'none';
+                // Reload page to remove deleted review
+                setTimeout(() => location.reload(), 1500);
+        } else {
+                showToast(data.error, 'error');
+        }
+    })
+    .catch(error => {
+            showToast('An error occurred. Please try again.', 'error');
+        })
+        .finally(() => {
+            this.innerHTML = 'Delete Review';
+            this.disabled = false;
+        });
+    });
+    
+    // Star rating functionality for edit form
+    document.querySelectorAll('#editStarRating input[type="radio"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const rating = parseInt(this.value);
+            document.querySelectorAll('#editStarRating .star-label').forEach((label, index) => {
+                if (index < rating) {
+                    label.style.color = '#ffc107';
+                } else {
+                    label.style.color = '#ddd';
+                }
+            });
+        });
+    });
+});
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="fa fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add toast styles
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 100);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+</script> 

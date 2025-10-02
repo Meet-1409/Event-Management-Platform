@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Event Registration - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Event Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-dark">{{ event.title }}</h1>
+                <p class="lead text-muted">{{ event.description|truncatewords:20 }}</p>
+                <div class="event-meta">
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-calendar me-1"></i>{{ event.start_date|date:"M d, Y" }}
+                    </span>
+                    <span class="badge bg-info me-2">
+                        <i class="fas fa-map-marker-alt me-1"></i>{{ event.venue.name }}
+                    </span>
+                    <span class="badge bg-warning text-dark">
+                        <i class="fas fa-tag me-1"></i>{{ event.event_type.name }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Progress Steps - 3 STEPS ONLY -->
+            <div class="progress-steps mb-5">
+                <div class="step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Personal Info</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Event Details</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Event Registration - NO PAYMENT REQUIRED
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="registrationForm">
+                        {% csrf_token %}
+                        
+                        <!-- Step 1: Personal Information -->
+                        <div class="step-content" id="step1">
+                            <h5 class="fw-bold mb-4">Personal Information</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Full Name *</label>
+                                    <input type="text" class="form-control" name="full_name" value="{{ user.get_full_name }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Email *</label>
+                                    <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Phone Number *</label>
+                                    <input type="tel" class="form-control" name="phone" value="{{ user.phone_number|default:'' }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Number of Guests *</label>
+                                    <select class="form-select" name="guest_count" required>
+                                        <option value="1">1 Guest</option>
+                                        <option value="2">2 Guests</option>
+                                        <option value="3">3 Guests</option>
+                                        <option value="4">4 Guests</option>
+                                        <option value="5">5+ Guests</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="text-end">
+                                <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Event Details -->
+                        <div class="step-content" id="step2" style="display: none;">
+                            <h5 class="fw-bold mb-4">Event Details</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Special Requirements</label>
+                                    <textarea class="form-control" name="special_requirements" rows="3" placeholder="Any dietary restrictions, accessibility needs, etc."></textarea>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">How did you hear about this event?</label>
+                                    <select class="form-select" name="source">
+                                        <option value="">Select an option</option>
+                                        <option value="social_media">Social Media</option>
+                                        <option value="website">Website</option>
+                                        <option value="friend">Friend/Family</option>
+                                        <option value="email">Email</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                        <label class="form-check-label" for="terms">
+                                            I agree to the Terms and Conditions and Privacy Policy *
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(1)">Previous</button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Confirmation -->
+                        <div class="step-content" id="step3" style="display: none;">
+                            <h5 class="fw-bold mb-4">Confirmation</h5>
+                            <div class="confirmation-details">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold text-muted">Event</h6>
+                                        <p>{{ event.title }}</p>
+                                        
+                                        <h6 class="fw-bold text-muted">Date & Time</h6>
+                                        <p>{{ event.start_date|date:"F d, Y" }} at {{ event.start_time|time:"g:i A" }}</p>
+                                        
+                                        <h6 class="fw-bold text-muted">Venue</h6>
+                                        <p>{{ event.venue.name }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold text-muted">Price</h6>
+                                        <p class="text-success fw-bold">₹{{ event.total_budget|floatformat:0 }} per person</p>
+                                        
+                                        <h6 class="fw-bold text-muted">Registration Includes</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-check text-success me-2"></i>Event entry</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Welcome drinks</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Buffet dinner</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Event materials</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Certificate</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Note:</strong> Payment will be collected at the event venue. No online payment required.
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary" onclick="prevStep(2)">Previous</button>
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-check me-2"></i>Complete Registration
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step.completed {
+    opacity: 1;
+}
+
+.step-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #6c757d;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-circle {
+    background: #28a745;
+    color: white;
+}
+
+.step.completed .step-circle {
+    background: #17a2b8;
+    color: white;
+}
+
+.step-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6c757d;
+    text-align: center;
+}
+
+.step.active .step-label {
+    color: #28a745;
+}
+
+.step.completed .step-label {
+    color: #17a2b8;
+}
+</style>
+
+<script>
+let currentStep = 1;
+
+function nextStep(step) {
+    // Validate current step
+    if (currentStep === 1) {
+        const requiredFields = ['full_name', 'email', 'phone', 'guest_count'];
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            const input = document.querySelector(`[name="${field}"]`);
+            if (!input.value.trim()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+    }
+    
+    if (currentStep === 2) {
+        const terms = document.getElementById('terms');
+        if (!terms.checked) {
+            alert('Please accept the Terms and Conditions.');
+            return;
+        }
+    }
+    
+    // Hide current step
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    
+    // Update progress
+    document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+    document.querySelector(`[data-step="${currentStep}"]`).classList.add('completed');
+    
+    // Show next step
+    currentStep = step;
+    document.getElementById(`step${currentStep}`).style.display = 'block';
+    document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+}
+
+function prevStep(step) {
+    // Hide current step
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+    
+    // Update progress
+    document.querySelector(`[data-step="${currentStep}"]`).classList.remove('active');
+    
+    // Show previous step
+    currentStep = step;
+    document.getElementById(`step${currentStep}`).style.display = 'block';
+    document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+}
+
+// Form submission
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Registering...';
+    submitBtn.disabled = true;
+    
+    // Let the form submit normally
+});
+</script>
+{% endblock %}

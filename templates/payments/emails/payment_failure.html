@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head><title>Payment Failed</title></head>
+<body style="font-family: Arial, sans-serif;">
+    <h2>Payment Failed</h2>
+    <p>Dear {{ user.get_full_name|default:user.email }},</p>
+    <p>Unfortunately, your payment for {{ event.title|default:"Event Booking" }} could not be processed.</p>
+    <p><strong>Payment ID:</strong> {{ payment.payment_id }}</p>
+    <p>Please try again or contact support.</p>
+</body>
+</html>

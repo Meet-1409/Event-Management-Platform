@@ -1,0 +1,545 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Event Calendar | 360° Event Manager{% endblock %}
+
+{% block extra_head %}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/events/">Events</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Calendar View</li>
+        </ol>
+    </nav>
+
+    <!-- Calendar Header -->
+    <div class="calendar-header">
+        <div class="header-content">
+            <h1>Event Calendar</h1>
+            <p>Manage and view all events in a comprehensive calendar interface</p>
+        </div>
+        <div class="calendar-actions">
+            <button class="btn btn-primary" onclick="window.location.href='{% url 'events:add_event' %}'">
+                <i class="fas fa-plus"></i> Add Event
+            </button>
+            <button class="btn btn-outline-primary" onclick="exportCalendar()">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Calendar Filters -->
+    <div class="calendar-filters">
+        <div class="filter-group">
+            <label for="eventTypeFilter">Event Type:</label>
+            <select id="eventTypeFilter" class="form-select" onchange="filterEvents()">
+                <option value="">All Types</option>
+                {% for event_type in event_types %}
+                    <option value="{{ event_type.id }}">{{ event_type.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="statusFilter">Status:</label>
+            <select id="statusFilter" class="form-select" onchange="filterEvents()">
+                <option value="">All Status</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="pending">Pending</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="venueFilter">Venue:</label>
+            <select id="venueFilter" class="form-select" onchange="filterEvents()">
+                <option value="">All Venues</option>
+                {% for venue in venues %}
+                    <option value="{{ venue.id }}">{{ venue.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Calendar Container -->
+    <div class="calendar-container">
+        <div id="calendar"></div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div id="eventModal" class="event-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Event Details</h3>
+                <button class="modal-close" onclick="closeEventModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Calendar Header */
+.calendar-header {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.header-content h1 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.header-content p {
+    margin: 0;
+    color: #666;
+}
+
+.calendar-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Calendar Filters */
+.calendar-filters {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.filter-group select {
+    min-width: 150px;
+    padding: 0.5rem;
+    border: 2px solid #e9ecef;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Calendar Container */
+.calendar-container {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+#calendar {
+    height: 600px;
+}
+
+/* FullCalendar Customization */
+.fc {
+    font-family: 'Poppins', sans-serif;
+}
+
+.fc-toolbar-title {
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+}
+
+.fc-button-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    border-radius: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 500 !important;
+}
+
+.fc-button-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+    transform: translateY(-1px) !important;
+}
+
+.fc-event {
+    border-radius: 0.25rem !important;
+    border: none !important;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+}
+
+.fc-event:hover {
+    transform: scale(1.02) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+}
+
+.event-confirmed {
+    background: #28a745 !important;
+    color: #000000 !important;
+}
+
+.event-pending {
+    background: #ffc107 !important;
+    color: #333 !important;
+}
+
+.event-cancelled {
+    background: #dc3545 !important;
+    color: #000000 !important;
+}
+
+.event-completed {
+    background: #6c757d !important;
+    color: #000000 !important;
+}
+
+/* Event Modal Styles */
+.event-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 1rem;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.event-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.event-detail-item:last-child {
+    border-bottom: none;
+}
+
+.event-detail-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.event-detail-value {
+    color: #666;
+}
+
+.event-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .calendar-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .calendar-filters {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .filter-group select {
+        min-width: auto;
+    }
+    
+    #calendar {
+        height: 400px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+}
+</style>
+
+<script>
+// Calendar Events Data
+let calendarEvents = [
+    {% for event in events %}
+    {
+        id: '{{ event.id }}',
+        title: '{{ event.title }}',
+        start: '{{ event.start_date|date:"Y-m-d" }}T{{ event.start_time|time:"H:i" }}',
+        end: '{{ event.end_date|date:"Y-m-d" }}T{{ event.end_time|time:"H:i" }}',
+        className: 'event-{{ event.status }}',
+        extendedProps: {
+            event_type: '{{ event.event_type.name }}',
+            venue: '{{ event.venue.name }}',
+            organizer: '{{ event.organizer.get_full_name|default:event.organizer.username }}',
+            status: '{{ event.status }}',
+            expected_guests: {{ event.expected_guests }},
+            total_budget: {{ event.total_budget }},
+            description: '{{ event.description|escapejs }}'
+        }
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+
+// Initialize Calendar
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+        events: calendarEvents,
+        eventClick: function(info) {
+            showEventDetails(info.event);
+        },
+        eventDidMount: function(info) {
+            // Add tooltip
+            info.el.title = `${info.event.title}\n${info.event.extendedProps.event_type}\n${info.event.extendedProps.venue}`;
+        },
+        height: 'auto',
+        editable: false,
+        selectable: true,
+        selectMirror: true,
+        dayMaxEvents: true,
+        weekends: true,
+        firstDay: 1, // Monday
+        locale: 'en',
+        buttonText: {
+            today: 'Today',
+            month: 'Month',
+            week: 'Week',
+            day: 'Day',
+            list: 'List'
+        }
+    });
+    
+    calendar.render();
+    
+    // Store calendar instance globally
+    window.calendar = calendar;
+});
+
+// Filter Events
+function filterEvents() {
+    const eventTypeFilter = document.getElementById('eventTypeFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const venueFilter = document.getElementById('venueFilter').value;
+    
+    // Remove all events
+    window.calendar.removeAllEvents();
+    
+    // Filter and add events back
+    const filteredEvents = calendarEvents.filter(event => {
+        let show = true;
+        
+        if (eventTypeFilter && event.extendedProps.event_type !== eventTypeFilter) {
+            show = false;
+        }
+        
+        if (statusFilter && event.extendedProps.status !== statusFilter) {
+            show = false;
+        }
+        
+        if (venueFilter && event.extendedProps.venue !== venueFilter) {
+            show = false;
+        }
+        
+        return show;
+    });
+    
+    // Add filtered events
+    window.calendar.addEventSource(filteredEvents);
+}
+
+// Show Event Details
+function showEventDetails(event) {
+    const modal = document.getElementById('eventModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+    
+    modalTitle.textContent = event.title;
+    
+    const content = `
+        <div class="event-details">
+            <div class="event-detail-item">
+                <span class="event-detail-label">Event Type:</span>
+                <span class="event-detail-value">${event.extendedProps.event_type}</span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Venue:</span>
+                <span class="event-detail-value">${event.extendedProps.venue}</span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Organizer:</span>
+                <span class="event-detail-value">${event.extendedProps.organizer}</span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Status:</span>
+                <span class="event-detail-value">
+                    <span class="badge bg-${getStatusColor(event.extendedProps.status)}">${event.extendedProps.status}</span>
+                </span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Expected Guests:</span>
+                <span class="event-detail-value">${event.extendedProps.expected_guests}</span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Budget:</span>
+                <span class="event-detail-value">₹${event.extendedProps.total_budget.toLocaleString()}</span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Start:</span>
+                <span class="event-detail-value">${event.start.toLocaleString()}</span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">End:</span>
+                <span class="event-detail-value">${event.end.toLocaleString()}</span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Description:</span>
+                <span class="event-detail-value">${event.extendedProps.description}</span>
+            </div>
+        </div>
+        <div class="event-actions">
+            <button class="btn btn-primary" onclick="editEvent(${event.id})">
+                <i class="fas fa-edit"></i> Edit Event
+            </button>
+            <button class="btn btn-outline-secondary" onclick="closeEventModal()">
+                Close
+            </button>
+        </div>
+    `;
+    
+    modalContent.innerHTML = content;
+    modal.style.display = 'flex';
+}
+
+// Close Event Modal
+function closeEventModal() {
+    document.getElementById('eventModal').style.display = 'none';
+}
+
+// Get Status Color
+function getStatusColor(status) {
+    switch(status) {
+        case 'confirmed': return 'success';
+        case 'pending': return 'warning';
+        case 'cancelled': return 'danger';
+        case 'completed': return 'secondary';
+        default: return 'primary';
+    }
+}
+
+// Edit Event
+function editEvent(eventId) {
+    window.location.href = `/events/${eventId}/edit/`;
+}
+
+// Export Calendar
+function exportCalendar() {
+    // Create CSV content
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Event Title,Event Type,Venue,Organizer,Status,Start Date,End Date,Expected Guests,Budget\n";
+    
+    calendarEvents.forEach(event => {
+        const row = [
+            event.title,
+            event.extendedProps.event_type,
+            event.extendedProps.venue,
+            event.extendedProps.organizer,
+            event.extendedProps.status,
+            event.start.toLocaleDateString(),
+            event.end.toLocaleDateString(),
+            event.extendedProps.expected_guests,
+            event.extendedProps.total_budget
+        ].join(',');
+        csvContent += row + '\n';
+    });
+    
+    // Download CSV
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "events_calendar.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Close modal when clicking outside
+document.getElementById('eventModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEventModal();
+    }
+});
+</script>
+{% endblock %} 

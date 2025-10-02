@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Packages - {{ venue.name }} - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .packages-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .packages-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        margin: 30px 0;
+    }
+    
+    .package-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        border: 3px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .package-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+    
+    .package-card.featured {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .package-card.featured .package-price {
+        color: white;
+    }
+    
+    .package-card.featured .package-feature {
+        color: rgba(255,255,255,0.9);
+    }
+    
+    .package-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #ffc107;
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .package-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .package-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    .package-description {
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+    
+    .package-price {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 5px;
+    }
+    
+    .package-period {
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+    
+    .package-features {
+        margin: 30px 0;
+    }
+    
+    .package-feature {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .package-feature i {
+        color: #28a745;
+        margin-right: 15px;
+        font-size: 1.2rem;
+        width: 20px;
+    }
+    
+    .package-feature.disabled {
+        color: #6c757d;
+    }
+    
+    .package-feature.disabled i {
+        color: #dc3545;
+    }
+    
+    .package-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 15px 30px;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .package-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .package-btn.featured {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+    }
+    
+    .package-btn.featured:hover {
+        box-shadow: 0 15px 30px rgba(40, 167, 69, 0.4);
+    }
+    
+    .comparison-table {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        margin: 30px 0;
+        overflow-x: auto;
+    }
+    
+    .comparison-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .comparison-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .comparison-table .feature-name {
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .comparison-table .check {
+        color: #28a745;
+        font-size: 1.2rem;
+    }
+    
+    .comparison-table .cross {
+        color: #dc3545;
+        font-size: 1.2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="packages-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-box me-3"></i>Venue Packages
+                </h1>
+                <p class="lead mb-4">Choose the perfect package for your event at {{ venue.name }}</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'venues:venue_detail' venue.id %}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Venue
+                    </a>
+                    <a href="{% url 'venues:venue_booking' venue.id %}" class="btn btn-light">
+                        <i class="fas fa-calendar-check me-2"></i>Book Now
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-box" style="font-size: 6rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Packages Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            {% for package in venue.packages.all %}
+            <div class="col-lg-4 col-md-6">
+                <div class="package-card {% if package.is_featured %}featured{% endif %}">
+                    {% if package.is_featured %}
+                    <div class="package-badge">Most Popular</div>
+                    {% endif %}
+                    
+                    <div class="package-header">
+                        <div class="package-name">{{ package.name }}</div>
+                        <div class="package-description">{{ package.description }}</div>
+                        <div class="package-price">₹{{ package.price }}</div>
+                        <div class="package-period">per event</div>
+                    </div>
+                    
+                    <div class="package-features">
+                        {% for feature in package.features.all %}
+                        <div class="package-feature">
+                            <i class="fas fa-check"></i>
+                            <span>{{ feature.name }}</span>
+                        </div>
+                        {% endfor %}
+                        
+                        {% for feature in package.excluded_features.all %}
+                        <div class="package-feature disabled">
+                            <i class="fas fa-times"></i>
+                            <span>{{ feature.name }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button class="package-btn {% if package.is_featured %}featured{% endif %}" 
+                            onclick="selectPackage('{{ package.id }}', '{{ package.name }}', '{{ package.price }}')">
+                        {% if package.is_featured %}
+                            <i class="fas fa-star me-2"></i>Choose This Package
+                        {% else %}
+                            <i class="fas fa-check me-2"></i>Select Package
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <div class="py-5">
+                    <i class="fas fa-box fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Packages Available</h4>
+                    <p class="text-muted">Contact us for custom pricing options.</p>
+                    <a href="{% url 'venues:venue_booking' venue.id %}" class="btn btn-primary">
+                        <i class="fas fa-calendar-check me-2"></i>Request Custom Quote
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Package Comparison -->
+{% if venue.packages.count > 1 %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="comparison-table">
+            <h3 class="fw-bold mb-4 text-center">
+                <i class="fas fa-balance-scale me-2 text-primary"></i>Package Comparison
+            </h3>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th class="feature-name">Features</th>
+                        {% for package in venue.packages.all %}
+                        <th>{{ package.name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="feature-name">Basic Setup</td>
+                        {% for package in venue.packages.all %}
+                        <td><i class="fas fa-check check"></i></td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Tables & Chairs</td>
+                        {% for package in venue.packages.all %}
+                        <td><i class="fas fa-check check"></i></td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Sound System</td>
+                        {% for package in venue.packages.all %}
+                        {% if package.name == "Premium" %}
+                        <td><i class="fas fa-check check"></i></td>
+                        {% else %}
+                        <td><i class="fas fa-times cross"></i></td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Lighting</td>
+                        {% for package in venue.packages.all %}
+                        {% if package.name == "Premium" %}
+                        <td><i class="fas fa-check check"></i></td>
+                        {% else %}
+                        <td><i class="fas fa-times cross"></i></td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Catering</td>
+                        {% for package in venue.packages.all %}
+                        {% if package.name == "Premium" %}
+                        <td><i class="fas fa-check check"></i></td>
+                        {% else %}
+                        <td><i class="fas fa-times cross"></i></td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Event Coordinator</td>
+                        {% for package in venue.packages.all %}
+                        {% if package.name == "Premium" %}
+                        <td><i class="fas fa-check check"></i></td>
+                        {% else %}
+                        <td><i class="fas fa-times cross"></i></td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Price</td>
+                        {% for package in venue.packages.all %}
+                        <td class="fw-bold text-primary">₹{{ package.price }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Custom Package -->
+<section class="py-5">
+    <div class="container">
+        <div class="packages-container text-center">
+            <h3 class="fw-bold mb-4">
+                <i class="fas fa-magic me-2 text-primary"></i>Need a Custom Package?
+            </h3>
+            <p class="lead mb-4">We can create a custom package tailored to your specific needs and budget.</p>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="{% url 'venues:venue_booking' venue.id %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-calendar-check me-2"></i>Request Custom Quote
+                        </a>
+                        <a href="{% url 'communications:inbox' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-comments me-2"></i>Chat with Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function selectPackage(packageId, packageName, packagePrice) {
+    // Store selected package in session storage
+    sessionStorage.setItem('selectedPackage', JSON.stringify({
+        id: packageId,
+        name: packageName,
+        price: parseFloat(packagePrice) || packagePrice
+    }));
+    
+    // Redirect to booking page with package pre-selected
+    window.location.href = "{% url 'venues:venue_booking' venue.id %}?package=" + packageId;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Package card hover effects
+    const packageCards = document.querySelectorAll('.package-card');
+    
+    packageCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Package button click effects
+    const packageButtons = document.querySelectorAll('.package-btn');
+    
+    packageButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-2px)';
+            }, 150);
+        });
+    });
+});
+</script>
+{% endblock %} 

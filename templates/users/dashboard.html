@@ -1,0 +1,430 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Dashboard - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dashboard-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .stats-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        border-left: 5px solid #667eea;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stats-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+        margin-bottom: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        color: #7f8c8d;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+    }
+    
+    .recent-events {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .event-item {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+    }
+    
+    .event-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+    
+    .quick-actions {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .action-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 15px 25px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .welcome-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    .progress-ring {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 20px;
+    }
+    
+    .progress-ring circle {
+        fill: none;
+        stroke-width: 8;
+        stroke-linecap: round;
+    }
+    
+    .progress-ring .bg {
+        stroke: #e9ecef;
+    }
+    
+    .progress-ring .progress {
+        stroke: #667eea;
+        stroke-dasharray: 283;
+        stroke-dashoffset: 283;
+        transition: stroke-dashoffset 0.5s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="dashboard-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+                <p class="lead mb-4">Manage your events, track your bookings, and stay updated with your activities.</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'events:event_list' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-calendar-alt me-2"></i>Browse Events
+                    </a>
+                    <a href="{% url 'users:my_bookings' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-ticket-alt me-2"></i>My Bookings
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="progress-ring">
+                    <svg width="120" height="120">
+                        <circle class="bg" cx="60" cy="60" r="45"></circle>
+                        <circle class="progress" cx="60" cy="60" r="45" 
+                                style="stroke-dashoffset: {{ profile_completion|default:75 }}"></circle>
+                    </svg>
+                </div>
+                <p class="text-white">Profile Completion</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Content -->
+<div class="container py-5">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3 class="fw-bold mb-2">Your Event Journey</h3>
+                <p class="mb-0">You've been a member since {{ user.date_joined|date:"F Y" }}. Keep exploring amazing events!</p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <div class="d-flex justify-content-end gap-2">
+                    <span class="badge bg-light text-dark fs-6">{{ total_events|default:0 }} Events</span>
+                    <span class="badge bg-light text-dark fs-6">{{ total_bookings|default:0 }} Bookings</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-5">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card text-center">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-number">{{ total_bookings|default:0 }}</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card text-center">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-number">{{ total_events|default:0 }}</div>
+                <div class="stat-label">Events Attended</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card text-center">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="stat-number">₹{{ total_spent|default:0 }}</div>
+                <div class="stat-label">Total Spent</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card text-center">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-number">{{ user_reviews|default:0 }}</div>
+                <div class="stat-label">Reviews Given</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Events -->
+        <div class="col-lg-8">
+            <div class="recent-events">
+                <h4 class="fw-bold mb-4">
+                    <i class="fas fa-clock text-primary me-2"></i>Recent Events
+                </h4>
+                {% if recent_events %}
+                    {% for event in recent_events %}
+                    <div class="event-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="fw-bold mb-1">{{ event.title }}</h6>
+                                <p class="text-muted mb-1">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ event.venue.name }}, {{ event.venue.city }}
+                                </p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>{{ event.start_date|date:"M d, Y" }}
+                                </small>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <span class="badge bg-primary">{{ event.event_type.name }}</span>
+                                <a href="{% url 'events:event_detail' event.id %}" class="btn btn-sm btn-outline-primary ms-2">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No recent events</h5>
+                        <p class="text-muted">Start exploring events to see them here!</p>
+                        <a href="{% url 'events:event_list' %}" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Browse Events
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="recent-events">
+                <h4 class="fw-bold mb-4">
+                    <i class="fas fa-calendar-plus text-success me-2"></i>Upcoming Events
+                </h4>
+                {% if upcoming_events %}
+                    {% for event in upcoming_events %}
+                    <div class="event-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="fw-bold mb-1">{{ event.title }}</h6>
+                                <p class="text-muted mb-1">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ event.venue.name }}, {{ event.venue.city }}
+                                </p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>{{ event.start_date|date:"M d, Y" }}
+                                </small>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <span class="badge bg-success">Upcoming</span>
+                                <a href="{% url 'events:event_detail' event.id %}" class="btn btn-sm btn-outline-success ms-2">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No upcoming events</h5>
+                        <p class="text-muted">Book some events to see them here!</p>
+                        <a href="{% url 'events:event_list' %}" class="btn btn-success">
+                            <i class="fas fa-search me-2"></i>Find Events
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Actions Sidebar -->
+        <div class="col-lg-4">
+            <div class="quick-actions">
+                <h4 class="fw-bold mb-4">
+                    <i class="fas fa-bolt text-warning me-2"></i>Quick Actions
+                </h4>
+                <div class="d-grid gap-3">
+                    <a href="{% url 'users:my_bookings' %}" class="action-btn">
+                        <i class="fas fa-ticket-alt me-2"></i>My Bookings
+                    </a>
+                    <a href="{% url 'events:event_list' %}" class="action-btn">
+                        <i class="fas fa-calendar-alt me-2"></i>Browse Events
+                    </a>
+                    <a href="{% url 'venues:venue_list' %}" class="action-btn">
+                        <i class="fas fa-map-marker-alt me-2"></i>Explore Venues
+                    </a>
+                    <a href="{% url 'users:profile' %}" class="action-btn">
+                        <i class="fas fa-user me-2"></i>Edit Profile
+                    </a>
+                    <a href="{% url 'users:change_password' %}" class="action-btn">
+                        <i class="fas fa-lock me-2"></i>Change Password
+                    </a>
+                    <a href="{% url 'communications:conversation_list' %}" class="action-btn">
+                        <i class="fas fa-comments me-2"></i>Messages
+                    </a>
+                </div>
+            </div>
+
+            <!-- Profile Completion -->
+            <div class="quick-actions">
+                <h4 class="fw-bold mb-4">
+                    <i class="fas fa-user-check text-info me-2"></i>Profile Status
+                </h4>
+                <div class="text-center">
+                    <div class="progress-ring mb-3">
+                        <svg width="100" height="100">
+                            <circle class="bg" cx="50" cy="50" r="35"></circle>
+                            <circle class="progress" cx="50" cy="50" r="35" 
+                                    style="stroke-dashoffset: {{ profile_completion|default:75 }}"></circle>
+                        </svg>
+                    </div>
+                    <h5 class="fw-bold">{{ profile_completion|default:75 }}% Complete</h5>
+                    <p class="text-muted small">Keep your profile updated for better experience</p>
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i>Update Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate stats cards on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.stats-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %} 

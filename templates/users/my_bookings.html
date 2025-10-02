@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}My Bookings - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-dark">
+                        <i class="fas fa-ticket-alt me-2 text-success"></i>My Bookings
+                    </h2>
+                    <p class="text-muted">Manage your event registrations and bookings</p>
+                </div>
+                <a href="/events/" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Browse Events
+                </a>
+            </div>
+
+            <!-- Bookings List -->
+            {% if bookings %}
+            <div class="row">
+                {% for booking in bookings %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="fw-bold text-dark mb-1">{{ booking.event.title }}</h5>
+                                    <p class="text-muted small mb-0">{{ booking.event.event_type.name }}</p>
+                                </div>
+                                <span class="badge bg-success">Confirmed</span>
+                            </div>
+                            
+                            <div class="event-details mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1">
+                                            <i class="fas fa-calendar text-success me-2"></i>
+                                            <strong>Date:</strong> {{ booking.event.start_date|date:"M d, Y" }}
+                                        </p>
+                                        <p class="mb-1">
+                                            <i class="fas fa-clock text-success me-2"></i>
+                                            <strong>Time:</strong> {{ booking.event.start_time|time:"g:i A" }}
+                                        </p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="mb-1">
+                                            <i class="fas fa-map-marker-alt text-success me-2"></i>
+                                            <strong>Venue:</strong> {{ booking.event.venue.name }}
+                                        </p>
+                                        <p class="mb-1">
+                                            <i class="fas fa-users text-success me-2"></i>
+                                            <strong>Guests:</strong> {{ booking.guest_count }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if booking.special_requirements %}
+                            <div class="special-requirements mb-3">
+                                <p class="mb-1">
+                                    <i class="fas fa-info-circle text-success me-2"></i>
+                                    <strong>Special Requirements:</strong>
+                                </p>
+                                <p class="text-muted small">{{ booking.special_requirements }}</p>
+                            </div>
+                            {% endif %}
+
+                            <div class="booking-meta">
+                                <p class="text-muted small mb-2">
+                                    <i class="fas fa-hashtag me-1"></i>Booking ID: #{{ booking.id }}
+                                </p>
+                                <p class="text-muted small mb-0">
+                                    <i class="fas fa-calendar-plus me-1"></i>Booked on: {{ booking.created_at|date:"M d, Y g:i A" }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-transparent border-0">
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'events:event_detail' booking.event.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>View Event
+                                </a>
+                                <a href="{% url 'events:event_gallery' booking.event.id %}" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-images me-1"></i>Gallery
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- No Bookings -->
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-ticket-alt fa-4x text-muted"></i>
+                </div>
+                <h4 class="text-muted mb-3">No Bookings Yet</h4>
+                <p class="text-muted mb-4">You haven't registered for any events yet. Browse our events and book your first one!</p>
+                <a href="/events/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-calendar me-2"></i>Browse Events
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.event-details p {
+    font-size: 0.9rem;
+}
+
+.special-requirements {
+    background-color: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border-left: 3px solid #4ade80;
+}
+</style>
+{% endblock %}

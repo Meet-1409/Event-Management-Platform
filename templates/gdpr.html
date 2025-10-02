@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block title %}GDPR Compliance | 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <h1 class="text-center mb-4">GDPR Compliance</h1>
+                    <p class="lead text-center text-muted mb-5">
+                        Your data protection rights under the General Data Protection Regulation (GDPR)
+                    </p>
+
+                    <div class="gdpr-content">
+                        <section class="mb-5">
+                            <h3 class="fw-bold text-primary mb-3">What is GDPR?</h3>
+                            <p class="text-muted">
+                                The General Data Protection Regulation (GDPR) is a comprehensive data protection law that 
+                                gives you control over your personal data and ensures organizations handle your information responsibly.
+                            </p>
+                        </section>
+
+                        <section class="mb-5">
+                            <h3 class="fw-bold text-primary mb-3">Your Rights Under GDPR</h3>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body">
+                                            <h5 class="fw-bold text-success">
+                                                <i class="fas fa-eye me-2"></i>Right to Access
+                                            </h5>
+                                            <p class="small text-muted">
+                                                You can request a copy of all personal data we hold about you, including how it's used and shared.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body">
+                                            <h5 class="fw-bold text-info">
+                                                <i class="fas fa-edit me-2"></i>Right to Rectification
+                                            </h5>
+                                            <p class="small text-muted">
+                                                You can request correction of inaccurate or incomplete personal data.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body">
+                                            <h5 class="fw-bold text-warning">
+                                                <i class="fas fa-trash me-2"></i>Right to Erasure
+                                            </h5>
+                                            <p class="small text-muted">
+                                                You can request deletion of your personal data in certain circumstances.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body">
+                                            <h5 class="fw-bold text-danger">
+                                                <i class="fas fa-pause me-2"></i>Right to Restrict Processing
+                                            </h5>
+                                            <p class="small text-muted">
+                                                You can request that we limit how we use your personal data.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body">
+                                            <h5 class="fw-bold text-primary">
+                                                <i class="fas fa-download me-2"></i>Right to Data Portability
+                                            </h5>
+                                            <p class="small text-muted">
+                                                You can request your data in a structured, machine-readable format.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-body">
+                                            <h5 class="fw-bold text-secondary">
+                                                <i class="fas fa-ban me-2"></i>Right to Object
+                                            </h5>
+                                            <p class="small text-muted">
+                                                You can object to processing of your data for specific purposes.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="mb-5">
+                            <h3 class="fw-bold text-primary mb-3">How We Process Your Data</h3>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Purpose</th>
+                                            <th>Legal Basis</th>
+                                            <th>Data Retention</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Account Management</td>
+                                            <td>Contract Performance</td>
+                                            <td>Until account deletion</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Event Registration</td>
+                                            <td>Contract Performance</td>
+                                            <td>7 years for tax records</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Customer Support</td>
+                                            <td>Legitimate Interest</td>
+                                            <td>3 years</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Marketing Communications</td>
+                                            <td>Consent</td>
+                                            <td>Until consent withdrawal</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Analytics & Improvement</td>
+                                            <td>Legitimate Interest</td>
+                                            <td>2 years</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="mb-5">
+                            <h3 class="fw-bold text-primary mb-3">Data Protection Measures</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="fw-semibold text-success">Technical Safeguards</h6>
+                                    <ul class="list-unstyled small text-muted">
+                                        <li><i class="fas fa-lock text-success me-2"></i>End-to-end encryption</li>
+                                        <li><i class="fas fa-shield-alt text-success me-2"></i>Secure data transmission (HTTPS)</li>
+                                        <li><i class="fas fa-database text-success me-2"></i>Encrypted data storage</li>
+                                        <li><i class="fas fa-key text-success me-2"></i>Access controls and authentication</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-semibold text-info">Organizational Measures</h6>
+                                    <ul class="list-unstyled small text-muted">
+                                        <li><i class="fas fa-users text-info me-2"></i>Staff training on data protection</li>
+                                        <li><i class="fas fa-file-contract text-info me-2"></i>Data processing agreements</li>
+                                        <li><i class="fas fa-clipboard-check text-info me-2"></i>Regular security audits</li>
+                                        <li><i class="fas fa-exclamation-triangle text-info me-2"></i>Incident response procedures</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="mb-5">
+                            <h3 class="fw-bold text-primary mb-3">Exercising Your Rights</h3>
+                            <p class="text-muted">
+                                To exercise any of your GDPR rights, you can:
+                            </p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card border-primary">
+                                        <div class="card-body">
+                                            <h6 class="fw-bold text-primary">
+                                                <i class="fas fa-envelope me-2"></i>Email Request
+                                            </h6>
+                                            <p class="small mb-2">Send your request to:</p>
+                                            <p class="fw-bold mb-0">privacy@360eventmanager.com</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <h6 class="fw-bold text-success">
+                                                <i class="fas fa-user-cog me-2"></i>Account Settings
+                                            </h6>
+                                            <p class="small mb-2">Manage your data through:</p>
+                                            <p class="fw-bold mb-0">Your account dashboard</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="mb-5">
+                            <h3 class="fw-bold text-primary mb-3">Data Protection Officer</h3>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h6 class="fw-bold">Contact Our DPO</h6>
+                                            <p class="small text-muted mb-2">
+                                                For complex data protection inquiries or to lodge a complaint:
+                                            </p>
+                                            <p class="mb-0">
+                                                <strong>Email:</strong> dpo@360eventmanager.com<br>
+                                                <strong>Phone:</strong> +91 98765 43210<br>
+                                                <strong>Address:</strong> Data Protection Officer, 360° Event Manager, India
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <i class="fas fa-user-shield fa-3x text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="mb-5">
+                            <h3 class="fw-bold text-primary mb-3">International Data Transfers</h3>
+                            <p class="text-muted">
+                                Your data may be transferred to and processed in countries outside the European Economic Area (EEA). 
+                                We ensure appropriate safeguards are in place through:
+                            </p>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Adequacy decisions by the European Commission</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Standard contractual clauses approved by the EU</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Certification schemes and codes of conduct</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Binding corporate rules for intra-group transfers</li>
+                            </ul>
+                        </section>
+
+                        <div class="text-center mt-5">
+                            <p class="text-muted small">
+                                Last updated: July 27, 2025<br>
+                                For GDPR-related questions, contact our Data Protection Officer at dpo@360eventmanager.com
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.gdpr-content h3 {
+    color: #007bff;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+.gdpr-content .card {
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.gdpr-content .card:hover {
+    transform: translateY(-2px);
+}
+
+.table th {
+    background-color: #343a40;
+    color: white;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.fa-3x {
+    font-size: 3rem;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+
+{% block title %}Frequently Asked Questions | 360° Event Manager{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Frequently Asked Questions</h1>
+                <p class="lead mb-4">Find answers to common questions about our event management services in Ahmedabad and Gandhinagar.</p>
+                <div class="d-flex gap-3">
+                    <a href="#faq" class="btn btn-light btn-lg">
+                        <i class="fas fa-question-circle me-2"></i>Browse FAQ
+                    </a>
+                    <a href="/contact/" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-phone me-2"></i>Contact Us
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="text-center">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="FAQ" class="img-fluid rounded-3 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Section -->
+<div class="py-4 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0" id="faqSearch" placeholder="Search for questions...">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FAQ Categories -->
+<section id="faq" class="py-5">
+    <div class="container">
+        <!-- Category Tabs -->
+        <div class="text-center mb-5">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" data-category="general">General</button>
+                <button type="button" class="btn btn-outline-primary" data-category="booking">Booking</button>
+                <button type="button" class="btn btn-outline-primary" data-category="pricing">Pricing</button>
+                <button type="button" class="btn btn-outline-primary" data-category="venues">Venues</button>
+                <button type="button" class="btn btn-outline-primary" data-category="services">Services</button>
+            </div>
+        </div>
+
+        <!-- General Questions -->
+        <div class="faq-category" id="general">
+            <h2 class="display-6 fw-bold text-dark mb-4">General Questions</h2>
+            <div class="accordion" id="generalFAQ">
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#g1">
+                            What areas do you serve?
+                        </button>
+                    </h2>
+                    <div id="g1" class="accordion-collapse collapse show" data-bs-parent="#generalFAQ">
+                        <div class="accordion-body">
+                            We primarily serve Ahmedabad and Gandhinagar, including all surrounding areas. Our team is well-versed with local venues, vendors, and regulations in these cities.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#g2">
+                            How far in advance should I book my event?
+                        </button>
+                    </h2>
+                    <div id="g2" class="accordion-collapse collapse" data-bs-parent="#generalFAQ">
+                        <div class="accordion-body">
+                            We recommend booking at least 3-6 months in advance for large events and 1-2 months for smaller gatherings. Popular venues and dates get booked quickly, especially during wedding season (November to February).
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#g3">
+                            What types of events do you manage?
+                        </button>
+                    </h2>
+                    <div id="g3" class="accordion-collapse collapse" data-bs-parent="#generalFAQ">
+                        <div class="accordion-body">
+                            We manage all types of events including corporate events, weddings, birthday parties, conferences, product launches, cultural events, and more. Our team has experience with events ranging from 10 to 1000+ guests.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#g4">
+                            Do you provide emergency support?
+                        </button>
+                    </h2>
+                    <div id="g4" class="accordion-collapse collapse" data-bs-parent="#generalFAQ">
+                        <div class="accordion-body">
+                            Yes, we provide 24/7 emergency support during your event. Our team is always available to handle any last-minute issues or changes that may arise.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Questions -->
+        <div class="faq-category d-none" id="booking">
+            <h2 class="display-6 fw-bold text-dark mb-4">Booking & Reservations</h2>
+            <div class="accordion" id="bookingFAQ">
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#b1">
+                            How do I book an event with you?
+                        </button>
+                    </h2>
+                    <div id="b1" class="accordion-collapse collapse show" data-bs-parent="#bookingFAQ">
+                        <div class="accordion-body">
+                            You can book through our website, call us directly, or visit our office. We'll schedule a consultation to understand your requirements and provide a detailed quote.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#b2">
+                            What information do I need to provide for booking?
+                        </button>
+                    </h2>
+                    <div id="b2" class="accordion-collapse collapse" data-bs-parent="#bookingFAQ">
+                        <div class="accordion-body">
+                            We need details like event type, date, expected guest count, budget, venue preferences, and any special requirements. The more details you provide, the better we can serve you.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#b3">
+                            Can I cancel or reschedule my booking?
+                        </button>
+                    </h2>
+                    <div id="b3" class="accordion-collapse collapse" data-bs-parent="#bookingFAQ">
+                        <div class="accordion-body">
+                            Yes, you can cancel or reschedule with advance notice. Cancellation policies vary based on the package and time remaining. We'll work with you to find the best solution.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#b4">
+                            Do you require a deposit?
+                        </button>
+                    </h2>
+                    <div id="b4" class="accordion-collapse collapse" data-bs-parent="#bookingFAQ">
+                        <div class="accordion-body">
+                            Yes, we require a 25% deposit to confirm your booking. The remaining amount is due 7 days before the event. We accept various payment methods including online transfers.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Questions -->
+        <div class="faq-category d-none" id="pricing">
+            <h2 class="display-6 fw-bold text-dark mb-4">Pricing & Payment</h2>
+            <div class="accordion" id="pricingFAQ">
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#p1">
+                            Are your prices inclusive of GST?
+                        </button>
+                    </h2>
+                    <div id="p1" class="accordion-collapse collapse show" data-bs-parent="#pricingFAQ">
+                        <div class="accordion-body">
+                            Yes, all our prices include GST. The quoted price is the final amount you pay. We provide detailed invoices with complete cost breakdowns.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p2">
+                            Do you offer discounts for large events?
+                        </button>
+                    </h2>
+                    <div id="p2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                        <div class="accordion-body">
+                            Yes, we offer volume discounts for events with 100+ guests. We also have special packages for corporate clients and regular customers.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p3">
+                            What payment methods do you accept?
+                        </button>
+                    </h2>
+                    <div id="p3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                        <div class="accordion-body">
+                            We accept cash, bank transfers, UPI, credit/debit cards, and digital wallets. Corporate clients can also opt for invoice-based payments.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#p4">
+                            Are there any hidden costs?
+                        </button>
+                    </h2>
+                    <div id="p4" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                        <div class="accordion-body">
+                            No, we believe in complete transparency. All costs are clearly outlined in our quotes. Any additional services will be discussed and approved before implementation.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Venue Questions -->
+        <div class="faq-category d-none" id="venues">
+            <h2 class="display-6 fw-bold text-dark mb-4">Venues & Locations</h2>
+            <div class="accordion" id="venuesFAQ">
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#v1">
+                            Do you have your own venues?
+                        </button>
+                    </h2>
+                    <div id="v1" class="accordion-collapse collapse show" data-bs-parent="#venuesFAQ">
+                        <div class="accordion-body">
+                            We partner with premium venues across Ahmedabad and Gandhinagar. We have exclusive partnerships that allow us to offer better rates and priority booking.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v2">
+                            Can I choose my own venue?
+                        </button>
+                    </h2>
+                    <div id="v2" class="accordion-collapse collapse" data-bs-parent="#venuesFAQ">
+                        <div class="accordion-body">
+                            Absolutely! You can choose any venue you prefer. We'll help you with venue selection, negotiations, and coordination with the venue management.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v3">
+                            Do venues provide parking facilities?
+                        </button>
+                    </h2>
+                    <div id="v3" class="accordion-collapse collapse" data-bs-parent="#venuesFAQ">
+                        <div class="accordion-body">
+                            Most of our partner venues provide parking facilities. We'll inform you about parking capacity and any additional parking arrangements if needed.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v4">
+                            Are venues accessible for differently-abled guests?
+                        </button>
+                    </h2>
+                    <div id="v4" class="accordion-collapse collapse" data-bs-parent="#venuesFAQ">
+                        <div class="accordion-body">
+                            Yes, most venues are accessible. We can arrange for ramps, accessible restrooms, and other facilities as needed. Please inform us in advance.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Questions -->
+        <div class="faq-category d-none" id="services">
+            <h2 class="display-6 fw-bold text-dark mb-4">Services & Amenities</h2>
+            <div class="accordion" id="servicesFAQ">
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#s1">
+                            What services are included in your packages?
+                        </button>
+                    </h2>
+                    <div id="s1" class="accordion-collapse collapse show" data-bs-parent="#servicesFAQ">
+                        <div class="accordion-body">
+                            Our packages include event coordination, venue setup, catering, audio-visual equipment, basic decorations, and event management. Additional services can be added as needed.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s2">
+                            Do you provide catering services?
+                        </button>
+                    </h2>
+                    <div id="s2" class="accordion-collapse collapse" data-bs-parent="#servicesFAQ">
+                        <div class="accordion-body">
+                            Yes, we provide comprehensive catering services including menu planning, food preparation, service staff, and cleanup. We can accommodate dietary restrictions and preferences.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s3">
+                            Can you arrange entertainment?
+                        </button>
+                    </h2>
+                    <div id="s3" class="accordion-collapse collapse" data-bs-parent="#servicesFAQ">
+                        <div class="accordion-body">
+                            Yes, we can arrange various entertainment options including live bands, DJs, cultural performances, magicians, and more. We'll help you choose based on your event type and budget.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 shadow-sm mb-3">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#s4">
+                            Do you provide photography and videography?
+                        </button>
+                    </h2>
+                    <div id="s4" class="accordion-collapse collapse" data-bs-parent="#servicesFAQ">
+                        <div class="accordion-body">
+                            Yes, we offer professional photography and videography services. We work with experienced photographers who specialize in different types of events.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-5 fw-bold text-dark mb-3">Still Have Questions?</h2>
+                <p class="lead text-muted mb-4">Our expert team is here to help you with any questions about event planning in Ahmedabad and Gandhinagar.</p>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-phone fa-2x text-primary"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2">Call Us</h5>
+                                <p class="text-muted mb-0">+91 98765 43210</p>
+                                <small class="text-muted">Mon-Sat: 9 AM - 8 PM</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-envelope fa-2x text-success"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2">Email Us</h5>
+                                <p class="text-muted mb-0">info@360eventmanager.com</p>
+                                <small class="text-muted">24/7 support</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-comments fa-2x text-warning"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2">Live Chat</h5>
+                                <p class="text-muted mb-0">Chat with us online</p>
+                                <small class="text-muted">Instant responses</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="/contact/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    color: #000;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, 0.125);
+}
+
+.btn-group .btn {
+    border-radius: 8px;
+    margin-right: 0.5rem;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+    
+    .btn-group {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        margin-right: 0;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Category filter functionality
+    const categoryButtons = document.querySelectorAll('[data-category]');
+    const faqCategories = document.querySelectorAll('.faq-category');
+
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            
+            // Update active button
+            categoryButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show selected category
+            faqCategories.forEach(cat => {
+                cat.classList.add('d-none');
+                if (cat.id === category) {
+                    cat.classList.remove('d-none');
+                }
+            });
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('faqSearch');
+    const accordionItems = document.querySelectorAll('.accordion-item');
+
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        accordionItems.forEach(item => {
+            const question = item.querySelector('.accordion-button').textContent.toLowerCase();
+            const answer = item.querySelector('.accordion-body').textContent.toLowerCase();
+            
+            if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

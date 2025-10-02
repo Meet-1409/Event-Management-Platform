@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Consultations - Manager Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-primary">
+                        <i class="fas fa-handshake me-2"></i>Client Consultations
+                    </h2>
+                    <p class="text-muted">Manage consultation requests and meetings</p>
+                </div>
+            </div>
+
+            <!-- Consultation Stats -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-warning">{{ pending_consultations|default:0 }}</h4>
+                            <small class="text-muted">Pending</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-info">{{ scheduled_consultations|default:0 }}</h4>
+                            <small class="text-muted">Scheduled</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-success">{{ completed_consultations|default:0 }}</h4>
+                            <small class="text-muted">Completed</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <h4 class="text-primary">{{ total_consultations|default:0 }}</h4>
+                            <small class="text-muted">Total</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consultations Table -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-check me-2"></i>Consultation Schedule
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Topic</th>
+                                    <th>Type</th>
+                                    <th>Requested Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for consultation in consultations %}
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <div class="fw-bold">{{ consultation.user.get_full_name }}</div>
+                                            <small class="text-muted">{{ consultation.user.email }}</small>
+                                        </div>
+                                    </td>
+                                    <td>{{ consultation.topic|truncatewords:5 }}</td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ consultation.get_consultation_type_display }}</span>
+                                    </td>
+                                    <td>{{ consultation.requested_date|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ consultation.status|default:'secondary' }}">
+                                            {{ consultation.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-success" onclick="scheduleConsultation({{ consultation.id }})">
+                                                <i class="fas fa-calendar-check"></i>
+                                            </button>
+                                            <a href="{% url 'communications:start_chat' consultation.user.id %}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-comment"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <i class="fas fa-handshake fa-3x text-muted mb-3"></i>
+                                        <div>No consultation requests</div>
+                                        <small class="text-muted">Clients will contact you for consultations</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function scheduleConsultation(id) {
+    // Placeholder for consultation scheduling
+    alert('Consultation scheduling feature - Contact client directly for now');
+}
+</script>
+{% endblock %}

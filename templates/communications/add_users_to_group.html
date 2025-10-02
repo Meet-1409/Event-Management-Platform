@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Add Users to Group | 360° Event Manager{% endblock %}
+{% block content %}
+<div class="page-container flex flex-center">
+  <div class="glass-card shadow" style="max-width:500px;width:100%;">
+    <h2 class="mb-2 text-center">Add Users to Group: {{ room.name }}</h2>
+    <div class="alert alert-info mb-2">Requests will be sent for higher-rank users and superadmin. Direct add for same or lower rank.</div>
+    <form method="post">{% csrf_token %}
+      <div class="form-group mb-2">
+        <label for="user_ids">Select users to add:</label>
+        <select name="user_ids" id="user_ids" class="form-control" multiple required style="min-height:120px;">
+          {% for user in available_users %}
+          <option value="{{ user.id }}">{{ user.get_full_name|default:user.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="flex gap-2 mt-2">
+        <button type="submit" class="btn btn-primary">Add to Group</button>
+        <a href="{% url 'communications:group_chat_room' room.id %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vendors - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .vendor-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .vendor-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .vendor-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .vendor-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .vendor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .vendor-image {
+        height: 200px;
+        object-fit: cover;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+    }
+    
+    .vendor-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255,255,255,0.9);
+        color: #667eea;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .service-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 10px;
+    }
+    
+    .service-tag {
+        background: #f8f9fa;
+        color: #667eea;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .filter-section {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+    
+    .filter-btn {
+        background: #f8f9fa;
+        border: 2px solid transparent;
+        color: #6c757d;
+        padding: 8px 16px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        margin: 5px;
+    }
+    
+    .filter-btn.active {
+        background: #667eea;
+        border-color: #667eea;
+        color: white;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="vendor-hero">
+    <div class="container">
+        <div class="row align-items-center vendor-hero-content">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="fas fa-handshake me-3"></i>
+                    Professional Vendors
+                </h1>
+                <p class="lead mb-4">
+                    Connect with trusted vendors for food, music, photography, and more. 
+                    Quality services for your perfect event.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#vendors" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-search me-2"></i>
+                        Find Vendors
+                    </a>
+                    <a href="#services" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-list me-2"></i>
+                        Services
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="position-relative">
+                    <i class="fas fa-users" style="font-size: 8rem; opacity: 0.3;"></i>
+                    <div class="position-absolute top-50 start-50 translate-middle">
+                        <i class="fas fa-handshake" style="font-size: 3rem; color: rgba(255,255,255,0.8);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">200+</div>
+                    <div class="stats-label">Verified Vendors</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">15+</div>
+                    <div class="stats-label">Service Categories</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">4.8★</div>
+                    <div class="stats-label">Average Rating</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">98%</div>
+                    <div class="stats-label">Satisfaction Rate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filters Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="filter-section">
+            <h4 class="mb-4">
+                <i class="fas fa-filter me-2 text-primary"></i>
+                Filter Vendors
+            </h4>
+            <form method="GET" action="{% url 'vendors:vendor_list' %}">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-semibold">Service Category</label>
+                        <select class="form-select" name="category" id="categoryFilter">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-semibold">Service Type</label>
+                        <select class="form-select" name="service" id="serviceFilter">
+                            <option value="">All Services</option>
+                            {% for service in services %}
+                            <option value="{{ service.id }}" {% if selected_service == service.id|stringformat:"s" %}selected{% endif %}>
+                                {{ service.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-semibold">Location</label>
+                        <select class="form-select" name="city" id="cityFilter">
+                            <option value="">All Cities</option>
+                            {% for city in cities %}
+                            <option value="{{ city }}" {% if selected_city == city %}selected{% endif %}>
+                                {{ city }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-semibold">Max Price</label>
+                        <select class="form-select" name="max_price" id="priceFilter">
+                            <option value="">Any Price</option>
+                            <option value="5000" {% if selected_max_price == "5000" %}selected{% endif %}>₹5,000</option>
+                            <option value="10000" {% if selected_max_price == "10000" %}selected{% endif %}>₹10,000</option>
+                            <option value="25000" {% if selected_max_price == "25000" %}selected{% endif %}>₹25,000</option>
+                            <option value="50000" {% if selected_max_price == "50000" %}selected{% endif %}>₹50,000</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label fw-semibold">Search Vendors</label>
+                        <input type="text" class="form-control" name="search" value="{{ search_query }}" 
+                               placeholder="Search by name, service, or location...">
+                    </div>
+                    <div class="col-md-4 mb-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Vendors Section -->
+<section class="py-5" id="vendors">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-3">
+                    <i class="fas fa-handshake me-2 text-primary"></i>
+                    Featured Vendors
+                </h2>
+                <p class="text-muted">Discover trusted vendors for your event needs</p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <a href="{% url 'vendors:vendor_list' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    Become a Vendor
+                </a>
+            </div>
+        </div>
+
+        {% if vendors %}
+        <div class="row">
+            {% for vendor in vendors %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card vendor-card h-100">
+                    <div class="position-relative">
+                        {% if vendor.image %}
+                        <img src="{{ vendor.image.url }}" class="card-img-top vendor-image" alt="{{ vendor.name }}">
+                        {% else %}
+                        <div class="vendor-image d-flex align-items-center justify-content-center">
+                            <i class="fas fa-handshake" style="font-size: 3rem; color: white;"></i>
+                        </div>
+                        {% endif %}
+                        <span class="vendor-badge">{{ vendor.category.name }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">{{ vendor.name }}</h5>
+                        <p class="card-text text-muted">
+                            {{ vendor.description|truncatewords:20 }}
+                        </p>
+                        <div class="service-tags">
+                            {% for service in vendor.vendor_services.all|slice:":3" %}
+                            <span class="service-tag">{{ service.name }}</span>
+                            {% endfor %}
+                            {% if vendor.vendor_services.count > 3 %}
+                            <span class="service-tag">+{{ vendor.vendor_services.count|add:"-3" }} more</span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <i class="fas fa-map-marker-alt text-primary me-1"></i>
+                                <small class="text-muted">{{ vendor.city }}</small>
+                            </div>
+                            <div>
+                                <i class="fas fa-star text-warning me-1"></i>
+                                <small class="text-muted">{{ vendor.average_rating|default:"New" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹{{ vendor.minimum_order|default:"Contact" }}</span>
+                            <a href="{% url 'vendors:vendor_detail' vendor.slug %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if vendors.has_other_pages %}
+        <nav aria-label="Vendor pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if vendors.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ vendors.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_service %}&service={{ selected_service }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_max_price %}&max_price={{ selected_max_price }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in vendors.paginator.page_range %}
+                    {% if vendors.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > vendors.number|add:'-3' and num < vendors.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_service %}&service={{ selected_service }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_max_price %}&max_price={{ selected_max_price }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if vendors.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ vendors.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_service %}&service={{ selected_service }}{% endif %}{% if selected_city %}&city={{ selected_city }}{% endif %}{% if selected_max_price %}&max_price={{ selected_max_price }}{% endif %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-search" style="font-size: 4rem; color: #dee2e6;"></i>
+            <h4 class="mt-3 text-muted">No vendors found</h4>
+            <p class="text-muted">Try adjusting your search criteria or browse all vendors.</p>
+            <a href="{% url 'vendors:vendor_list' %}" class="btn btn-primary">
+                <i class="fas fa-list me-2"></i>
+                View All Vendors
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit form when filters change
+    const filterSelects = document.querySelectorAll('#categoryFilter, #serviceFilter, #cityFilter, #priceFilter');
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
+});
+</script>
+{% endblock %} 

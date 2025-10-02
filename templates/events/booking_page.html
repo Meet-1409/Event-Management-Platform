@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}My Bookings | 360° Event Manager{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <h1 class="mb-4 text-center">My Event Bookings</h1>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if bookings %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Date</th>
+                                    <th>Venue</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Registered At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reg in bookings %}
+                                <tr>
+                                    <td><a href="/events/{{ reg.event.id }}/">{{ reg.event.title }}</a></td>
+                                    <td>{{ reg.event.start_date }}</td>
+                                    <td>{{ reg.event.venue.name }}, {{ reg.event.venue.city }}</td>
+                                    <td>{{ reg.name }}</td>
+                                    <td>{{ reg.email }}</td>
+                                    <td>{{ reg.phone }}</td>
+                                    <td>{{ reg.created_at|date:'Y-m-d H:i' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info text-center">You have no event bookings yet.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

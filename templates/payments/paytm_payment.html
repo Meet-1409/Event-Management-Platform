@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}Paytm Payment | 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-qrcode me-2"></i>Paytm QR Payment
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h5 class="text-primary">Payment Amount: ₹{{ payment.amount|floatformat:2 }}</h5>
+                        <p class="text-muted">Scan the QR code below with Paytm app to complete payment</p>
+                    </div>
+                    
+                    <!-- QR Code -->
+                    <div class="text-center mb-4">
+                        <div class="qr-code-container p-3 bg-light rounded">
+                            <img src="data:image/png;base64,{{ qr_code }}" alt="Paytm QR Code" class="img-fluid" style="max-width: 300px;">
+                        </div>
+                    </div>
+                    
+                    <!-- Timer -->
+                    <div class="text-center mb-4">
+                        <div class="timer-container">
+                            <h6 class="text-danger">Time Remaining:</h6>
+                            <div class="timer" id="payment-timer">
+                                <span id="minutes">02</span>:<span id="seconds">00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Instructions -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Payment Instructions:</h6>
+                        <ol class="mb-0">
+                            <li>Open Paytm app on your phone</li>
+                            <li>Tap on "Scan QR" or "Pay"</li>
+                            <li>Scan the QR code above</li>
+                            <li>Enter the amount: ₹{{ payment.amount|floatformat:2 }}</li>
+                            <li>Complete the payment</li>
+                            <li>Wait for confirmation from admin</li>
+                        </ol>
+                    </div>
+                    
+                    <!-- Payment Status -->
+                    <div class="payment-status text-center">
+                        <div class="status-indicator" id="payment-status">
+                            <i class="fas fa-clock text-warning"></i>
+                            <span class="ms-2">Waiting for payment...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Confirmation (for admin users) -->
+                    {% if user.user_type == 'admin' %}
+                    <div class="admin-controls mt-4 p-3 bg-light rounded">
+                        <h6 class="text-center mb-3">Admin Controls</h6>
+                        <div class="d-flex justify-content-center gap-3">
+                            <button class="btn btn-success" onclick="confirmPayment('received')">
+                                <i class="fas fa-check me-2"></i>Payment Received
+                            </button>
+                            <button class="btn btn-danger" onclick="confirmPayment('not_received')">
+                                <i class="fas fa-times me-2"></i>Payment Not Received
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timer {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #dc3545;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 2px solid #dc3545;
+}
+
+.qr-code-container {
+    border: 2px solid #dee2e6;
+    display: inline-block;
+}
+
+.payment-status {
+    margin-top: 2rem;
+}
+
+.status-indicator {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.admin-controls {
+    border: 1px solid #dee2e6;
+}
+</style>
+
+<script>
+let timeLeft = 120; // 2 minutes in seconds
+let timerInterval;
+
+function startTimer() {
+    timerInterval = setInterval(function() {
+        timeLeft--;
+        
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        
+        document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+        document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('payment-status').innerHTML = `
+                <i class="fas fa-times-circle text-danger"></i>
+                <span class="ms-2">Payment time expired</span>
+            `;
+            // Redirect to payment failed page
+            setTimeout(() => {
+                window.location.href = '/payments/cancel/';
+            }, 2000);
+        }
+    }, 1000);
+}
+
+function confirmPayment(action) {
+    const paymentId = {{ payment_id }};
+    
+    fetch(`/payments/paytm-confirmation/${paymentId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({
+            action: action
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (action === 'received') {
+                document.getElementById('payment-status').innerHTML = `
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span class="ms-2">Payment confirmed successfully!</span>
+                `;
+                // Redirect to success page
+                setTimeout(() => {
+                    window.location.href = '/payments/success/';
+                }, 2000);
+            } else {
+                document.getElementById('payment-status').innerHTML = `
+                    <i class="fas fa-times-circle text-danger"></i>
+                    <span class="ms-2">Payment marked as not received</span>
+                `;
+                // Redirect to failed page
+                setTimeout(() => {
+                    window.location.href = '/payments/cancel/';
+                }, 2000);
+            }
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while confirming payment');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Start timer when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    startTimer();
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Manager Specializations - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="display-6 fw-bold text-primary mb-4">
+                <i class="fas fa-star me-2"></i>Manager Specializations
+            </h2>
+            <p class="text-muted mb-4">Explore different areas of expertise offered by our event managers</p>
+
+            {% if specializations %}
+                <div class="row g-4">
+                    {% for spec in specializations %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4 text-center">
+                                <div class="specialization-icon mb-3">
+                                    <i class="fas fa-award fa-2x text-primary"></i>
+                                </div>
+                                <h5 class="card-title">{{ spec.name }}</h5>
+                                <p class="text-muted mb-3">
+                                    {{ spec.count }} manager{{ spec.count|pluralize }} specialized in this area
+                                </p>
+                                <a href="{% url 'managers:manager_list' %}?specialization={{ spec.name }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-search me-1"></i>Find Managers
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                    <h4>No Specializations Available</h4>
+                    <p class="text-muted">Manager specialization data will be available soon.</p>
+                    <a href="{% url 'managers:manager_list' %}" class="btn btn-primary">
+                        <i class="fas fa-users me-1"></i>View All Managers
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,480 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard | 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+    
+    .recent-activity {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .activity-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+    }
+    
+    .quick-actions {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .action-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-tachometer-alt me-2 text-primary"></i>
+                        Admin Dashboard
+                    </h1>
+                    <p class="text-muted">Welcome back, {{ user.get_full_name }}!</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="exportReport()">
+                        <i class="fas fa-download me-2"></i>Export Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="stats-number">{{ total_users }}</div>
+                <div class="stats-label">Total Users</div>
+                <small class="opacity-75">+{{ new_users_this_month }} this month</small>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="stats-number">{{ total_events }}</div>
+                <div class="stats-label">Total Events</div>
+                <small class="opacity-75">{{ upcoming_events }} upcoming</small>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="stats-number">{{ total_venues }}</div>
+                <div class="stats-label">Total Venues</div>
+                <small class="opacity-75">{{ available_venues }} available</small>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                <div class="stats-number">{{ total_managers }}</div>
+                <div class="stats-label">Event Managers</div>
+                <small class="opacity-75">{{ verified_managers }} verified</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-xl-8 col-lg-7">
+            <div class="chart-container">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-chart-line me-2 text-primary"></i>
+                    Revenue Analytics
+                </h5>
+                <canvas id="revenueChart" height="100"></canvas>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-5">
+            <div class="chart-container">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-chart-pie me-2 text-primary"></i>
+                    Event Categories
+                </h5>
+                <canvas id="categoryChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="row mb-4">
+        <div class="col-xl-6 col-lg-6">
+            <div class="chart-container">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-chart-bar me-2 text-primary"></i>
+                    Monthly Events
+                </h5>
+                <canvas id="monthlyEventsChart" height="100"></canvas>
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-6">
+            <div class="chart-container">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-users me-2 text-primary"></i>
+                    User Growth
+                </h5>
+                <canvas id="userGrowthChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Third Row -->
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="recent-activity">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-clock me-2 text-primary"></i>
+                    Recent Activity
+                </h5>
+                <div class="activity-list">
+                    <div class="activity-item d-flex align-items-center">
+                        <div class="activity-icon bg-success text-white">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">New user registered</h6>
+                            <p class="text-muted mb-0">John Doe registered as an event manager</p>
+                            <small class="text-muted">2 minutes ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex align-items-center">
+                        <div class="activity-icon bg-primary text-white">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">New event created</h6>
+                            <p class="text-muted mb-0">Tech Conference 2024 was created</p>
+                            <small class="text-muted">15 minutes ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex align-items-center">
+                        <div class="activity-icon bg-warning text-white">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">Payment received</h6>
+                            <p class="text-muted mb-0">₹15,000 payment for Wedding Event</p>
+                            <small class="text-muted">1 hour ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex align-items-center">
+                        <div class="activity-icon bg-info text-white">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">New venue added</h6>
+                            <p class="text-muted mb-0">Grand Hotel was added to venues</p>
+                            <small class="text-muted">2 hours ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-5">
+            <div class="quick-actions">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-bolt me-2 text-primary"></i>
+                    Quick Actions
+                </h5>
+                <a href="{% url 'admin:index' %}" class="action-btn btn-primary">
+                    <i class="fas fa-cog me-2"></i>
+                    Admin Panel
+                </a>
+                <a href="{% url 'events:add_event' %}" class="action-btn btn-success">
+                    <i class="fas fa-plus me-2"></i>
+                    Create Event
+                </a>
+                <a href="{% url 'venues:venue_list' %}" class="action-btn btn-info">
+                    <i class="fas fa-building me-2"></i>
+                    Manage Venues
+                </a>
+                <a href="{% url 'users:admin_dashboard' %}" class="action-btn btn-warning">
+                    <i class="fas fa-users me-2"></i>
+                    User Management
+                </a>
+                <a href="{% url 'payments:payment_list' %}" class="action-btn btn-secondary">
+                    <i class="fas fa-credit-card me-2"></i>
+                    Payment Reports
+                </a>
+                <a href="/analytics/export/" target="_blank" class="action-btn btn-dark">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Generate Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+// Revenue Chart
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+const revenueChart = new Chart(revenueCtx, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+            label: 'Revenue (₹)',
+            data: [120000, 150000, 180000, 220000, 250000, 280000],
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '₹' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Category Chart
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+const categoryChart = new Chart(categoryCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Weddings', 'Corporate', 'Birthdays', 'Conferences', 'Others'],
+        datasets: [{
+            data: [35, 25, 20, 15, 5],
+            backgroundColor: [
+                '#667eea',
+                '#f093fb',
+                '#4facfe',
+                '#43e97b',
+                '#ffecd2'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Load real-time data
+function loadDashboardData() {
+    fetch('/analytics/api/dashboard-data/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateDashboardMetrics(data.data);
+                updateCharts(data.data);
+            }
+        })
+        .catch(error => console.error('Error loading dashboard data:', error));
+}
+
+function updateDashboardMetrics(data) {
+    // Update metric cards with real data
+    document.getElementById('totalUsers').textContent = data.users.total;
+    document.getElementById('totalEvents').textContent = data.events.total;
+    document.getElementById('totalRevenue').textContent = '₹' + data.revenue.total.toLocaleString();
+    document.getElementById('totalBookings').textContent = data.bookings.total;
+}
+
+function updateCharts(data) {
+    // Monthly Events Chart
+    const monthlyCtx = document.getElementById('monthlyEventsChart').getContext('2d');
+    if (window.monthlyChart) {
+        window.monthlyChart.destroy();
+    }
+    
+    window.monthlyChart = new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: data.events.monthly_data.labels,
+            datasets: [{
+                label: 'Events',
+                data: data.events.monthly_data.data,
+                backgroundColor: '#4facfe'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // User Growth Chart
+    const userCtx = document.getElementById('userGrowthChart').getContext('2d');
+    if (window.userChart) {
+        window.userChart.destroy();
+    }
+    
+    // Generate user growth data based on total users
+    const userGrowthData = generateUserGrowthData(data.users.total);
+    
+    window.userChart = new Chart(userCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Users',
+                data: userGrowthData,
+                borderColor: '#43e97b',
+                backgroundColor: 'rgba(67, 233, 123, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function generateUserGrowthData(totalUsers) {
+    // Generate realistic user growth data
+    const baseGrowth = totalUsers * 0.2;
+    return [
+        Math.round(baseGrowth * 0.3),
+        Math.round(baseGrowth * 0.4),
+        Math.round(baseGrowth * 0.6),
+        Math.round(baseGrowth * 0.8),
+        Math.round(baseGrowth * 0.9),
+        totalUsers
+    ];
+}
+
+// Load data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardData();
+});
+
+// Functions
+function refreshData() {
+    loadDashboardData();
+}
+
+function exportReport() {
+    window.open('/analytics/export/', '_blank');
+}
+
+function generateReport() {
+    // Redirect to analytics export
+    window.open('/analytics/export/', '_blank');
+}
+
+// Auto-refresh data every 5 minutes
+setInterval(function() {
+    loadDashboardData();
+    console.log('Refreshing dashboard data...');
+}, 300000);
+</script>
+{% endblock %} 

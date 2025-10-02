@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ vendor.name }} - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .vendor-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        position: relative;
+    }
+    
+    .vendor-image {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .service-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .review-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .review-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+    
+    .rating-stars {
+        color: #ffc107;
+    }
+    
+    .contact-info {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+    }
+    
+    .price-card {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+    }
+    
+    .gallery-item {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="vendor-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'vendors:vendor_list' %}" class="text-dark">Vendors</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'vendors:vendor_list' %}" class="text-dark">{{ vendor.category.name }}</a></li>
+                        <li class="breadcrumb-item active text-dark" aria-current="page">{{ vendor.name }}</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-3">{{ vendor.name }}</h1>
+                <p class="lead mb-4">{{ vendor.description }}</p>
+                <div class="d-flex gap-3 mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span>{{ vendor.city }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        <span>{{ vendor.average_rating|default:"New" }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-handshake me-2"></i>
+                        <span>{{ vendor.category.name }}</span>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <a href="#contact" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-phone me-2"></i>
+                        Contact Vendor
+                    </a>
+                    <a href="#services" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-list me-2"></i>
+                        View Services
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                {% if vendor.image %}
+                <img src="{{ vendor.image.url }}" alt="{{ vendor.name }}" class="img-fluid vendor-image">
+                {% else %}
+                <div class="vendor-image bg-white p-5">
+                    <i class="fas fa-handshake" style="font-size: 4rem; color: #667eea;"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5" id="services">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-3">
+                    <i class="fas fa-list me-2 text-primary"></i>
+                    Services Offered
+                </h2>
+                <p class="text-muted">Professional services tailored to your event needs</p>
+            </div>
+        </div>
+
+        {% if services %}
+        <div class="row">
+            {% for service in services %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card service-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-check-circle text-success me-3" style="font-size: 1.5rem;"></i>
+                            <h5 class="card-title mb-0">{{ service.name }}</h5>
+                        </div>
+                        <p class="card-text text-muted">{{ service.description|default:"Professional service with attention to detail." }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹{{ service.price|default:"Contact" }}</span>
+                            <span class="badge bg-success">{{ service.duration|default:"Flexible" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-list" style="font-size: 4rem; color: #dee2e6;"></i>
+            <h4 class="mt-3 text-muted">No services listed</h4>
+            <p class="text-muted">Contact the vendor for available services.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h3 class="fw-bold mb-4">About {{ vendor.name }}</h3>
+                <p class="text-muted mb-4">{{ vendor.description|default:"This vendor provides professional services with years of experience in the industry. They are committed to delivering high-quality results for your special events." }}</p>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-award text-primary me-2"></i>
+                            Experience
+                        </h5>
+                        <p class="text-muted">{{ vendor.experience_years|default:"5+" }} years of professional experience</p>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-calendar-check text-primary me-2"></i>
+                            Availability
+                        </h5>
+                        <p class="text-muted">{{ vendor.availability|default:"Flexible scheduling available" }}</p>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            Service Area
+                        </h5>
+                        <p class="text-muted">{{ vendor.service_area|default:"Ahmedabad and surrounding areas" }}</p>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-shield-alt text-primary me-2"></i>
+                            Insurance
+                        </h5>
+                        <p class="text-muted">{{ vendor.insurance_status|default:"Fully insured" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="contact-info">
+                    <h5 class="fw-bold mb-4">
+                        <i class="fas fa-phone me-2 text-primary"></i>
+                        Contact Information
+                    </h5>
+                    <div class="mb-3">
+                        <strong>Phone:</strong><br>
+                        <a href="tel:{{ vendor.phone|default:'+91-XXXXXXXXXX' }}" class="text-decoration-none">
+                            {{ vendor.phone|default:"+91-XXXXXXXXXX" }}
+                        </a>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Email:</strong><br>
+                        <a href="mailto:{{ vendor.email|default:'contact@vendor.com' }}" class="text-decoration-none">
+                            {{ vendor.email|default:"contact@vendor.com" }}
+                        </a>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Website:</strong><br>
+                        <a href="{{ vendor.website|default:'#' }}" class="text-decoration-none" target="_blank">
+                            {{ vendor.website|default:"Visit Website" }}
+                        </a>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Address:</strong><br>
+                        <span class="text-muted">{{ vendor.address|default:"Ahmedabad, Gujarat" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-3">
+                    <i class="fas fa-tags me-2 text-primary"></i>
+                    Pricing & Packages
+                </h2>
+                <p class="text-muted">Transparent pricing for quality services</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="price-card">
+                    <h4 class="fw-bold mb-3">Basic Package</h4>
+                    <div class="display-6 fw-bold mb-3">₹{{ vendor.base_price|default:"5,000" }}</div>
+                    <p class="mb-4">Essential services for small events</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Basic setup</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Standard equipment</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>4-hour service</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-light btn-lg w-100">Get Quote</a>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="price-card">
+                    <h4 class="fw-bold mb-3">Premium Package</h4>
+                    <div class="display-6 fw-bold mb-3">₹{{ vendor.premium_price|default:"15,000" }}</div>
+                    <p class="mb-4">Enhanced services for medium events</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Premium setup</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Advanced equipment</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>8-hour service</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Additional staff</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-light btn-lg w-100">Get Quote</a>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="price-card">
+                    <h4 class="fw-bold mb-3">Luxury Package</h4>
+                    <div class="display-6 fw-bold mb-3">₹{{ vendor.luxury_price|default:"25,000" }}</div>
+                    <p class="mb-4">Full-service for large events</p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Luxury setup</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Premium equipment</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>12-hour service</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Full staff</li>
+                        <li class="mb-2"><i class="fas fa-check me-2"></i>Custom options</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-light btn-lg w-100">Get Quote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reviews Section -->
+{% if reviews %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-3">
+                    <i class="fas fa-star me-2 text-primary"></i>
+                    Customer Reviews
+                </h2>
+                <p class="text-muted">What our clients say about {{ vendor.name }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for review in reviews %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card review-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle bg-primary text-dark d-flex align-items-center justify-content-center" 
+                                     style="width: 50px; height: 50px;">
+                                    {{ review.user.first_name|first|upper|default:"U" }}
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">{{ review.user.get_full_name|default:"Anonymous" }}</h6>
+                                <div class="rating-stars">
+                                    {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                    <i class="fas fa-star"></i>
+                                    {% else %}
+                                    <i class="far fa-star"></i>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <p class="card-text">{{ review.comment|truncatewords:30 }}</p>
+                        <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Contact Section -->
+<section class="py-5" id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-4">
+                    <i class="fas fa-envelope me-2 text-primary"></i>
+                    Contact {{ vendor.name }}
+                </h2>
+                <p class="text-muted mb-4">Get in touch to discuss your event requirements and get a personalized quote.</p>
+                
+                <form method="POST" action="#">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Your Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Phone</label>
+                            <input type="tel" class="form-control" name="phone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Event Date</label>
+                            <input type="date" class="form-control" name="event_date">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Service Required</label>
+                        <select class="form-select" name="service">
+                            <option value="">Select a service</option>
+                            {% for service in services %}
+                            <option value="{{ service.id }}">{{ service.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Message</label>
+                        <textarea class="form-control" name="message" rows="5" 
+                                  placeholder="Tell us about your event requirements..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Send Message
+                    </button>
+                </form>
+            </div>
+            <div class="col-lg-4">
+                <div class="contact-info">
+                    <h5 class="fw-bold mb-4">Quick Contact</h5>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">
+                            <i class="fas fa-phone text-primary me-2"></i>
+                            Call Now
+                        </h6>
+                        <a href="tel:{{ vendor.phone|default:'+91-XXXXXXXXXX' }}" class="text-decoration-none">
+                            {{ vendor.phone|default:"+91-XXXXXXXXXX" }}
+                        </a>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">
+                            <i class="fas fa-envelope text-primary me-2"></i>
+                            Email
+                        </h6>
+                        <a href="mailto:{{ vendor.email|default:'contact@vendor.com' }}" class="text-decoration-none">
+                            {{ vendor.email|default:"contact@vendor.com" }}
+                        </a>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">
+                            <i class="fas fa-clock text-primary me-2"></i>
+                            Response Time
+                        </h6>
+                        <span class="text-muted">Within 2 hours</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

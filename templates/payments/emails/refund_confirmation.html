@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Refund Confirmation</title></head>
+<body style="font-family: Arial, sans-serif;">
+    <h2>Refund Processed</h2>
+    <p>Dear {{ user.get_full_name|default:user.email }},</p>
+    <p>Your refund has been processed for {{ event.title|default:"Event Booking" }}</p>
+    <p><strong>Refund Amount:</strong> ₹{{ refund.amount }}</p>
+    <p><strong>Refund ID:</strong> {{ refund.refund_id }}</p>
+    <p>The amount will be credited to your account within 5-7 business days.</p>
+</body>
+</html>

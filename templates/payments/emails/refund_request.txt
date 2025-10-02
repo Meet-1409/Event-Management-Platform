@@ -1,0 +1,30 @@
+Refund Request Notification - Admin Alert
+
+A new refund request has been submitted and requires review:
+
+User Information:
+- Name: {{ user.get_full_name }}
+- Email: {{ user.email }}
+- Phone: {{ user.phone_number|default:"Not provided" }}
+
+Event Information:
+- Event: {{ event.title }}
+- Event Date: {{ event.start_date|date:"F d, Y" }}
+- Venue: {{ event.venue.name|default:"TBD" }}
+
+Refund Details:
+- Original Payment: {{ payment.payment_id }}
+- Original Amount: ₹{{ payment.amount }}
+- Refund Amount: ₹{{ refund.amount }}
+- Refund ID: {{ refund.refund_id }}
+- Reason: {{ refund.reason }}
+- Request Date: {{ refund.created_at|date:"F d, Y H:i" }}
+
+Payment Method: {{ payment.payment_method }}
+Transaction ID: {{ payment.transaction_id|default:"N/A" }}
+
+Please review this refund request and process accordingly through the admin panel.
+
+Admin Panel: /admin/payments/refund/{{ refund.id }}/change/
+
+This is an automated notification from 360° Event Manager.

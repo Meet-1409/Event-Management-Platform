@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics & Reports - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="display-6 fw-bold text-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Analytics & Reports
+                    </h2>
+                    <p class="text-muted">Comprehensive platform analytics and reporting</p>
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'analytics:dashboard' %}" class="btn btn-primary">
+                        <i class="fas fa-chart-line me-1"></i>Full Analytics
+                    </a>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-download me-1"></i>Export Reports
+                    </button>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="text-primary">{{ platform_stats.total_users|default:0 }}</h3>
+                            <p class="text-muted mb-0">Total Users</p>
+                            <small class="text-success">+{{ platform_stats.new_users_this_month|default:0 }} this month</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="text-success">₹{{ platform_stats.total_revenue|default:0 }}</h3>
+                            <p class="text-muted mb-0">Total Revenue</p>
+                            <small class="text-success">+{{ platform_stats.revenue_growth|default:0 }}% growth</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="text-info">{{ platform_stats.total_events|default:0 }}</h3>
+                            <p class="text-muted mb-0">Events Hosted</p>
+                            <small class="text-info">{{ platform_stats.events_this_month|default:0 }} this month</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <h3 class="text-warning">{{ platform_stats.satisfaction_rate|default:95 }}%</h3>
+                            <p class="text-muted mb-0">Satisfaction Rate</p>
+                            <small class="text-warning">Based on reviews</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Recent Activity -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fas fa-activity me-2"></i>Recent Platform Activity
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-feed">
+                                {% for activity in recent_activities %}
+                                <div class="activity-item d-flex align-items-start mb-3">
+                                    <div class="activity-icon bg-{{ activity.type|default:'primary' }} text-dark rounded-circle me-3">
+                                        <i class="fas fa-{{ activity.icon|default:'bell' }}"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold">{{ activity.title|default:"Platform Activity" }}</div>
+                                        <small class="text-muted">{{ activity.description|default:"System activity logged" }}</small>
+                                        <div class="small text-muted mt-1">{{ activity.created_at|default:activity.timestamp|date:"M d, Y H:i" }}</div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-chart-line fa-2x text-muted mb-2"></i>
+                                    <div>No recent activity</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Quick Reports -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-bottom">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-alt me-2"></i>Quick Reports
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary">
+                                    <i class="fas fa-users me-2"></i>User Registration Report
+                                </button>
+                                <button class="btn btn-outline-success">
+                                    <i class="fas fa-calendar me-2"></i>Event Performance Report
+                                </button>
+                                <button class="btn btn-outline-info">
+                                    <i class="fas fa-money-bill me-2"></i>Revenue Analysis
+                                </button>
+                                <button class="btn btn-outline-warning">
+                                    <i class="fas fa-building me-2"></i>Venue Utilization
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fas fa-star me-2"></i>Customer Satisfaction
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.activity-icon {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}

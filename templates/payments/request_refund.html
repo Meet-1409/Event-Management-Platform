@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Request Refund - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .refund-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .payment-summary {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+    
+    .refund-form {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .amount-slider {
+        width: 100%;
+        margin: 20px 0;
+    }
+    
+    .amount-display {
+        background: #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        margin: 15px 0;
+    }
+    
+    .reason-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    
+    .reason-option {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .reason-option:hover {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+    }
+    
+    .reason-option.selected {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+    }
+    
+    .reason-option input[type="radio"] {
+        display: none;
+    }
+    
+    .reason-option i {
+        font-size: 1.5rem;
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="refund-container">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="fw-bold mb-3">
+                <i class="fas fa-undo me-3 text-primary"></i>
+                Request Refund
+            </h1>
+            <p class="text-muted">Submit a refund request for your payment</p>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="payment-summary">
+            <h5 class="fw-bold mb-3">Payment Details</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Payment ID:</strong> {{ payment.payment_id }}</p>
+                    <p><strong>Event:</strong> {{ payment.invoice.event.title }}</p>
+                    <p><strong>Payment Method:</strong> {{ payment.payment_method.name }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Amount:</strong> ₹{{ payment.amount|floatformat:2 }}</p>
+                    <p><strong>Date:</strong> {{ payment.created_at|date:"M d, Y" }}</p>
+                    <p><strong>Status:</strong> 
+                        <span class="badge bg-success">{{ payment.status|title }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Refund Form -->
+        <div class="refund-form">
+            <form method="post" id="refundForm">
+                {% csrf_token %}
+                
+                <!-- Refund Amount -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Refund Amount</label>
+                    <div class="amount-display">
+                        <h4 class="mb-0" id="refundAmountDisplay">₹{{ payment.amount|floatformat:2 }}</h4>
+                        <small class="text-muted">Maximum refundable amount</small>
+                    </div>
+                    <input type="range" 
+                           class="amount-slider" 
+                           id="refundAmountSlider" 
+                           min="0" 
+                           max="{{ payment.amount }}" 
+                           step="0.01" 
+                           value="{{ payment.amount }}"
+                           name="amount">
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">₹0</small>
+                        <small class="text-muted">₹{{ payment.amount|floatformat:2 }}</small>
+                    </div>
+                </div>
+
+                <!-- Refund Reason -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Reason for Refund</label>
+                    <div class="reason-options">
+                        <div class="reason-option" data-reason="Event cancelled">
+                            <input type="radio" name="reason" value="Event cancelled" id="reason1">
+                            <i class="fas fa-calendar-times"></i>
+                            <div>Event Cancelled</div>
+                        </div>
+                        <div class="reason-option" data-reason="Change of plans">
+                            <input type="radio" name="reason" value="Change of plans" id="reason2">
+                            <i class="fas fa-calendar-minus"></i>
+                            <div>Change of Plans</div>
+                        </div>
+                        <div class="reason-option" data-reason="Double payment">
+                            <input type="radio" name="reason" value="Double payment" id="reason3">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>Double Payment</div>
+                        </div>
+                        <div class="reason-option" data-reason="Service not as expected">
+                            <input type="radio" name="reason" value="Service not as expected" id="reason4">
+                            <i class="fas fa-thumbs-down"></i>
+                            <div>Service Issues</div>
+                        </div>
+                        <div class="reason-option" data-reason="Technical error">
+                            <input type="radio" name="reason" value="Technical error" id="reason5">
+                            <i class="fas fa-bug"></i>
+                            <div>Technical Error</div>
+                        </div>
+                        <div class="reason-option" data-reason="Other">
+                            <input type="radio" name="reason" value="Other" id="reason6">
+                            <i class="fas fa-ellipsis-h"></i>
+                            <div>Other</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Reason -->
+                <div class="mb-4" id="customReasonDiv" style="display: none;">
+                    <label class="form-label fw-semibold">Please specify the reason</label>
+                    <textarea class="form-control" 
+                              name="custom_reason" 
+                              rows="3" 
+                              placeholder="Please provide details about your refund request..."></textarea>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Additional Information (Optional)</label>
+                    <textarea class="form-control" 
+                              name="additional_info" 
+                              rows="3" 
+                              placeholder="Any additional information that might help us process your refund..."></textarea>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="mb-4">
+                    <h6 class="fw-semibold mb-3">Contact Information</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" class="form-control" value="{{ user.phone_number|default:'Not provided' }}" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                        <label class="form-check-label" for="agreeTerms">
+                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#refundTermsModal">refund terms and conditions</a>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-primary btn-lg flex-fill" id="submitBtn">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Submit Refund Request
+                    </button>
+                    <a href="{% url 'payments:payment_list' %}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Refund Terms Modal -->
+<div class="modal fade" id="refundTermsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Refund Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Refund Policy</h6>
+                <ul>
+                    <li>Refunds are processed within 5-7 business days</li>
+                    <li>Processing fees may be deducted from the refund amount</li>
+                    <li>Refunds are processed to the original payment method</li>
+                    <li>Event cancellations due to force majeure are fully refundable</li>
+                    <li>Refunds for change of plans may incur cancellation fees</li>
+                </ul>
+                
+                <h6>Processing Time</h6>
+                <ul>
+                    <li>Credit/Debit Cards: 5-7 business days</li>
+                    <li>Bank Transfers: 7-10 business days</li>
+                    <li>UPI Payments: 3-5 business days</li>
+                </ul>
+                
+                <h6>Contact Information</h6>
+                <p>For any questions about refunds, please contact our support team:</p>
+                <ul>
+                    <li>Email: support@360eventmanager.com</li>
+                    <li>Phone: +91 98765 43210</li>
+                    <li>Hours: Monday - Saturday, 9:00 AM - 6:00 PM</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const refundAmountSlider = document.getElementById('refundAmountSlider');
+    const refundAmountDisplay = document.getElementById('refundAmountDisplay');
+    const reasonOptions = document.querySelectorAll('.reason-option');
+    const customReasonDiv = document.getElementById('customReasonDiv');
+    const customReasonInput = document.querySelector('input[name="custom_reason"]');
+    const refundForm = document.getElementById('refundForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Update refund amount display
+    refundAmountSlider.addEventListener('input', function() {
+        const amount = parseFloat(this.value);
+        refundAmountDisplay.textContent = `₹${amount.toFixed(2)}`;
+    });
+    
+    // Handle reason selection
+    reasonOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            reasonOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Check the radio button
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Show/hide custom reason field
+            if (radio.value === 'Other') {
+                customReasonDiv.style.display = 'block';
+                customReasonInput.required = true;
+            } else {
+                customReasonDiv.style.display = 'none';
+                customReasonInput.required = false;
+            }
+        });
+    });
+    
+    // Form submission
+    refundForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate form
+        const amount = parseFloat(refundAmountSlider.value);
+        const reason = document.querySelector('input[name="reason"]:checked');
+        const agreeTerms = document.getElementById('agreeTerms').checked;
+        
+        if (!reason) {
+            alert('Please select a reason for the refund.');
+            return;
+        }
+        
+        if (reason.value === 'Other' && !customReasonInput.value.trim()) {
+            alert('Please specify the custom reason.');
+            return;
+        }
+        
+        if (!agreeTerms) {
+            alert('Please agree to the terms and conditions.');
+            return;
+        }
+        
+        if (amount <= 0) {
+            alert('Refund amount must be greater than 0.');
+            return;
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        
+        // Submit form
+        this.submit();
+    });
+    
+    // Auto-select first reason option
+    if (reasonOptions.length > 0) {
+        reasonOptions[0].click();
+    }
+});
+</script>
+{% endblock %} 

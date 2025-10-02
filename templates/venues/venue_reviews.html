@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reviews - {{ venue.name }} - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reviews-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .reviews-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        margin: 30px 0;
+    }
+    
+    .review-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .review-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        border-color: #667eea;
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+    
+    .reviewer-info {
+        flex: 1;
+    }
+    
+    .reviewer-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .review-date {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .review-rating {
+        display: flex;
+        align-items: center;
+    }
+    
+    .rating-stars {
+        color: #ffc107;
+        font-size: 1.1rem;
+        margin-right: 10px;
+    }
+    
+    .review-content {
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    
+    .review-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .review-helpful {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .helpful-btn {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 0.9rem;
+        color: #6c757d;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .helpful-btn:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+    
+    .review-stats {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-weight: 600;
+    }
+    
+    .rating-breakdown {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .rating-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .rating-label {
+        width: 80px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .rating-progress {
+        flex: 1;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        margin: 0 15px;
+        overflow: hidden;
+    }
+    
+    .rating-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+    
+    .rating-count {
+        width: 50px;
+        text-align: right;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .write-review-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 15px 30px;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .write-review-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="reviews-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-star me-3"></i>Venue Reviews
+                </h1>
+                <p class="lead mb-4">See what others are saying about {{ venue.name }}</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'venues:venue_detail' venue.id %}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Venue
+                    </a>
+                    <button class="write-review-btn">
+                        <i class="fas fa-edit me-2"></i>Write a Review
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-star" style="font-size: 6rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Review Stats -->
+<section class="py-5">
+    <div class="container">
+        <div class="review-stats">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ venue.average_rating|floatformat:1 }}</div>
+                        <div class="stat-label">Average Rating</div>
+                        <div class="rating-stars mt-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= venue.average_rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ venue.reviews.count }}</div>
+                        <div class="stat-label">Total Reviews</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ venue.reviews.count|add:"1" }}</div>
+                        <div class="stat-label">Events Hosted</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Recommendation Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Rating Breakdown -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="rating-breakdown">
+            <h3 class="fw-bold mb-4">
+                <i class="fas fa-chart-bar me-2 text-primary"></i>Rating Breakdown
+            </h3>
+            <div class="rating-bar">
+                <div class="rating-label">5 Stars</div>
+                <div class="rating-progress">
+                    <div class="rating-fill" style="width: 75%"></div>
+                </div>
+                <div class="rating-count">75%</div>
+            </div>
+            <div class="rating-bar">
+                <div class="rating-label">4 Stars</div>
+                <div class="rating-progress">
+                    <div class="rating-fill" style="width: 15%"></div>
+                </div>
+                <div class="rating-count">15%</div>
+            </div>
+            <div class="rating-bar">
+                <div class="rating-label">3 Stars</div>
+                <div class="rating-progress">
+                    <div class="rating-fill" style="width: 7%"></div>
+                </div>
+                <div class="rating-count">7%</div>
+            </div>
+            <div class="rating-bar">
+                <div class="rating-label">2 Stars</div>
+                <div class="rating-progress">
+                    <div class="rating-fill" style="width: 2%"></div>
+                </div>
+                <div class="rating-count">2%</div>
+            </div>
+            <div class="rating-bar">
+                <div class="rating-label">1 Star</div>
+                <div class="rating-progress">
+                    <div class="rating-fill" style="width: 1%"></div>
+                </div>
+                <div class="rating-count">1%</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reviews List -->
+<section class="py-5">
+    <div class="container">
+        <div class="reviews-container">
+            <h3 class="fw-bold mb-4">
+                <i class="fas fa-comments me-2 text-primary"></i>All Reviews
+            </h3>
+            
+            {% for review in venue.reviews.all %}
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-name">{{ review.user.get_full_name }}</div>
+                        <div class="review-date">{{ review.created_at|date:"F d, Y" }}</div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="rating-stars">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="badge bg-primary">{{ review.rating }}/5</span>
+                    </div>
+                </div>
+                
+                <div class="review-content">
+                    <h5 class="fw-bold mb-2">{{ review.title }}</h5>
+                    <p>{{ review.comment }}</p>
+                </div>
+                
+                <div class="review-footer">
+                    <div class="review-helpful">
+                        <button class="helpful-btn">
+                            <i class="fas fa-thumbs-up me-1"></i>Helpful (12)
+                        </button>
+                        <button class="helpful-btn">
+                            <i class="fas fa-thumbs-down me-1"></i>Not Helpful (2)
+                        </button>
+                    </div>
+                    <div class="review-actions">
+                        <button class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-reply me-1"></i>Reply
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-5">
+                <i class="fas fa-star fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No Reviews Yet</h4>
+                <p class="text-muted">Be the first to review this venue!</p>
+                <button class="write-review-btn">
+                    <i class="fas fa-edit me-2"></i>Write the First Review
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %} 

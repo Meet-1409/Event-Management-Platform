@@ -1,0 +1,764 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Movie Events - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .movie-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #000000;
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .movie-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="movie" width="30" height="30" patternUnits="userSpaceOnUse"><rect x="0" y="0" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23movie)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .movie-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .event-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .event-image {
+        height: 200px;
+        object-fit: cover;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+    }
+    
+    .event-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255,255,255,0.9);
+        color: #667eea;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .movie-genre {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 10px;
+    }
+    
+    .genre-tag {
+        background: #f8f9fa;
+        color: #667eea;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .filter-section {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+    
+    .filter-btn {
+        background: #f8f9fa;
+        border: 2px solid transparent;
+        color: #6c757d;
+        padding: 8px 16px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        margin: 5px;
+    }
+    
+    .filter-btn.active {
+        background: #667eea;
+        border-color: #667eea;
+        color: #000000;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #000000;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .rating {
+        color: #ffc107;
+        font-size: 0.9rem;
+    }
+    
+    .movie-poster {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="movie-hero">
+    <div class="container">
+        <div class="row align-items-center movie-hero-content">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="fas fa-film me-3"></i>
+                    Movie Events
+                </h1>
+                <p class="lead mb-4">
+                    Experience the magic of cinema with our curated movie events. 
+                    From premieres to film festivals, discover amazing stories on the big screen.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#events" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Browse Events
+                    </a>
+                    <a href="#upcoming" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-star me-2"></i>
+                        Upcoming Releases
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="position-relative">
+                    <i class="fas fa-film" style="font-size: 8rem; opacity: 0.3;"></i>
+                    <div class="position-absolute top-50 start-50 translate-middle">
+                        <i class="fas fa-play" style="font-size: 3rem; color: rgba(255,255,255,0.8);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">80+</div>
+                    <div class="stats-label">Movie Events</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">4K</div>
+                    <div class="stats-label">Movie Buffs</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">15+</div>
+                    <div class="stats-label">Cinemas</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number">97%</div>
+                    <div class="stats-label">Satisfaction Rate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filters Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="filter-section">
+            <h4 class="mb-4">
+                <i class="fas fa-filter me-2 text-primary"></i>
+                Filter Events
+            </h4>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-semibold">Event Type</label>
+                    <select class="form-select" id="eventTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="premiere">Movie Premiere</option>
+                        <option value="screening">Special Screening</option>
+                        <option value="festival">Film Festival</option>
+                        <option value="marathon">Movie Marathon</option>
+                        <option value="discussion">Film Discussion</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-semibold">Genre</label>
+                    <select class="form-select" id="genreFilter">
+                        <option value="">All Genres</option>
+                        <option value="action">Action</option>
+                        <option value="comedy">Comedy</option>
+                        <option value="drama">Drama</option>
+                        <option value="horror">Horror</option>
+                        <option value="sci-fi">Sci-Fi</option>
+                        <option value="romance">Romance</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-semibold">Language</label>
+                    <select class="form-select" id="languageFilter">
+                        <option value="">All Languages</option>
+                        <option value="english">English</option>
+                        <option value="hindi">Hindi</option>
+                        <option value="gujarati">Gujarati</option>
+                        <option value="marathi">Marathi</option>
+                        <option value="tamil">Tamil</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-semibold">Date Range</label>
+                    <select class="form-select" id="dateFilter">
+                        <option value="">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="quarter">Next 3 Months</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h6 class="fw-semibold mb-3">Quick Filters</h6>
+                <button class="filter-btn active" data-filter="all">All Events</button>
+                <button class="filter-btn" data-filter="3d">3D Movies</button>
+                <button class="filter-btn" data-filter="imax">IMAX</button>
+                <button class="filter-btn" data-filter="family">Family Movies</button>
+                <button class="filter-btn" data-filter="premium">Premium Seating</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Events Section -->
+<section class="py-5" id="events">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-3">
+                    <i class="fas fa-calendar-check me-2 text-primary"></i>
+                    Featured Movie Events
+                </h2>
+                <p class="text-muted">Discover amazing movie premieres, screenings, and cinematic experiences</p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <a href="{% url 'events:add_event' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>
+                    Host Event
+                </a>
+            </div>
+        </div>
+
+        <div class="row" id="eventsContainer">
+            <!-- Event Card 1 -->
+            <div class="col-lg-4 col-md-6 mb-4" data-category="premiere" data-genre="action" data-language="english">
+                <div class="card event-card h-100">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             class="card-img-top event-image" alt="Indian Action Movie Premiere">
+                        <span class="event-badge">Premiere</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">The Last Adventure - Premiere</h5>
+                        <p class="card-text text-muted">
+                            Be the first to watch this blockbuster action movie with exclusive premiere experience.
+                        </p>
+                        <div class="movie-genre">
+                            <span class="genre-tag">Action</span>
+                            <span class="genre-tag">Adventure</span>
+                            <span class="genre-tag">Thriller</span>
+                        </div>
+                        <div class="rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="ms-2 text-muted">4.5/5</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <i class="fas fa-calendar text-primary me-1"></i>
+                                <small class="text-muted">Dec 20, 2024</small>
+                            </div>
+                            <div>
+                                <i class="fas fa-users text-primary me-1"></i>
+                                <small class="text-muted">180/200</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹800</span>
+                            <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary btn-sm">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Card 2 -->
+            <div class="col-lg-4 col-md-6 mb-4" data-category="festival" data-genre="drama" data-language="hindi">
+                <div class="card event-card h-100">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             class="card-img-top event-image" alt="Indian Film Festival">
+                        <span class="event-badge">Festival</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Independent Film Festival</h5>
+                        <p class="card-text text-muted">
+                            A week-long celebration of independent cinema featuring award-winning films.
+                        </p>
+                        <div class="movie-genre">
+                            <span class="genre-tag">Drama</span>
+                            <span class="genre-tag">Independent</span>
+                            <span class="genre-tag">Award-Winning</span>
+                        </div>
+                        <div class="rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="ms-2 text-muted">4.8/5</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <i class="fas fa-calendar text-primary me-1"></i>
+                                <small class="text-muted">Dec 25-31, 2024</small>
+                            </div>
+                            <div>
+                                <i class="fas fa-users text-primary me-1"></i>
+                                <small class="text-muted">300/500</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹250</span>
+                            <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary btn-sm">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Card 3 -->
+            <div class="col-lg-4 col-md-6 mb-4" data-category="screening" data-genre="comedy" data-language="english">
+                <div class="card event-card h-100">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             class="card-img-top event-image" alt="Indian Comedy Screening">
+                        <span class="event-badge">Screening</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Classic Comedy Night</h5>
+                        <p class="card-text text-muted">
+                            Laugh your heart out with classic comedy films in a relaxed, fun atmosphere.
+                        </p>
+                        <div class="movie-genre">
+                            <span class="genre-tag">Comedy</span>
+                            <span class="genre-tag">Classic</span>
+                            <span class="genre-tag">Family</span>
+                        </div>
+                        <div class="rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span class="ms-2 text-muted">4.0/5</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <i class="fas fa-calendar text-primary me-1"></i>
+                                <small class="text-muted">Dec 28, 2024</small>
+                            </div>
+                            <div>
+                                <i class="fas fa-users text-primary me-1"></i>
+                                <small class="text-muted">120/150</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹250</span>
+                            <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary btn-sm">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Card 4 -->
+            <div class="col-lg-4 col-md-6 mb-4" data-category="marathon" data-genre="sci-fi" data-language="english">
+                <div class="card event-card h-100">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             class="card-img-top event-image" alt="Sci-Fi Marathon">
+                        <span class="event-badge">Marathon</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Sci-Fi Movie Marathon</h5>
+                        <p class="card-text text-muted">
+                            A 12-hour marathon of the best sci-fi movies with breaks and refreshments included.
+                        </p>
+                        <div class="movie-genre">
+                            <span class="genre-tag">Sci-Fi</span>
+                            <span class="genre-tag">Marathon</span>
+                            <span class="genre-tag">Epic</span>
+                        </div>
+                        <div class="rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="ms-2 text-muted">4.7/5</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <i class="fas fa-calendar text-primary me-1"></i>
+                                <small class="text-muted">Jan 1, 2025</small>
+                            </div>
+                            <div>
+                                <i class="fas fa-users text-primary me-1"></i>
+                                <small class="text-muted">80/100</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹1,200</span>
+                            <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary btn-sm">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Card 5 -->
+            <div class="col-lg-4 col-md-6 mb-4" data-category="discussion" data-genre="drama" data-language="hindi">
+                <div class="card event-card h-100">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             class="card-img-top event-image" alt="Film Discussion">
+                        <span class="event-badge">Discussion</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Film Analysis & Discussion</h5>
+                        <p class="card-text text-muted">
+                            Watch a thought-provoking film followed by an engaging discussion with film critics.
+                        </p>
+                        <div class="movie-genre">
+                            <span class="genre-tag">Drama</span>
+                            <span class="genre-tag">Discussion</span>
+                            <span class="genre-tag">Critics</span>
+                        </div>
+                        <div class="rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="ms-2 text-muted">4.3/5</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <i class="fas fa-calendar text-primary me-1"></i>
+                                <small class="text-muted">Jan 5, 2025</small>
+                            </div>
+                            <div>
+                                <i class="fas fa-users text-primary me-1"></i>
+                                <small class="text-muted">60/80</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹600</span>
+                            <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary btn-sm">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Card 6 -->
+            <div class="col-lg-4 col-md-6 mb-4" data-category="premiere" data-genre="romance" data-language="gujarati">
+                <div class="card event-card h-100">
+                    <div class="position-relative">
+                        <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                             class="card-img-top event-image" alt="Gujarati Movie Premiere">
+                        <span class="event-badge">Premiere</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Gujarati Romance Premiere</h5>
+                        <p class="card-text text-muted">
+                            Experience the magic of Gujarati cinema with this beautiful romantic drama premiere.
+                        </p>
+                        <div class="movie-genre">
+                            <span class="genre-tag">Romance</span>
+                            <span class="genre-tag">Drama</span>
+                            <span class="genre-tag">Gujarati</span>
+                        </div>
+                        <div class="rating mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span class="ms-2 text-muted">4.1/5</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <i class="fas fa-calendar text-primary me-1"></i>
+                                <small class="text-muted">Jan 8, 2025</small>
+                            </div>
+                            <div>
+                                <i class="fas fa-users text-primary me-1"></i>
+                                <small class="text-muted">150/200</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-primary">₹700</span>
+                            <a href="{% url 'events:event_list' %}" class="btn btn-outline-primary btn-sm">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load More Button -->
+        <div class="text-center mt-5">
+            <button class="btn btn-outline-primary btn-lg px-5" id="loadMoreBtn">
+                <i class="fas fa-plus me-2"></i>
+                Load More Events
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Upcoming Releases Section -->
+<section class="py-5 bg-light" id="upcoming">
+    <div class="container">
+        <h2 class="fw-bold mb-5 text-center">
+            <i class="fas fa-star me-2 text-primary"></i>
+            Upcoming Movie Releases
+        </h2>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
+                                     class="movie-poster" alt="Upcoming Movie">
+                            </div>
+                            <div class="col-md-9">
+                                <h4 class="fw-bold">The Future is Now</h4>
+                                <p class="text-muted mb-3">A groundbreaking sci-fi thriller that explores the boundaries of human consciousness and artificial intelligence.</p>
+                                <div class="d-flex gap-3 text-muted small mb-3">
+                                    <span><i class="fas fa-clock me-1"></i>Release: Jan 15, 2025</span>
+                                    <span><i class="fas fa-film me-1"></i>Genre: Sci-Fi/Thriller</span>
+                                    <span><i class="fas fa-clock me-1"></i>Duration: 2h 15m</span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="badge bg-primary me-2">IMAX</span>
+                                    <span class="badge bg-success me-2">3D</span>
+                                    <span class="badge bg-warning">Dolby Atmos</span>
+                                </div>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-bell me-2"></i>
+                                    Get Notified
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-dark">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            Release Calendar
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="release-calendar">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <h6 class="mb-0">January 2025</h6>
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="calendar-grid">
+                                <!-- Calendar days would be populated here -->
+                                <div class="calendar-day">1</div>
+                                <div class="calendar-day">2</div>
+                                <div class="calendar-day has-release">3</div>
+                                <div class="calendar-day">4</div>
+                                <div class="calendar-day has-release">5</div>
+                                <!-- More days... -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const eventCards = document.querySelectorAll('[data-category]');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterBtns.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            
+            eventCards.forEach(card => {
+                if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Dropdown filters
+    const eventTypeFilter = document.getElementById('eventTypeFilter');
+    const genreFilter = document.getElementById('genreFilter');
+    const languageFilter = document.getElementById('languageFilter');
+    
+    function applyFilters() {
+        const eventType = eventTypeFilter.value;
+        const genre = genreFilter.value;
+        const language = languageFilter.value;
+        
+        eventCards.forEach(card => {
+            const cardEventType = card.getAttribute('data-category');
+            const cardGenre = card.getAttribute('data-genre');
+            const cardLanguage = card.getAttribute('data-language');
+            
+            const typeMatch = !eventType || cardEventType === eventType;
+            const genreMatch = !genre || cardGenre === genre;
+            const languageMatch = !language || cardLanguage === language;
+            
+            if (typeMatch && genreMatch && languageMatch) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    eventTypeFilter.addEventListener('change', applyFilters);
+    genreFilter.addEventListener('change', applyFilters);
+    languageFilter.addEventListener('change', applyFilters);
+    
+    // Load more functionality
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    let currentPage = 1;
+    
+    loadMoreBtn.addEventListener('click', function() {
+        // Simulate loading more events
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+        this.disabled = true;
+        
+        setTimeout(() => {
+            // Add more event cards here
+            this.innerHTML = '<i class="fas fa-plus me-2"></i>Load More Events';
+            this.disabled = false;
+            currentPage++;
+            
+            if (currentPage >= 3) {
+                this.style.display = 'none';
+            }
+        }, 1500);
+    });
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Update all Book Now buttons to be functional
+    document.querySelectorAll('.btn-outline-primary').forEach(btn => {
+        if (btn.textContent.trim() === 'Book Now') {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Get event ID from the card (you can add data-event-id to each card)
+                const eventCard = this.closest('.event-card');
+                const eventId = eventCard.getAttribute('data-event-id') || '1'; // Default to event ID 1
+                // Redirect to event registration
+                window.location.href = `/events/register/${eventId}/`;
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

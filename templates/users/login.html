@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Login | 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="flex flex-center" style="min-height:60vh;">
+  <div class="glass-card shadow" style="max-width:400px;width:100%;">
+    <h2 class="mb-2 text-center">User Login</h2>
+    <form method="post">{% csrf_token %}
+      {% for field in form %}
+      <div class="form-group mb-2">
+        {{ field.label_tag }}
+        {{ field }}
+        {% for error in field.errors %}<div class="error-message">{{ error }}</div>{% endfor %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
+    </form>
+    <div class="text-center mt-2">
+      <a href="/users/register/" class="text-muted">Don't have an account? Register</a>
+    </div>
+    <div class="text-center mt-2">
+      <a href="{% url 'users:forgot_password' %}" class="text-muted">Forgot Password?</a>
+    </div>
+  </div>
+</div>
+{% endblock %} 

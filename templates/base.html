@@ -1,0 +1,589 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}360° Event Manager{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Professional event management platform with enhanced venue galleries and comprehensive planning tools.{% endblock %}">
+    <!-- Force browser to reload CSS -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/48/000000/calendar-plus.png">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/48/000000/calendar-plus.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <!-- SAGE THEME - Must load AFTER Bootstrap to override it -->
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}?v={{ now.timestamp }}">
+    <style>
+      .main-content {
+        padding-top: 90px;
+      }
+      @media (max-width: 768px) {
+        .main-content {
+          padding-top: 120px;
+        }
+      }
+      
+      /* FINAL NUCLEAR SAGE THEME OVERRIDE - MAXIMUM SPECIFICITY */
+      html body * {
+        color: #000000 !important;
+      }
+      
+      /* EXCEPTIONS - Allow star ratings to work properly - ULTRA SPECIFIC */
+      html body .fa-star.filled,
+      html body .review-rating .fa-star.filled,
+      html body .event-rating .fa-star.filled,
+      html body .rating-stars .fa-star.filled,
+      html body .review-item .fa-star.filled,
+      html body .gallery-item .fa-star.filled,
+      html body .reviews-list .fa-star.filled,
+      html body .review-content .fa-star.filled,
+      html body .reviewer-details .fa-star.filled {
+        color: #ffc107 !important;
+      }
+      
+      html body .fa-star:not(.filled),
+      html body .review-rating .fa-star:not(.filled),
+      html body .event-rating .fa-star:not(.filled),
+      html body .rating-stars .fa-star:not(.filled),
+      html body .review-item .fa-star:not(.filled),
+      html body .gallery-item .fa-star:not(.filled),
+      html body .reviews-list .fa-star:not(.filled),
+      html body .review-content .fa-star:not(.filled),
+      html body .reviewer-details .fa-star:not(.filled) {
+        color: #ddd !important;
+      }
+      
+      /* Force star rating display to work correctly */
+      html body .review-rating,
+      html body .event-rating,
+      html body .rating-stars {
+        color: inherit !important;
+      }
+      
+      html body .review-rating *,
+      html body .event-rating *,
+      html body .rating-stars * {
+        color: inherit !important;
+      }
+      
+      /* NUCLEAR OPTION - Override any inline styles for stars */
+      html body i.fa-star.filled[style*="color"] {
+        color: #ffc107 !important;
+      }
+      
+      html body i.fa-star:not(.filled)[style*="color"] {
+        color: #ddd !important;
+      }
+      
+      /* Fix text visibility issues */
+      .text-white-50 {
+        color: #333333 !important;
+      }
+      
+      /* Ensure readable text on white backgrounds */
+      .container p, .container .lead, .container .text-muted {
+        color: #333333 !important;
+      }
+      
+      /* Fix specific sections with poor contrast */
+      section .text-white-50 {
+        color: #333333 !important;
+      }
+      
+      /* BUTTONS - ULTRA SPECIFIC OVERRIDE */
+      html body .btn, 
+      html body .btn-primary, 
+      html body .btn-secondary, 
+      html body .btn-success, 
+      html body .btn-info, 
+      html body .btn-warning, 
+      html body .btn-danger, 
+      html body .btn-light, 
+      html body .btn-dark,
+      html body .btn-outline-primary,
+      html body .btn-outline-secondary,
+      html body button, 
+      html body input[type="submit"], 
+      html body a.btn,
+      html body a[class*="btn"] {
+        background-color: #6b8f71 !important;
+        border-color: #6b8f71 !important;
+        color: #000000 !important;
+        border: 2px solid #6b8f71 !important;
+        box-shadow: none !important;
+      }
+      
+      html body .btn:hover, 
+      html body button:hover,
+      html body a.btn:hover,
+      html body a[class*="btn"]:hover {
+        background-color: #58705d !important;
+        border-color: #58705d !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+      }
+      
+      /* FORCE BOOTSTRAP BUTTON STATES */
+      html body .btn:focus,
+      html body .btn:active,
+      html body .btn.active {
+        background-color: #58705d !important;
+        border-color: #58705d !important;
+        color: #000000 !important;
+        box-shadow: 0 0 0 0.25rem rgba(107, 143, 113, 0.5) !important;
+      }
+      
+      html body .card {
+        background-color: #f4f7f5 !important;
+        border-color: #bdd3c4 !important;
+        color: #000000 !important;
+      }
+      
+      html body .navbar {
+        background-color: #e7efe9 !important;
+        border-bottom: 1px solid #bdd3c4 !important;
+      }
+      
+      html body .badge {
+        background-color: #6b8f71 !important;
+        color: #000000 !important;
+      }
+      
+      html body .fa, html body .fas, html body .far, html body .fab {
+        color: #6b8f71 !important;
+      }
+      
+      html body .text-primary { color: #6b8f71 !important; }
+      html body .text-success { color: #6b8f71 !important; }
+      html body .text-info { color: #7fa487 !important; }
+      html body .text-warning { color: #9fbca7 !important; }
+      html body .text-danger { color: #58705d !important; }
+      
+      html body .bg-primary { background-color: #6b8f71 !important; }
+      html body .bg-success { background-color: #6b8f71 !important; }
+      html body .bg-info { background-color: #7fa487 !important; }
+      html body .bg-warning { background-color: #9fbca7 !important; }
+      html body .bg-danger { background-color: #58705d !important; }
+      html body .bg-light { background-color: #f4f7f5 !important; }
+      html body .bg-dark { background-color: #58705d !important; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Global Loading Spinner -->
+    <div id="global-spinner" class="global-spinner" style="display:none;">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Toast Notification Area -->
+    <div id="toast-area" style="position:fixed;top:2rem;right:2rem;z-index:9999;"></div>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="https://img.icons8.com/color/48/000000/calendar-plus.png" alt="Logo" width="32" height="32" class="me-2">
+                <span class="fw-bold">360° Event Manager</span>
+            </a>
+            
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navigation Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if user.is_authenticated %}
+                        {% if user.user_type == 'user' %}
+                            <!-- User Navigation -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">
+                                    <i class="fas fa-home me-1"></i>Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="/events/">
+                                    <i class="fas fa-calendar-alt me-1 "></i>Events
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="/venues/">
+                                    <i class="fas fa-building me-1 "></i>Venues
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="/pricing/">
+                                    <i class="fas fa-tags me-1 "></i>Pricing
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="/gallery/">
+                                    <i class="fas fa-images me-1"></i>Gallery
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{% url 'communications:inbox' %}">
+                                    <i class="fas fa-comments me-1"></i>Chat
+                                </a>
+                            </li>
+                            {% if user.user_type in 'admin,manager' %}
+                            <li class="nav-item">
+                                <a class="nav-link " href="/events/calendar/">
+                                    <i class="fas fa-calendar-alt me-1"></i>Calendar
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link " href="/about/">
+                                    <i class="fas fa-info-circle me-1"></i>About
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="/ai-mood-designer/">
+                                    <i class="fas fa-magic me-1"></i>AI Designer
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="/contact/">
+                                    <i class="fas fa-envelope me-1"></i>Contact
+                                </a>
+                            </li>
+                        {% elif user.user_type == 'manager' %}
+                            <!-- Manager Navigation -->
+                            <li class="nav-item">
+                                <a class="nav-link " href="{% url 'users:manager_dashboard' %}">
+                                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{% url 'events:add_event' %}">
+                                    <i class="fas fa-plus me-1"></i>Create Event
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{% url 'communications:inbox' %}">
+                                    <i class="fas fa-comments me-1"></i>Messages
+                                </a>
+                            </li>
+                        {% elif user.user_type == 'admin' %}
+                            <!-- Admin Navigation -->
+                            <li class="nav-item">
+                                <a class="nav-link " href="{% url 'users:admin_dashboard' %}">
+                                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="/admin/">
+                                    <i class="fas fa-cog me-1"></i>Admin Panel
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="{% url 'communications:inbox' %}">
+                                    <i class="fas fa-comments me-1"></i>Messages
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <!-- Guest Navigation -->
+                        <li class="nav-item">
+                            <a class="nav-link " href="/">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/about/">
+                                <i class="fas fa-info-circle me-1"></i>About
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/contact/">
+                                <i class="fas fa-envelope me-1"></i>Contact
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/events/">
+                                <i class="fas fa-calendar-alt me-1"></i>Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/venues/">
+                                <i class="fas fa-building me-1"></i>Venues
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/pricing/">
+                                <i class="fas fa-tags me-1"></i>Pricing
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="{% url 'users:login' %}?next={% url 'communications:inbox' %}">
+                                <i class="fas fa-comments me-1"></i>Chat
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- User Menu -->
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                    <i class="fas fa-user text-primary"></i>
+                                </div>
+                                <span>{{ user.get_full_name|default:user.username }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown">
+                                {% if user.user_type == 'user' %}
+                                    <li><a class="dropdown-item" href="{% url 'users:profile' %}">
+                                        <i class="fas fa-user-edit me-2"></i>Profile
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'users:dashboard' %}">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'users:my_events' %}">
+                                        <i class="fas fa-calendar-check me-2"></i>My Events
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'users:my_bookings' %}">
+                                        <i class="fas fa-ticket-alt me-2"></i>My Bookings
+                                    </a></li>
+                                {% elif user.user_type == 'manager' %}
+                                    <li><a class="dropdown-item" href="{% url 'users:manager_dashboard' %}">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Manager Dashboard
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'users:profile' %}">
+                                        <i class="fas fa-user-edit me-2"></i>Profile
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'communications:create_group' %}">
+                                        <i class="fas fa-users me-2"></i>Create Group
+                                    </a></li>
+                                {% elif user.user_type == 'admin' %}
+                                    <li><a class="dropdown-item" href="{% url 'users:admin_dashboard' %}">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/admin/">
+                                        <i class="fas fa-cog me-2"></i>Admin Panel
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'users:profile' %}">
+                                        <i class="fas fa-user-edit me-2"></i>Profile
+                                    </a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'users:logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login/Register
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="loginDropdown">
+                                <li><h6 class="dropdown-header">Login</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'users:login' %}">
+                                    <i class="fas fa-user me-2"></i>User Login
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'users:login' %}">
+                                    <i class="fas fa-user-tie me-2"></i>Manager Login
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'users:login' %}">
+                                    <i class="fas fa-user-shield me-2"></i>Admin Login
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header">Register</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'users:register' %}">
+                                    <i class="fas fa-user-plus me-2"></i>User Register
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'users:register' %}">
+                                    <i class="fas fa-user-plus me-2"></i>Manager Register
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'users:register' %}">
+                                    <i class="fas fa-user-plus me-2"></i>Admin Register
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- AI Chatbot Widget -->
+    {% include 'ai_chatbot.html' %}
+    
+    <!-- Footer -->
+    <footer class="site-footer bg-white  py-5 mt-5" style="border-top: 2px solid #22c55e;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://img.icons8.com/color/48/000000/calendar-plus.png" alt="Logo" width="32" height="32" class="me-2">
+                        <h5 class="mb-0 fw-bold">360° Event Manager</h5>
+                    </div>
+                    <p class="text-muted">Premier event management platform for Ahmedabad & Gandhinagar. From corporate conferences to dream weddings, we bring your vision to life with local expertise and global standards.</p>
+                    <div class="social-links">
+                        <a href="https://facebook.com/360eventmanager" target="_blank" class=" me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com/360eventmanager" target="_blank" class=" me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="https://linkedin.com/company/360eventmanager" target="_blank" class=" me-3"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://instagram.com/360eventmanager" target="_blank" class=""><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Platform</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/events/" class=" text-decoration-none">Events</a></li>
+                        <li><a href="/venues/" class=" text-decoration-none">Venues</a></li>
+                        <li><a href="/communications/inbox/" class=" text-decoration-none">Chat</a></li>
+                        <li><a href="/about/" class=" text-decoration-none">About</a></li>
+                        <li><a href="/pricing/" class=" text-decoration-none">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/contact/" class="text-muted text-decoration-none">Contact</a></li>
+                        <li><a href="/help-center/" class="text-muted text-decoration-none">Help Center</a></li>
+                        <li><a href="/faq/" class="text-muted text-decoration-none">FAQs</a></li>
+                        <li><a href="/support/" class="text-muted text-decoration-none">Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Legal</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/privacy/" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li><a href="/terms/" class="text-muted text-decoration-none">Terms of Service</a></li>
+                        <li><a href="/cookie-policy/" class="text-muted text-decoration-none">Cookie Policy</a></li>
+                        <li><a href="/gdpr/" class="text-muted text-decoration-none">GDPR</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Contact</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="tel:+919876543210" class="text-muted text-decoration-none"><i class="fas fa-phone me-2"></i>+91 98765 43210</a></li>
+                        <li><a href="mailto:info@360eventmanager.com" class="text-muted text-decoration-none"><i class="fas fa-envelope me-2"></i>info@360eventmanager.com</a></li>
+                        <li><a href="https://maps.google.com/?q=Ahmedabad,Gujarat" target="_blank" class="text-muted text-decoration-none"><i class="fas fa-map-marker-alt me-2"></i>Ahmedabad, Gujarat</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-muted mb-0">&copy; {{ now|date:'Y' }} 360° Event Manager. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">Made with <i class="fas fa-heart text-danger"></i> for world-class events</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        AOS.init({
+          duration: 800,
+          once: true,
+          easing: 'ease-in-out',
+        });
+        
+        // FORCE SAGE THEME WITH JAVASCRIPT
+        function forceSageTheme() {
+          // Force all buttons to sage green
+          const buttons = document.querySelectorAll('.btn, button, a[class*="btn"]');
+          buttons.forEach(btn => {
+            btn.style.backgroundColor = '#6b8f71';
+            btn.style.borderColor = '#6b8f71';
+            btn.style.color = '#000000';
+            btn.style.border = '2px solid #6b8f71';
+          });
+          
+          // Force all text to black
+          const textElements = document.querySelectorAll('*');
+          textElements.forEach(el => {
+            if (el.tagName !== 'IMG' && el.tagName !== 'svg') {
+              el.style.color = '#000000';
+            }
+          });
+          
+          // Force cards to white/sage
+          const cards = document.querySelectorAll('.card');
+          cards.forEach(card => {
+            card.style.backgroundColor = '#f4f7f5';
+            card.style.borderColor = '#bdd3c4';
+            card.style.color = '#000000';
+          });
+          
+          // Force navbar to sage
+          const navbar = document.querySelector('.navbar');
+          if (navbar) {
+            navbar.style.backgroundColor = '#e7efe9';
+            navbar.style.borderBottom = '2px solid #bdd3c4';
+          }
+          
+          // Force all icons to sage
+          const icons = document.querySelectorAll('.fa, .fas, .far, .fab, i[class*="fa"]');
+          icons.forEach(icon => {
+            icon.style.color = '#6b8f71';
+          });
+        }
+        
+        // Apply theme immediately and after any dynamic content loads
+        forceSageTheme();
+        setTimeout(forceSageTheme, 100);
+        setTimeout(forceSageTheme, 500);
+      });
+    </script>
+    <script>
+    // Global Spinner
+    function showSpinner() { document.getElementById('global-spinner').style.display = 'flex'; }
+    function hideSpinner() { document.getElementById('global-spinner').style.display = 'none'; }
+    
+    // Toasts
+    function showToast(message, type='info') {
+        const area = document.getElementById('toast-area');
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} shadow mb-2`;
+        toast.innerHTML = message;
+        area.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3500);
+    }
+    
+    // Active navigation highlighting
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html> 

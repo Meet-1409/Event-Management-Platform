@@ -1,0 +1,515 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment History - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+    
+    .payment-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .payment-status {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-failed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .status-refunded {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .filter-section {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+    
+    .payment-method-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: white;
+    }
+    
+    .method-stripe {
+        background: #6772e5;
+    }
+    
+    .method-razorpay {
+        background: #3399cc;
+    }
+    
+    .method-bank {
+        background: #28a745;
+    }
+    
+    .method-cash {
+        background: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <h1 class="fw-bold mb-3">
+                <i class="fas fa-credit-card me-3 text-primary"></i>
+                Payment History
+            </h1>
+            <p class="text-muted">Track all your payments and transactions</p>
+        </div>
+        <div class="col-lg-4 text-end">
+            <a href="{% url 'events:event_list' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>
+                Book New Event
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-5">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">₹{{ total_paid|floatformat:0 }}</div>
+                <div class="stats-label">Total Paid</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ payments.count }}</div>
+                <div class="stats-label">Total Payments</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ pending_payments }}</div>
+                <div class="stats-label">Pending</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ completed_payments }}</div>
+                <div class="stats-label">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-section">
+        <h4 class="mb-4">
+            <i class="fas fa-filter me-2 text-primary"></i>
+            Filter Payments
+        </h4>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-semibold">Status</label>
+                <select class="form-select" id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                    <option value="refunded">Refunded</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-semibold">Payment Method</label>
+                <select class="form-select" id="methodFilter">
+                    <option value="">All Methods</option>
+                    <option value="stripe">Stripe</option>
+                    <option value="razorpay">Razorpay</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="cash">Cash</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-semibold">Date Range</label>
+                <select class="form-select" id="dateFilter">
+                    <option value="">All Dates</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="quarter">Last 3 Months</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-semibold">Amount Range</label>
+                <select class="form-select" id="amountFilter">
+                    <option value="">All Amounts</option>
+                    <option value="0-1000">₹0 - ₹1,000</option>
+                    <option value="1000-5000">₹1,000 - ₹5,000</option>
+                    <option value="5000-10000">₹5,000 - ₹10,000</option>
+                    <option value="10000+">₹10,000+</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <h6 class="fw-semibold mb-3">Quick Filters</h6>
+            <button class="btn btn-outline-primary btn-sm me-2 mb-2" data-filter="all">All Payments</button>
+            <button class="btn btn-outline-success btn-sm me-2 mb-2" data-filter="completed">Completed</button>
+            <button class="btn btn-outline-warning btn-sm me-2 mb-2" data-filter="pending">Pending</button>
+            <button class="btn btn-outline-danger btn-sm me-2 mb-2" data-filter="failed">Failed</button>
+            <button class="btn btn-outline-info btn-sm me-2 mb-2" data-filter="refunded">Refunded</button>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Search payments by event name, payment ID...">
+            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-outline-secondary" id="exportBtn">
+                <i class="fas fa-download me-2"></i>
+                Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Payments List -->
+    <div id="paymentsContainer">
+        {% for payment in payments %}
+        <div class="card payment-card" data-status="{{ payment.status }}" data-method="{{ payment.payment_method.payment_type }}" data-amount="{{ payment.amount }}">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <div class="d-flex align-items-center">
+                            <div class="payment-method-icon method-{{ payment.payment_method.payment_type }}">
+                                {% if payment.payment_method.payment_type == 'stripe' %}
+                                    <i class="fab fa-stripe"></i>
+                                {% elif payment.payment_method.payment_type == 'razorpay' %}
+                                    <i class="fas fa-credit-card"></i>
+                                {% elif payment.payment_method.payment_type == 'bank_transfer' %}
+                                    <i class="fas fa-university"></i>
+                                {% else %}
+                                    <i class="fas fa-money-bill"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0">{{ payment.payment_method.name }}</h6>
+                                <small class="text-muted">{{ payment.payment_method.payment_type|title }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <h6 class="mb-1">{{ payment.invoice.event.title }}</h6>
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ payment.created_at|date:"M d, Y" }}
+                        </small>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <h6 class="mb-0 fw-bold text-primary">₹{{ payment.amount|floatformat:2 }}</h6>
+                        <small class="text-muted">{{ payment.currency }}</small>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <span class="payment-status status-{{ payment.status }}">
+                            {{ payment.status|title }}
+                        </span>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#paymentModal{{ payment.id }}">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            {% if payment.status == 'completed' %}
+                            <a href="{% url 'payments:request_refund' payment.payment_id %}" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-undo"></i>
+                            </a>
+                            {% endif %}
+                            <a href="#" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Detail Modal -->
+        <div class="modal fade" id="paymentModal{{ payment.id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Payment Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="fw-bold">Payment Information</h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Payment ID:</strong></td>
+                                        <td>{{ payment.payment_id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Amount:</strong></td>
+                                        <td>₹{{ payment.amount|floatformat:2 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Currency:</strong></td>
+                                        <td>{{ payment.currency }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td>
+                                            <span class="payment-status status-{{ payment.status }}">
+                                                {{ payment.status|title }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Method:</strong></td>
+                                        <td>{{ payment.payment_method.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Date:</strong></td>
+                                        <td>{{ payment.created_at|date:"M d, Y H:i" }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="fw-bold">Event Information</h6>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Event:</strong></td>
+                                        <td>{{ payment.invoice.event.title }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Event Date:</strong></td>
+                                        <td>{{ payment.invoice.event.start_date|date:"M d, Y" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Venue:</strong></td>
+                                        <td>{{ payment.invoice.event.venue.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Invoice:</strong></td>
+                                        <td>{{ payment.invoice.invoice_number }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        {% if payment.gateway_response %}
+                        <div class="mt-4">
+                            <h6 class="fw-bold">Gateway Response</h6>
+                            <pre class="bg-light p-3 rounded"><code>{{ payment.gateway_response|pprint }}</code></pre>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="#" class="btn btn-primary">Download Invoice</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="fas fa-credit-card fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No payments found</h4>
+            <p class="text-muted">You haven't made any payments yet.</p>
+            <a href="{% url 'events:event_list' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>
+                Book Your First Event
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if payments.has_other_pages %}
+    <nav aria-label="Payment pagination" class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if payments.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ payments.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+            
+            {% for num in payments.paginator.page_range %}
+            <li class="page-item {% if payments.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            
+            {% if payments.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ payments.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Filter functionality
+    const statusFilter = document.getElementById('statusFilter');
+    const methodFilter = document.getElementById('methodFilter');
+    const dateFilter = document.getElementById('dateFilter');
+    const amountFilter = document.getElementById('amountFilter');
+    const searchInput = document.getElementById('searchInput');
+    const filterBtns = document.querySelectorAll('[data-filter]');
+    const paymentCards = document.querySelectorAll('.payment-card');
+    
+    function applyFilters() {
+        const status = statusFilter.value;
+        const method = methodFilter.value;
+        const date = dateFilter.value;
+        const amount = amountFilter.value;
+        const search = searchInput.value.toLowerCase();
+        
+        paymentCards.forEach(card => {
+            const cardStatus = card.getAttribute('data-status');
+            const cardMethod = card.getAttribute('data-method');
+            const cardAmount = parseFloat(card.getAttribute('data-amount'));
+            const cardText = card.textContent.toLowerCase();
+            
+            const statusMatch = !status || cardStatus === status;
+            const methodMatch = !method || cardMethod === method;
+            const searchMatch = !search || cardText.includes(search);
+            
+            let amountMatch = true;
+            if (amount) {
+                const [min, max] = amount.split('-').map(x => x === '+' ? Infinity : parseFloat(x));
+                amountMatch = cardAmount >= min && (max === Infinity || cardAmount <= max);
+            }
+            
+            if (statusMatch && methodMatch && searchMatch && amountMatch) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    // Event listeners
+    statusFilter.addEventListener('change', applyFilters);
+    methodFilter.addEventListener('change', applyFilters);
+    dateFilter.addEventListener('change', applyFilters);
+    amountFilter.addEventListener('change', applyFilters);
+    searchInput.addEventListener('input', applyFilters);
+    
+    // Quick filter buttons
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Update status filter
+            if (filter !== 'all') {
+                statusFilter.value = filter;
+            } else {
+                statusFilter.value = '';
+            }
+            
+            // Remove active class from all buttons
+            filterBtns.forEach(b => b.classList.remove('btn-primary'));
+            filterBtns.forEach(b => b.classList.add('btn-outline-primary'));
+            
+            // Add active class to clicked button
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+            
+            applyFilters();
+        });
+    });
+    
+    // Export functionality
+    const exportBtn = document.getElementById('exportBtn');
+    exportBtn.addEventListener('click', function() {
+        // Get current filter parameters
+        const status = statusFilter.value;
+        const method = methodFilter.value;
+        const date = dateFilter.value;
+        const amount = amountFilter.value;
+        const search = searchInput.value;
+        
+        // Build export URL with filters
+        let exportUrl = '/payments/export/';
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        if (method) params.append('method', method);
+        if (date) params.append('date', date);
+        if (amount) params.append('amount', amount);
+        if (search) params.append('search', search);
+        
+        if (params.toString()) {
+            exportUrl += '?' + params.toString();
+        }
+        
+        // Open export in new tab
+        window.open(exportUrl, '_blank');
+    });
+});
+</script>
+{% endblock %} 

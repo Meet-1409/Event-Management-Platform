@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Refund Request</title></head>
+<body style="font-family: Arial, sans-serif;">
+    <h2>Refund Request Received</h2>
+    <p>A refund request has been submitted:</p>
+    <p><strong>User:</strong> {{ user.get_full_name }} ({{ user.email }})</p>
+    <p><strong>Event:</strong> {{ event.title }}</p>
+    <p><strong>Amount:</strong> ₹{{ refund.amount }}</p>
+    <p><strong>Reason:</strong> {{ refund.reason }}</p>
+</body>
+</html>

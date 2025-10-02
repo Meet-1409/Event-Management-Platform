@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Manager Verification - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="display-6 fw-bold text-primary mb-4">
+                <i class="fas fa-user-check me-2"></i>Manager Verification
+            </h2>
+            <p class="text-muted mb-4">Review and verify event manager applications</p>
+
+            {% if pending_managers %}
+                <div class="row g-4">
+                    {% for manager in pending_managers %}
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="avatar-circle bg-warning text-white me-3">
+                                        {% if manager.profile_picture %}
+                                            <img src="{{ manager.profile_picture.url }}" alt="{{ manager.get_full_name }}" class="rounded-circle" width="50" height="50">
+                                        {% else %}
+                                            <i class="fas fa-user"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-1">{{ manager.get_full_name }}</h5>
+                                        <small class="text-muted">{{ manager.email }}</small>
+                                    </div>
+                                </div>
+
+                                {% if manager.manager_profile %}
+                                    <div class="manager-info">
+                                        {% if manager.manager_profile.company_name %}
+                                            <p class="mb-1"><strong>Company:</strong> {{ manager.manager_profile.company_name }}</p>
+                                        {% endif %}
+                                        <p class="mb-1"><strong>Experience:</strong> {{ manager.manager_profile.years_of_experience }} years</p>
+                                        <p class="mb-1"><strong>Phone:</strong> {{ manager.phone_number|default:"Not provided" }}</p>
+                                        <p class="mb-1"><strong>Location:</strong> {{ manager.city }}, {{ manager.state }}</p>
+                                        {% if manager.manager_profile.specializations %}
+                                            <div class="mb-3">
+                                                <strong>Specializations:</strong>
+                                                <div class="mt-1">
+                                                    {% for spec in manager.manager_profile.specializations %}
+                                                        <span class="badge bg-primary me-1">{{ spec }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="d-flex gap-2">
+                                    <form method="POST" action="{% url 'managers:verify_manager' manager.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check me-1"></i>Verify
+                                        </button>
+                                    </form>
+                                    <a href="{% url 'managers:manager_detail' manager.id %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                    <h4>All Managers Verified</h4>
+                    <p class="text-muted">No pending manager verification requests.</p>
+                    <a href="{% url 'managers:manager_list' %}" class="btn btn-primary">
+                        <i class="fas fa-users me-1"></i>View All Managers
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+</style>
+{% endblock %}

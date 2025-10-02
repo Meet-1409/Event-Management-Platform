@@ -1,0 +1,580 @@
+{% extends 'base.html' %}
+
+{% block title %}Pricing & Packages | 360° Event Manager{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Transparent Pricing & Packages</h1>
+                <p class="lead mb-4">Choose the perfect package for your event in Ahmedabad and Gandhinagar. All prices in INR with no hidden costs.</p>
+                <div class="d-flex gap-3">
+                    <a href="#packages" class="btn btn-light btn-lg">
+                        <i class="fas fa-tags me-2"></i>View Packages
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="/contact/" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-calculator me-2"></i>Get Custom Quote
+                    </a>
+                    {% else %}
+                    <a href="/users/login/?next=/contact/" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-calculator me-2"></i>Get Custom Quote
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="text-center">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                         alt="Pricing" class="img-fluid rounded-3 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pricing Toggle -->
+<div class="py-4 bg-light">
+    <div class="container">
+        <div class="text-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" data-pricing="per-person">Per Person</button>
+                <button type="button" class="btn btn-outline-primary" data-pricing="per-event">Per Event</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Event Packages -->
+<section id="packages" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Event Packages</h2>
+            <p class="lead text-muted">Choose from our carefully curated packages designed for different event types</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Basic Package -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-primary text-white text-center border-0">
+                        <h4 class="mb-0 fw-bold">Basic Package</h4>
+                        <p class="mb-0">Perfect for small events</p>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <div class="display-4 fw-bold text-primary mb-2">₹1,500</div>
+                            <p class="text-muted mb-0">per person</p>
+                        </div>
+                        
+                        <h6 class="fw-bold mb-3">What's Included:</h6>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Event coordination</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic venue setup</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Welcome drinks</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic catering</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Event materials</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic photography</li>
+                        </ul>
+                        
+                        <div class="d-grid">
+                            {% if user.is_authenticated %}
+                            <a href="/contact/" class="btn btn-primary">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                            {% else %}
+                            <a href="/users/login/?next=/contact/" class="btn btn-primary">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <small class="text-muted mt-3 d-block">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Up to 50 guests • 4 hours duration
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standard Package -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm h-100 border-primary">
+                    <div class="card-header bg-success text-white text-center border-0 position-relative">
+                        <span class="position-absolute top-0 start-50 translate-middle badge bg-warning text-dark px-3 py-2">
+                            Most Popular
+                        </span>
+                        <h4 class="mb-0 fw-bold">Standard Package</h4>
+                        <p class="mb-0">Ideal for medium events</p>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <div class="display-4 fw-bold text-success mb-2">₹250</div>
+                            <p class="text-muted mb-0">per person</p>
+                        </div>
+                        
+                        <h6 class="fw-bold mb-3">What's Included:</h6>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professional event coordination</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Premium venue setup</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Welcome drinks & appetizers</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Buffet dinner</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Event materials & branding</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professional photography</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Audio-visual equipment</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Security services</li>
+                        </ul>
+                        
+                        <div class="d-grid">
+                            {% if user.is_authenticated %}
+                            <a href="/contact/" class="btn btn-success">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                            {% else %}
+                            <a href="/users/login/?next=/contact/" class="btn btn-success">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <small class="text-muted mt-3 d-block">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Up to 200 guests • 6 hours duration
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Package -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-warning text-dark text-center border-0">
+                        <h4 class="mb-0 fw-bold">Premium Package</h4>
+                        <p class="mb-0">For luxury events</p>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <div class="display-4 fw-bold text-warning mb-2">₹4,500</div>
+                            <p class="text-muted mb-0">per person</p>
+                        </div>
+                        
+                        <h6 class="fw-bold mb-3">What's Included:</h6>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Dedicated event manager</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Luxury venue setup</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Premium cocktails & appetizers</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Multi-course dinner</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom branding & materials</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professional photography & video</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Advanced AV equipment</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>VIP security services</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Live entertainment</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>24/7 support</li>
+                        </ul>
+                        
+                        <div class="d-grid">
+                            {% if user.is_authenticated %}
+                            <a href="/contact/" class="btn btn-warning">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                            {% else %}
+                            <a href="/users/login/?next=/contact/" class="btn btn-warning">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <small class="text-muted mt-3 d-block">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Up to 500 guests • 8 hours duration
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Event Type Pricing -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Pricing by Event Type</h2>
+            <p class="lead text-muted">Specialized pricing for different types of events</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Corporate Events -->
+            <div class="col-lg-6">
+                <div class="event-category-box">
+                    <h4 class="mb-4 fw-bold">Corporate Events</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Conference</span>
+                                <span class="event-price fw-bold text-primary">₹2,000/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Seminar</span>
+                                <span class="event-price fw-bold text-primary">₹1,500/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Product Launch</span>
+                                <span class="event-price fw-bold text-primary">₹3,500/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Team Building</span>
+                                <span class="event-price fw-bold text-primary">₹250/person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wedding Events -->
+            <div class="col-lg-6">
+                <div class="event-category-box">
+                    <h4 class="mb-4 fw-bold">Wedding Events</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Reception</span>
+                                <span class="event-price fw-bold text-success">₹4,000/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Engagement</span>
+                                <span class="event-price fw-bold text-success">₹250/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Mehendi</span>
+                                <span class="event-price fw-bold text-success">₹1,800/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Sangeet</span>
+                                <span class="event-price fw-bold text-success">₹3,000/person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Birthday Events -->
+            <div class="col-lg-6">
+                <div class="event-category-box">
+                    <h4 class="mb-4 fw-bold">Birthday Celebrations</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Kids Birthday</span>
+                                <span class="event-price fw-bold text-warning">₹1,200/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Adult Birthday</span>
+                                <span class="event-price fw-bold text-warning">₹2,000/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Anniversary</span>
+                                <span class="event-price fw-bold text-warning">₹3,500/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Graduation</span>
+                                <span class="event-price fw-bold text-warning">₹250/person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Special Events -->
+            <div class="col-lg-6">
+                <div class="event-category-box">
+                    <h4 class="mb-4 fw-bold">Special Events</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Music Concert</span>
+                                <span class="event-price fw-bold text-info">₹1,500/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Art Exhibition</span>
+                                <span class="event-price fw-bold text-info">₹800/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Charity Event</span>
+                                <span class="event-price fw-bold text-info">₹1,000/person</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="event-price-box">
+                                <span>Cultural Event</span>
+                                <span class="event-price fw-bold text-info">₹1,200/person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Additional Services -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Additional Services</h2>
+            <p class="lead text-muted">Enhance your event with our premium add-on services</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-camera fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Professional Photography</h5>
+                        <p class="text-muted mb-3">High-quality photos and videos of your event</p>
+                        <div class="fw-bold text-primary">₹5,000 - ₹15,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-music fa-2x text-success"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Live Entertainment</h5>
+                        <p class="text-muted mb-3">Live bands, DJs, and cultural performances</p>
+                        <div class="fw-bold text-success">₹8,000 - ₹25,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-palette fa-2x text-warning"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Custom Decorations</h5>
+                        <p class="text-muted mb-3">Themed decorations and floral arrangements</p>
+                        <div class="fw-bold text-warning">₹3,000 - ₹12,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-shield-alt fa-2x text-info"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Security Services</h5>
+                        <p class="text-muted mb-3">Professional security personnel and crowd management</p>
+                        <div class="fw-bold text-info">₹2,000 - ₹8,000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Frequently Asked Questions</h2>
+            <p class="lead text-muted">Get answers to common questions about our pricing</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="pricingFAQ">
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Are there any hidden costs?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                No, all our prices are transparent and include GST. The quoted price is the final price you pay. We provide detailed breakdowns of all costs upfront.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Can I customize a package?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Absolutely! We offer custom packages tailored to your specific needs and budget. Contact us for a personalized quote.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                What's included in the venue rental?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Venue rental includes basic setup, tables, chairs, lighting, and audio-visual equipment. Additional services can be added as needed.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                Do you offer discounts for large events?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Yes, we offer volume discounts for events with 100+ guests. Contact us for special pricing on large-scale events.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="display-5 fw-bold mb-3">Ready to Plan Your Event?</h2>
+        <p class="lead mb-4">Get a personalized quote for your event in Ahmedabad or Gandhinagar</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/contact/" class="btn btn-light btn-lg">
+                <i class="fas fa-calculator me-2"></i>Get Custom Quote
+            </a>
+            <a href="/events/" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-calendar me-2"></i>Browse Events
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    color: #000;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, 0.125);
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+    
+    .btn-group {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Pricing toggle functionality
+    const pricingButtons = document.querySelectorAll('[data-pricing]');
+    
+    pricingButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const pricingType = this.getAttribute('data-pricing');
+            
+            // Update active button
+            pricingButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update pricing display based on type
+            if (pricingType === 'per-event') {
+                // Show per-event pricing
+                document.querySelectorAll('.display-4').forEach(price => {
+                    if (price.textContent.includes('₹')) {
+                        const currentPrice = price.textContent;
+                        const newPrice = currentPrice.replace('/person', '/event');
+                        price.textContent = newPrice;
+                    }
+                });
+            } else {
+                // Show per-person pricing
+                document.querySelectorAll('.display-4').forEach(price => {
+                    if (price.textContent.includes('₹')) {
+                        const currentPrice = price.textContent;
+                        const newPrice = currentPrice.replace('/event', '/person');
+                        price.textContent = newPrice;
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,12 @@
+Payment Failed
+
+Dear {{ user.get_full_name|default:user.email }},
+
+Your payment for {{ event.title|default:"Event Booking" }} could not be processed.
+
+Payment ID: {{ payment.payment_id }}
+
+Please try again or contact our support team.
+
+Best regards,
+360° Event Manager Team

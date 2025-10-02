@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sports Events | 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container sports-category-page py-4">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/events/">Events</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Sports Events</li>
+        </ol>
+    </nav>
+    <!-- Header -->
+    <div class="category-header d-flex align-items-center mb-4">
+        <div class="category-icon me-3">
+            <i class="fa fa-futbol fa-3x text-primary"></i>
+        </div>
+        <div>
+            <h1 class="mb-1">Sports Events</h1>
+            <p class="lead mb-0">From football tournaments to pickleball competitions – find your perfect sports event!</p>
+        </div>
+    </div>
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="/events/" class="btn btn-outline-primary"><i class="fa fa-arrow-left"></i> Back to All Events</a>
+    </div>
+    <!-- Subcategory Tabs -->
+    <ul class="nav nav-pills mb-4 sports-tabs" id="sportsTabs">
+        {% for sub in subcategories %}
+        <li class="nav-item">
+            <a class="nav-link {% if selected.subcategory == sub %}active{% endif %}" href="?subcategory={{ sub }}{% if selected.date %}&date={{ selected.date }}{% endif %}{% if selected.location %}&location={{ selected.location }}{% endif %}{% if selected.skill %}&skill={{ selected.skill }}{% endif %}{% if selected.search %}&search={{ selected.search }}{% endif %}">
+                {{ sub }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <!-- Filters & Search -->
+    <form class="row g-3 mb-4 align-items-end" method="get">
+        <input type="hidden" name="subcategory" value="{{ selected.subcategory }}">
+        <div class="col-md-3">
+            <label for="dateFilter" class="form-label">Date</label>
+            <input type="date" class="form-control" id="dateFilter" name="date" value="{{ selected.date }}">
+        </div>
+        <div class="col-md-3">
+            <label for="locationFilter" class="form-label">Location</label>
+            <input type="text" class="form-control" id="locationFilter" name="location" placeholder="City or Venue" value="{{ selected.location }}">
+        </div>
+        <div class="col-md-3">
+            <label for="skillFilter" class="form-label">Skill Level</label>
+            <select class="form-select" id="skillFilter" name="skill">
+                <option value="">Any</option>
+                {% for s in skills %}
+                <option value="{{ s }}" {% if selected.skill == s %}selected{% endif %}>{{ s|title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="searchBar" class="form-label">Search</label>
+            <input type="text" class="form-control" id="searchBar" name="search" placeholder="Search events..." value="{{ selected.search }}">
+        </div>
+        <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
+    </form>
+    <!-- Event Cards Grid -->
+    {% if events %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="sportsEventGrid">
+        {% for event in events %}
+        <div class="col">
+            <div class="card event-card h-100">
+                {% if event.event_image %}
+                <img src="{{ event.event_image.url }}" class="card-img-top event-img" alt="{{ event.title }}">
+                {% else %}
+                <img src="{% static 'images/default_event.jpg' %}" class="card-img-top event-img" alt="{{ event.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">{{ event.sub_category }}</span>
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text">{{ event.description|truncatewords:20 }}</p>
+                    <ul class="list-unstyled small mb-2">
+                        <li><i class="fa fa-calendar-alt"></i> {{ event.start_date }}</li>
+                        <li><i class="fa fa-map-marker-alt"></i> {{ event.venue.name }}</li>
+                        <li><i class="fa fa-users"></i> {{ event.skill_level }}</li>
+                    </ul>
+                    <a href="/events/{{ event.id }}/" class="btn btn-success">Register Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- Pagination Controls -->
+    <nav aria-label="Event pagination" class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?{% if selected.subcategory %}subcategory={{ selected.subcategory }}&{% endif %}{% if selected.date %}date={{ selected.date }}&{% endif %}{% if selected.location %}location={{ selected.location }}&{% endif %}{% if selected.skill %}skill={{ selected.skill }}&{% endif %}{% if selected.search %}search={{ selected.search }}&{% endif %}page={{ page_obj.previous_page_number }}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+        {% endif %}
+        {% for num in paginator.page_range %}
+          {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link" href="?{% if selected.subcategory %}subcategory={{ selected.subcategory }}&{% endif %}{% if selected.date %}date={{ selected.date }}&{% endif %}{% if selected.location %}location={{ selected.location }}&{% endif %}{% if selected.skill %}skill={{ selected.skill }}&{% endif %}{% if selected.search %}search={{ selected.search }}&{% endif %}page={{ num }}">{{ num }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?{% if selected.subcategory %}subcategory={{ selected.subcategory }}&{% endif %}{% if selected.date %}date={{ selected.date }}&{% endif %}{% if selected.location %}location={{ selected.location }}&{% endif %}{% if selected.skill %}skill={{ selected.skill }}&{% endif %}{% if selected.search %}search={{ selected.search }}&{% endif %}page={{ page_obj.next_page_number }}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center text-muted mt-5">
+        <i class="fa fa-frown fa-3x mb-3"></i>
+        <h4>No sports events found for your filters.</h4>
+        <p>Try adjusting your filters or check back later for new events.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.sports-category-page {
+    background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+    border-radius: 1.2rem;
+    box-shadow: 0 8px 32px rgba(30,58,138,0.16);
+}
+.category-header h1 {
+    font-weight: 700;
+    color: #185a9d;
+}
+.category-header .category-icon {
+    background: #fff;
+    border-radius: 50%;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.08);
+}
+.sports-tabs .nav-link {
+    font-weight: 600;
+    color: #185a9d;
+    border-radius: 2rem;
+    margin-right: 0.5rem;
+    background: #e3f2fd;
+    transition: background 0.2s, color 0.2s;
+}
+.sports-tabs .nav-link.active, .sports-tabs .nav-link:hover {
+    background: #185a9d;
+    color: #fff;
+}
+.event-card {
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 16px rgba(30,58,138,0.10);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.event-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 32px rgba(30,58,138,0.16);
+}
+.event-img {
+    border-top-left-radius: 1.2rem;
+    border-top-right-radius: 1.2rem;
+    height: 180px;
+    object-fit: cover;
+}
+.badge {
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    border-radius: 1rem;
+}
+</style>
+{% endblock %} 

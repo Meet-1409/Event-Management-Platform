@@ -1,0 +1,29 @@
+Payment Confirmation - 360° Event Manager
+
+Dear {{ user.get_full_name|default:user.email }},
+
+Your payment has been successfully processed!
+
+Event: {{ event.title|default:"Event Booking" }}
+Payment ID: {{ payment.payment_id }}
+Amount: ₹{{ payment.amount }}
+Date: {{ payment.payment_date|default:payment.created_at|date:"F d, Y H:i" }}
+Method: {{ payment.payment_method }}
+
+{% if event %}
+Event Details:
+- Date: {{ event.start_date|date:"F d, Y" }}
+- Venue: {{ event.venue.name|default:"TBD" }}
+- Time: {{ event.start_time }} - {{ event.end_time }}
+{% endif %}
+
+Your booking is confirmed and you will receive your ticket shortly.
+
+For any questions, contact us at:
+Phone: +91 98765 43210
+Email: info@360eventmanager.com
+
+Thank you for choosing 360° Event Manager!
+
+Best regards,
+360° Event Manager Team

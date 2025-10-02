@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Payment Instructions</title></head>
+<body style="font-family: Arial, sans-serif;">
+    <h2>Payment Instructions</h2>
+    <p>Dear {{ user.get_full_name|default:user.email }},</p>
+    <p>Please complete your payment for {{ event.title|default:"Event Booking" }}</p>
+    <p><strong>Amount:</strong> ₹{{ payment.amount }}</p>
+    <p><strong>Payment ID:</strong> {{ payment.payment_id }}</p>
+    <p>Payment instructions will be sent separately.</p>
+</body>
+</html>

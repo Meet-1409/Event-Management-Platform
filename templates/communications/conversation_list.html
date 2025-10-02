@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Conversations - 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 fw-bold mb-4">
+                <i class="fas fa-comments me-2 text-primary"></i>
+                My Conversations
+            </h1>
+
+            {% if conversations %}
+                <div class="row">
+                    {% for conversation in conversations %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                        <i class="fas fa-user text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h5 class="card-title fw-bold mb-1">
+                                            {% if conversation.participant1 == user %}
+                                                {{ conversation.participant2.get_full_name|default:conversation.participant2.username }}
+                                            {% else %}
+                                                {{ conversation.participant1.get_full_name|default:conversation.participant1.username }}
+                                            {% endif %}
+                                        </h5>
+                                        <small class="text-muted">
+                                            {% if conversation.participant1 == user %}
+                                                {{ conversation.participant2.user_type|title }}
+                                            {% else %}
+                                                {{ conversation.participant1.user_type|title }}
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted d-block">
+                                            {{ conversation.updated_at|date:"M d" }}
+                                        </small>
+                                        <small class="text-muted">
+                                            {{ conversation.updated_at|time:"g:i A" }}
+                                        </small>
+                                    </div>
+                                </div>
+
+                                {% if conversation.messages.last %}
+                                    <p class="card-text text-muted mb-3">
+                                        {{ conversation.messages.last.content|truncatewords:20 }}
+                                    </p>
+                                {% else %}
+                                    <p class="card-text text-muted mb-3">
+                                        No messages yet
+                                    </p>
+                                {% endif %}
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        {{ conversation.messages.count }} messages
+                                    </small>
+                                    <a href="{% url 'communications:chat_room' conversation.id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-comment me-1"></i>Open Chat
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-comments fa-4x text-muted"></i>
+                    </div>
+                    <h3 class="text-muted mb-3">No Conversations Yet</h3>
+                    <p class="text-muted mb-4">You haven't started any conversations yet. Start chatting with other users!</p>
+                    <a href="{% url 'communications:inbox' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-inbox me-2"></i>Go to Inbox
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

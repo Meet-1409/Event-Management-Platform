@@ -1,0 +1,464 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book {{ venue.name }} - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .booking-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .booking-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        margin: 30px 0;
+    }
+    
+    .booking-form {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .booking-summary {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 20px;
+    }
+    
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .summary-item:last-child {
+        border-bottom: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #667eea;
+    }
+    
+    .venue-preview {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .venue-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .package-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .package-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        border-color: #667eea;
+    }
+    
+    .package-card.selected {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .package-card.selected .package-price {
+        color: white;
+    }
+    
+    .booking-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 15px 30px;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .booking-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+    
+    .calendar-widget {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .calendar-day {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 2px;
+    }
+    
+    .calendar-day:hover {
+        background: #667eea;
+        color: white;
+    }
+    
+    .calendar-day.selected {
+        background: #667eea;
+        color: white;
+    }
+    
+    .calendar-day.disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="booking-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-calendar-check me-3"></i>Book {{ venue.name }}
+                </h1>
+                <p class="lead mb-4">Reserve your perfect venue for your special event</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'venues:venue_detail' venue.id %}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Venue
+                    </a>
+                    <a href="{% url 'venues:venue_gallery_enhanced' venue.id %}" class="btn btn-light">
+                        <i class="fas fa-images me-2"></i>Enhanced Gallery
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-calendar-check" style="font-size: 6rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Form -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Venue Preview -->
+                <div class="venue-preview">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-building me-2 text-primary"></i>Venue Details
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{ venue.main_image.url|default:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=800&q=80' }}" 
+                                 alt="{{ venue.name }}" class="venue-image">
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="fw-bold mb-2">{{ venue.name }}</h4>
+                            <p class="text-muted mb-3">{{ venue.description|truncatewords:30 }}</p>
+                            <div class="d-flex gap-3 mb-3">
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-users me-1"></i>{{ venue.capacity_max }} Guests
+                                </span>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ venue.city }}
+                                </span>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-star me-1"></i>{{ venue.average_rating|floatformat:1 }}/5
+                                </span>
+                            </div>
+                            <div class="h5 fw-bold text-primary">₹{{ venue.base_price }} / event</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Form -->
+                <div class="booking-form">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-edit me-2 text-primary"></i>Booking Details
+                    </h3>
+                    <form id="bookingForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Event Type</label>
+                                    <select class="form-control" required>
+                                        <option value="">Select Event Type</option>
+                                        <option value="wedding">Wedding</option>
+                                        <option value="corporate">Corporate Event</option>
+                                        <option value="birthday">Birthday Party</option>
+                                        <option value="conference">Conference</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Expected Guests</label>
+                                    <input type="number" class="form-control" min="1" max="{{ venue.capacity_max }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Event Date</label>
+                                    <input type="date" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Event Time</label>
+                                    <input type="time" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Event Duration (Hours)</label>
+                            <input type="number" class="form-control" min="1" max="24" value="4" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Special Requirements</label>
+                            <textarea class="form-control" rows="4" placeholder="Any special requirements or requests..."></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Package Selection -->
+                <div class="booking-form">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-box me-2 text-primary"></i>Select Package
+                    </h3>
+                    {% for package in venue.packages.all %}
+                    <div class="package-card" data-package-id="{{ package.id }}" data-price="{{ package.price }}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="fw-bold mb-2">{{ package.name }}</h5>
+                                <p class="text-muted mb-3">{{ package.description }}</p>
+                                <ul class="list-unstyled">
+                                    {% for feature in package.features.all %}
+                                    <li><i class="fas fa-check text-success me-2"></i>{{ feature.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="text-end">
+                                <div class="package-price h4 fw-bold text-primary">₹{{ package.price }}</div>
+                                <small class="text-muted">per event</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Packages Available</h5>
+                        <p class="text-muted">Contact us for custom pricing.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Booking Summary -->
+                <div class="booking-summary">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-receipt me-2 text-primary"></i>Booking Summary
+                    </h3>
+                    
+                    <div class="summary-item">
+                        <span>Venue Rental</span>
+                        <span>₹{{ venue.base_price }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Package</span>
+                        <span id="packagePrice">₹0</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Service Fee (5%)</span>
+                        <span id="serviceFee">₹0</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>GST (18%)</span>
+                        <span id="gstAmount">₹0</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="summary-item">
+                        <span>Total Amount</span>
+                        <span id="totalAmount">₹{{ venue.base_price }}</span>
+                    </div>
+                    
+                    <button class="booking-btn mt-4" onclick="processBooking()">
+                        <i class="fas fa-credit-card me-2"></i>Proceed to Payment
+                    </button>
+                </div>
+
+                <!-- Calendar Widget -->
+                <div class="calendar-widget">
+                    <h4 class="fw-bold mb-3">
+                        <i class="fas fa-calendar-alt me-2 text-primary"></i>Check Availability
+                    </h4>
+                    <div class="text-center">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h5 class="mb-0">December 2024</h5>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex flex-wrap justify-content-center">
+                            <!-- Calendar days would be populated here -->
+                            <div class="calendar-day">1</div>
+                            <div class="calendar-day">2</div>
+                            <div class="calendar-day disabled">3</div>
+                            <div class="calendar-day">4</div>
+                            <div class="calendar-day selected">5</div>
+                            <!-- More days... -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Package selection
+    const packageCards = document.querySelectorAll('.package-card');
+    
+    packageCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove selected class from all cards
+            packageCards.forEach(c => c.classList.remove('selected'));
+            // Add selected class to clicked card
+            this.classList.add('selected');
+            
+            // Update booking summary
+            updateBookingSummary();
+        });
+    });
+    
+    // Calendar day selection
+    const calendarDays = document.querySelectorAll('.calendar-day:not(.disabled)');
+    
+    calendarDays.forEach(day => {
+        day.addEventListener('click', function() {
+            // Remove selected class from all days
+            calendarDays.forEach(d => d.classList.remove('selected'));
+            // Add selected class to clicked day
+            this.classList.add('selected');
+        });
+    });
+});
+
+function updateBookingSummary() {
+    const selectedPackage = document.querySelector('.package-card.selected');
+    const venuePrice = {{ venue.base_price }};
+    let packagePrice = 0;
+    
+    if (selectedPackage) {
+        packagePrice = parseInt(selectedPackage.getAttribute('data-price'));
+    }
+    
+    const subtotal = venuePrice + packagePrice;
+    const serviceFee = subtotal * 0.05;
+    const gst = (subtotal + serviceFee) * 0.18;
+    const total = subtotal + serviceFee + gst;
+    
+    document.getElementById('packagePrice').textContent = '₹' + packagePrice;
+    document.getElementById('serviceFee').textContent = '₹' + serviceFee.toFixed(0);
+    document.getElementById('gstAmount').textContent = '₹' + gst.toFixed(0);
+    document.getElementById('totalAmount').textContent = '₹' + total.toFixed(0);
+}
+
+function processBooking() {
+    const form = document.getElementById('bookingForm');
+    const selectedPackage = document.querySelector('.package-card.selected');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    if (!selectedPackage) {
+        alert('Please select a package');
+        return;
+    }
+    
+    // Redirect to payment page
+    window.location.href = "{% url 'payments:process_payment' %}?venue={{ venue.id }}&package=" + selectedPackage.getAttribute('data-package-id');
+}
+</script>
+{% endblock %} 

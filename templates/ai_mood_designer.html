@@ -1,0 +1,748 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Mood Designer | 360° Event Manager{% endblock %}
+
+{% block content %}
+<div class="page-container" style="background: linear-gradient(135deg, #ffffff 0%, #f4f7f5 50%, #e7efe9 100%); min-height: 100vh;">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb" style="background: transparent; color: #000000;">
+            <li class="breadcrumb-item"><a href="/" style="color: #6b8f71;">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page" style="color: #000000;">AI Mood Designer</li>
+        </ol>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="mood-designer-hero">
+        <div class="hero-content text-center">
+            <h1 class="hero-title">AI Mood Designer</h1>
+            <p class="hero-subtitle">Let our AI create the perfect event atmosphere for you</p>
+            <div class="hero-features">
+                <div class="feature-item">
+                    <i class="fas fa-magic"></i>
+                    <span>Smart Theme Suggestions</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-music"></i>
+                    <span>Curated Playlists</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Food Recommendations</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-building"></i>
+                    <span>Venue Matching</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mood Designer Form -->
+    <div class="mood-designer-form">
+        <div class="form-container">
+            <h2 class="form-title">Tell us about your event</h2>
+            <p class="form-subtitle">Our AI will analyze your preferences and create a personalized event experience</p>
+            
+            <form id="moodDesignerForm" class="mood-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventType">Event Type *</label>
+                        <select id="eventType" name="eventType" required>
+                            <option value="">Select Event Type</option>
+                            <option value="wedding">Wedding</option>
+                            <option value="corporate">Corporate Event</option>
+                            <option value="birthday">Birthday Party</option>
+                            <option value="anniversary">Anniversary</option>
+                            <option value="graduation">Graduation</option>
+                            <option value="conference">Conference</option>
+                            <option value="seminar">Seminar</option>
+                            <option value="product-launch">Product Launch</option>
+                            <option value="team-building">Team Building</option>
+                            <option value="cultural">Cultural Event</option>
+                            <option value="sports">Sports Event</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="audience">Target Audience *</label>
+                        <select id="audience" name="audience" required>
+                            <option value="">Select Audience</option>
+                            <option value="family">Family & Friends</option>
+                            <option value="colleagues">Colleagues</option>
+                            <option value="clients">Clients</option>
+                            <option value="students">Students</option>
+                            <option value="professionals">Professionals</option>
+                            <option value="mixed">Mixed Audience</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="mood">Desired Mood *</label>
+                        <select id="mood" name="mood" required>
+                            <option value="">Select Mood</option>
+                            <option value="elegant">Elegant & Sophisticated</option>
+                            <option value="fun">Fun & Energetic</option>
+                            <option value="romantic">Romantic & Intimate</option>
+                            <option value="professional">Professional & Formal</option>
+                            <option value="casual">Casual & Relaxed</option>
+                            <option value="luxurious">Luxurious & Premium</option>
+                            <option value="creative">Creative & Artistic</option>
+                            <option value="traditional">Traditional & Cultural</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="size">Event Size *</label>
+                        <select id="size" name="size" required>
+                            <option value="">Select Size</option>
+                            <option value="intimate">Intimate (10-25 people)</option>
+                            <option value="small">Small (25-50 people)</option>
+                            <option value="medium">Medium (50-100 people)</option>
+                            <option value="large">Large (100-250 people)</option>
+                            <option value="corporate">Corporate (250+ people)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Event Date *</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="budget">Budget Range</label>
+                        <select id="budget" name="budget">
+                            <option value="">Select Budget</option>
+                            <option value="budget">Budget Friendly (₹50K-₹1L)</option>
+                            <option value="moderate">Moderate (₹1L-₹3L)</option>
+                            <option value="premium">Premium (₹3L-₹5L)</option>
+                            <option value="luxury">Luxury (₹5L+)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="specialRequirements">Special Requirements</label>
+                    <textarea id="specialRequirements" name="specialRequirements" rows="3" placeholder="Any specific requirements, themes, or preferences..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-magic"></i> Generate Event Design
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AI Processing Section -->
+    <div id="aiProcessing" class="ai-processing" style="display: none;">
+        <div class="processing-content">
+            <div class="processing-animation">
+                <div class="spinner"></div>
+            </div>
+            <h3 style="color: #000000; margin-bottom: 1rem;">AI is designing your perfect event...</h3>
+            <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">Analyzing your preferences and creating personalized recommendations</p>
+            <div class="processing-steps">
+                <div class="step active">
+                    <i class="fas fa-brain"></i>
+                    <span>Analyzing preferences</span>
+                </div>
+                <div class="step">
+                    <i class="fas fa-palette"></i>
+                    <span>Generating themes</span>
+                </div>
+                <div class="step">
+                    <i class="fas fa-music"></i>
+                    <span>Curating music</span>
+                </div>
+                <div class="step">
+                    <i class="fas fa-utensils"></i>
+                    <span>Selecting food</span>
+                </div>
+                <div class="step">
+                    <i class="fas fa-building"></i>
+                    <span>Matching venues</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="aiResults" class="ai-results" style="display: none;">
+        <div class="results-header">
+            <h2>Your AI-Designed Event</h2>
+            <p>Here's what our AI has created for your perfect event experience</p>
+        </div>
+
+        <div class="results-grid">
+            <!-- Theme Recommendation -->
+            <div class="result-card theme-card">
+                <div class="card-header">
+                    <i class="fas fa-palette"></i>
+                    <h3>Theme & Decor</h3>
+                </div>
+                <div class="card-content">
+                    <div id="themeContent">
+                        <!-- Theme content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Music Playlist -->
+            <div class="result-card music-card">
+                <div class="card-header">
+                    <i class="fas fa-music"></i>
+                    <h3>Music Playlist</h3>
+                </div>
+                <div class="card-content">
+                    <div id="musicContent">
+                        <!-- Music content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Food Recommendations -->
+            <div class="result-card food-card">
+                <div class="card-header">
+                    <i class="fas fa-utensils"></i>
+                    <h3>Food & Beverages</h3>
+                </div>
+                <div class="card-content">
+                    <div id="foodContent">
+                        <!-- Food content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Venue Suggestions -->
+            <div class="result-card venue-card">
+                <div class="card-header">
+                    <i class="fas fa-building"></i>
+                    <h3>Venue Recommendations</h3>
+                </div>
+                <div class="card-content">
+                    <div id="venueContent">
+                        <!-- Venue content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-actions">
+            <button class="btn btn-primary" onclick="bookEvent()">
+                <i class="fas fa-calendar-check"></i> Book This Event
+            </button>
+            <button class="btn btn-outline-primary" onclick="regenerateDesign()">
+                <i class="fas fa-redo"></i> Regenerate Design
+            </button>
+            <button class="btn btn-outline-secondary" onclick="downloadPDF()">
+                <i class="fas fa-download"></i> Download PDF
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Hero Section */
+.mood-designer-hero {
+    background: linear-gradient(135deg, #6b8f71 0%, #58705d 100%);
+    color: #000000;
+    padding: 4rem 0;
+    border-radius: 1rem;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.hero-features {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.feature-item i {
+    font-size: 1.2rem;
+}
+
+/* Form Styles */
+.mood-designer-form {
+    background: transparent;
+    padding: 3rem 0;
+    margin-bottom: 3rem;
+}
+
+.form-container h2,
+.form-title {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #000000;
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+.form-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.mood-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-group select,
+.form-group input,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #000000;
+    transition: all 0.3s ease;
+}
+
+.form-group select option {
+    background: #ffffff;
+    color: #000000;
+}
+
+.form-group select:focus,
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.form-actions .btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #6b8f71 0%, #58705d 100%);
+    border: none;
+    color: #000000;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.form-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* AI Processing Styles */
+.ai-processing {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    padding: 3rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    margin-bottom: 3rem;
+    color: #000000;
+}
+
+.processing-animation {
+    margin-bottom: 2rem;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #e9ecef;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.processing-steps {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.step.active {
+    opacity: 1;
+    color: #667eea;
+}
+
+.step i {
+    font-size: 1.5rem;
+}
+
+/* Results Styles */
+.ai-results {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    padding: 3rem;
+    backdrop-filter: blur(10px);
+    color: #000000;
+}
+
+.results-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.results-header h2 {
+    color: #000000;
+    margin-bottom: 0.5rem;
+}
+
+.results-header p {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.result-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #000000;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #6b8f71 0%, #58705d 100%);
+    color: #000000;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.card-content {
+    padding: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.results-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.results-actions .btn {
+    background: linear-gradient(135deg, #6b8f71 0%, #58705d 100%);
+    border: none;
+    color: #000000;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.results-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.results-actions .btn-outline-primary {
+    background: transparent;
+    border: 2px solid #6b8f71;
+    color: #6b8f71;
+}
+
+.results-actions .btn-outline-primary:hover {
+    background: #6b8f71;
+    color: #000000;
+}
+
+.results-actions .btn-outline-secondary {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.results-actions .btn-outline-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #000000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-features {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .processing-steps {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .results-actions {
+        flex-direction: column;
+    }
+    
+    .mood-designer-form {
+        padding: 2rem;
+    }
+}
+</style>
+
+<script>
+// AI Mood Designer JavaScript
+let currentStep = 0;
+const processingSteps = document.querySelectorAll('.processing-steps .step');
+
+document.getElementById('moodDesignerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    startAIProcessing();
+});
+
+function startAIProcessing() {
+    // Hide form and show processing
+    document.querySelector('.mood-designer-form').style.display = 'none';
+    document.getElementById('aiProcessing').style.display = 'block';
+    
+    // Start step animation
+    animateProcessingSteps();
+    
+    // Simulate AI processing
+    setTimeout(() => {
+        showResults();
+    }, 8000);
+}
+
+function animateProcessingSteps() {
+    const interval = setInterval(() => {
+        if (currentStep < processingSteps.length) {
+            // Remove active from previous step
+            if (currentStep > 0) {
+                processingSteps[currentStep - 1].classList.remove('active');
+            }
+            
+            // Add active to current step
+            processingSteps[currentStep].classList.add('active');
+            currentStep++;
+        } else {
+            clearInterval(interval);
+        }
+    }, 1500);
+}
+
+function showResults() {
+    document.getElementById('aiProcessing').style.display = 'none';
+    document.getElementById('aiResults').style.display = 'block';
+    
+    // Generate AI recommendations
+    generateAIRecommendations();
+}
+
+function generateAIRecommendations() {
+    const formData = new FormData(document.getElementById('moodDesignerForm'));
+    const eventType = formData.get('eventType');
+    const audience = formData.get('audience');
+    const mood = formData.get('mood');
+    const size = formData.get('size');
+    const budget = formData.get('budget');
+    
+    // AI Logic for recommendations
+    const recommendations = getAIRecommendations(eventType, audience, mood, size, budget);
+    
+    // Populate results
+    document.getElementById('themeContent').innerHTML = recommendations.theme;
+    document.getElementById('musicContent').innerHTML = recommendations.music;
+    document.getElementById('foodContent').innerHTML = recommendations.food;
+    document.getElementById('venueContent').innerHTML = recommendations.venue;
+}
+
+function getAIRecommendations(eventType, audience, mood, size, budget) {
+    // AI Recommendation Logic
+    const recommendations = {
+        theme: '',
+        music: '',
+        food: '',
+        venue: ''
+    };
+    
+    // Theme recommendations based on event type and mood
+    const themes = {
+        'wedding': {
+            'elegant': 'Classic white and gold theme with crystal chandeliers and floral arrangements',
+            'romantic': 'Soft pink and rose gold with candlelit ambiance',
+            'traditional': 'Rich red and gold with traditional Indian decor elements'
+        },
+        'corporate': {
+            'professional': 'Clean blue and white theme with modern minimalist decor',
+            'luxurious': 'Deep navy and silver with premium materials and lighting'
+        },
+        'birthday': {
+            'fun': 'Colorful balloon arch with confetti and party lights',
+            'elegant': 'Sophisticated black and gold with geometric patterns'
+        }
+    };
+    
+    // Music recommendations
+    const music = {
+        'wedding': 'Bollywood romantic hits, classical instrumental, and contemporary love songs',
+        'corporate': 'Soft jazz, instrumental music, and ambient background tunes',
+        'birthday': 'Upbeat pop hits, dance music, and celebratory songs'
+    };
+    
+    // Food recommendations
+    const food = {
+        'wedding': 'Multi-course Indian feast with continental options, live cooking stations',
+        'corporate': 'Professional buffet with healthy options, coffee/tea service',
+        'birthday': 'Finger foods, cake cutting ceremony, dessert bar'
+    };
+    
+    // Venue recommendations
+    const venues = {
+        'intimate': 'Private dining rooms, boutique hotels, garden venues',
+        'small': 'Banquet halls, restaurant private areas, community centers',
+        'medium': 'Conference centers, hotel ballrooms, outdoor venues',
+        'large': 'Convention centers, large banquet halls, stadiums'
+    };
+    
+    // Generate recommendations
+    recommendations.theme = themes[eventType]?.[mood] || 'Elegant and sophisticated theme with modern decor elements';
+    recommendations.music = music[eventType] || 'Curated playlist matching your event mood and audience preferences';
+    recommendations.food = food[eventType] || 'Customized menu based on your preferences and dietary requirements';
+    recommendations.venue = venues[size] || 'Perfect venue matching your event size and requirements';
+    
+    return recommendations;
+}
+
+function bookEvent() {
+    showToast('Redirecting to booking page...', 'success');
+    setTimeout(() => {
+        window.location.href = '/events/booking/';
+    }, 1500);
+}
+
+function regenerateDesign() {
+    document.getElementById('aiResults').style.display = 'none';
+    document.querySelector('.mood-designer-form').style.display = 'block';
+    currentStep = 0;
+    processingSteps.forEach(step => step.classList.remove('active'));
+}
+
+function downloadPDF() {
+    showToast('Generating PDF...', 'info');
+    // Simulate PDF generation
+    setTimeout(() => {
+        showToast('PDF downloaded successfully!', 'success');
+    }, 2000);
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="fa fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}360° Event Manager - Where Luxury and Planning Meets{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    360° Event & Venue Management
+                </h1>
+                <p class="lead mb-4">
+                    Where luxury and planning meets. Professional event management platform with enhanced venue galleries and comprehensive planning tools.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="/events/" class="btn btn-lg px-4">
+                        <i class="fas fa-calendar-alt me-2"></i>Browse Events
+                    </a>
+                    <a href="/venues/" class="btn btn-lg px-4">
+                        <i class="fas fa-building me-2"></i>Find Venues
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image text-center">
+                    <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&h=400&fit=crop" 
+                         alt="Event Management" class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold mb-3">Why Choose 360° Event Manager?</h2>
+                <p class="text-muted">Professional event management with cutting-edge technology</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-users fa-3x mb-3"></i>
+                    <h4>Professional Managers</h4>
+                    <p>Connect with verified event management professionals</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-building fa-3x mb-3"></i>
+                    <h4>Premium Venues</h4>
+                    <p>Enhanced venue galleries with 360° virtual tours</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-credit-card fa-3x mb-3"></i>
+                    <h4>Secure Payments</h4>
+                    <p>Multiple payment options with instant confirmations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container text-center">
+        <h3 class="mb-4">Ready to Plan Your Perfect Event?</h3>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            {% if not user.is_authenticated %}
+                <a href="/users/register/" class="btn btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Get Started
+                </a>
+            {% endif %}
+            <a href="/contact/" class="btn btn-lg">
+                <i class="fas fa-phone me-2"></i>Contact Us
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

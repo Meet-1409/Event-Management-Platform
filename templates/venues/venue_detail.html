@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ venue.name }} - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .venue-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .venue-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .venue-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .venue-image {
+        height: 400px;
+        object-fit: cover;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    
+    .venue-stats {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .venue-info-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        border: none;
+    }
+    
+    .venue-package-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .venue-package-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        border-color: #667eea;
+    }
+    
+    .venue-package-card.featured {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .venue-package-card.featured .package-price {
+        color: white;
+    }
+    
+    .venue-review-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .venue-amenity {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 15px;
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .venue-amenity i {
+        color: #667eea;
+        margin-right: 15px;
+        font-size: 1.2rem;
+    }
+    
+    .venue-gallery {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .gallery-image {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .gallery-image img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-image:hover img {
+        transform: scale(1.05);
+    }
+    
+    .venue-360-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 15px 30px;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .venue-360-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .venue-booking-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 15px 30px;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .venue-booking-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+    
+    .rating-stars {
+        color: #ffc107;
+        font-size: 1.2rem;
+    }
+    
+    .venue-price {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+    
+    .venue-capacity {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .venue-location {
+        background: #f3e5f5;
+        color: #7b1fa2;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="venue-hero">
+    <div class="container">
+        <div class="row align-items-center venue-hero-content">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">{{ venue.name }}</h1>
+                <p class="lead mb-4">{{ venue.description|truncatewords:30 }}</p>
+                <div class="d-flex gap-3 mb-4">
+                    <span class="venue-capacity">
+                        <i class="fas fa-users me-2"></i>{{ venue.capacity_max }} Guests
+                    </span>
+                    <span class="venue-location">
+                        <i class="fas fa-map-marker-alt me-2"></i>{{ venue.city }}
+                    </span>
+                </div>
+                <div class="d-flex gap-3">
+                                    <a href="{% url 'venues:venue_gallery_enhanced' venue.id %}" class="venue-gallery-btn">
+                    <i class="fas fa-images me-2"></i>Enhanced Gallery
+                    </a>
+                    <a href="{% url 'venues:venue_booking' venue.id %}" class="venue-booking-btn">
+                        <i class="fas fa-calendar-check me-2"></i>Book Now
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                {% if venue.venue_image %}
+                    <img src="{{ venue.venue_image.url }}" alt="{{ venue.name }}" class="venue-image">
+                {% else %}
+                    {% if venue.category.name == 'Conference Hall' %}
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="{{ venue.name }}" class="venue-image">
+                    {% elif venue.category.name == 'Wedding Hall' %}
+                        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="{{ venue.name }}" class="venue-image">
+                    {% elif venue.category.name == 'Outdoor Garden' %}
+                        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="{{ venue.name }}" class="venue-image">
+                    {% elif venue.category.name == 'Restaurant' %}
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="{{ venue.name }}" class="venue-image">
+                    {% elif venue.category.name == 'Sports Complex' %}
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="{{ venue.name }}" class="venue-image">
+                    {% elif venue.category.name == 'Hotel Ballroom' %}
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="{{ venue.name }}" class="venue-image">
+                    {% elif venue.category.name == 'Community Center' %}
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="{{ venue.name }}" class="venue-image">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="{{ venue.name }}" class="venue-image">
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="venue-stats text-center">
+                    <div class="venue-price mb-2">₹{{ venue.base_price }}</div>
+                    <div class="text-muted">Starting Price</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="venue-stats text-center">
+                    <div class="h3 fw-bold text-primary mb-2">{{ venue.capacity_max }}</div>
+                    <div class="text-muted">Max Capacity</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="venue-stats text-center">
+                    <div class="h3 fw-bold text-success mb-2">{{ venue.average_rating|floatformat:1 }}</div>
+                    <div class="rating-stars mb-2">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= venue.average_rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="text-muted">Rating</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="venue-stats text-center">
+                    <div class="h3 fw-bold text-info mb-2">{{ venue.reviews.count }}</div>
+                    <div class="text-muted">Reviews</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Venue Details -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Venue Information -->
+                <div class="venue-info-card">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Venue Information
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Address:</strong> {{ venue.address }}</p>
+                            <p><strong>City:</strong> {{ venue.city }}</p>
+                            <p><strong>State:</strong> {{ venue.state }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Category:</strong> {{ venue.category.name }}</p>
+                            <p><strong>Capacity:</strong> {{ venue.capacity_min }} - {{ venue.capacity_max }} guests</p>
+                            <p><strong>Parking:</strong> {{ venue.parking_spaces }} spaces</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h5 class="fw-bold mb-3">Description</h5>
+                        <p>{{ venue.description }}</p>
+                    </div>
+                </div>
+
+                <!-- Amenities -->
+                <div class="venue-info-card">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-concierge-bell me-2 text-primary"></i>Amenities & Features
+                    </h3>
+                    <div class="row">
+                        {% for amenity in venue.amenities.all %}
+                        <div class="col-md-6">
+                            <div class="venue-amenity">
+                                <i class="fas fa-check-circle"></i>
+                                <span>{{ amenity.name }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Gallery -->
+                <div class="venue-gallery">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-images me-2 text-primary"></i>Gallery
+                    </h3>
+                    <div class="row">
+                        {% for image in venue.images.all|slice:":6" %}
+                        <div class="col-md-4">
+                            <div class="gallery-image">
+                                <img src="{{ image.image.url }}" alt="{{ venue.name }}">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'venues:venue_gallery' venue.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-images me-2"></i>View All Photos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Reviews -->
+                <div class="venue-info-card">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-star me-2 text-primary"></i>Reviews
+                    </h3>
+                    {% for review in reviews %}
+                    <div class="venue-review-card">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="fw-bold mb-1">{{ review.user.get_full_name }}</h6>
+                                <div class="rating-stars">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= review.rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                        </div>
+                        <p class="mb-0">{{ review.comment }}</p>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No reviews yet. Be the first to review this venue!</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Packages -->
+                <div class="venue-info-card">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-box me-2 text-primary"></i>Packages
+                    </h3>
+                    {% for package in packages %}
+                    <div class="venue-package-card {% if package.is_featured %}featured{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="fw-bold mb-0">{{ package.name }}</h5>
+                            {% if package.is_featured %}
+                            <span class="badge bg-warning">Featured</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-muted mb-3">{{ package.description }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="package-price">
+                                <span class="h4 fw-bold">₹{{ package.price }}</span>
+                                <small class="text-muted">/event</small>
+                            </div>
+                            <a href="{% url 'venues:venue_booking' venue.id %}?package={{ package.id }}" 
+                               class="btn btn-sm btn-primary">
+                                Select Package
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No packages available for this venue.</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="venue-info-card">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-bolt me-2 text-primary"></i>Quick Actions
+                    </h3>
+                    <div class="d-grid gap-3">
+                                        <a href="{% url 'venues:venue_gallery_enhanced' venue.id %}" class="venue-gallery-btn">
+                    <i class="fas fa-images me-2"></i>View Enhanced Gallery
+                        </a>
+                        <a href="{% url 'venues:venue_booking' venue.id %}" class="venue-booking-btn">
+                            <i class="fas fa-calendar-check me-2"></i>Book This Venue
+                        </a>
+                        <a href="{% url 'venues:venue_availability' venue.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-calendar-alt me-2"></i>Check Availability
+                        </a>
+                        <a href="{% url 'venues:venue_reviews' venue.id %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-star me-2"></i>View All Reviews
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

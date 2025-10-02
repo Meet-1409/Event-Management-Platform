@@ -1,0 +1,484 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manager Dashboard - 360° Event Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .manager-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .manager-container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        margin: 30px 0;
+    }
+    
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .stats-card.events {
+        border-left-color: #28a745;
+    }
+    
+    .stats-card.venues {
+        border-left-color: #ffc107;
+    }
+    
+    .stats-card.revenue {
+        border-left-color: #17a2b8;
+    }
+    
+    .stats-card.clients {
+        border-left-color: #dc3545;
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .stats-label {
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .stats-icon {
+        font-size: 2rem;
+        color: #667eea;
+        margin-bottom: 15px;
+    }
+    
+    .stats-card.events .stats-icon {
+        color: #28a745;
+    }
+    
+    .stats-card.venues .stats-icon {
+        color: #ffc107;
+    }
+    
+    .stats-card.revenue .stats-icon {
+        color: #17a2b8;
+    }
+    
+    .stats-card.clients .stats-icon {
+        color: #dc3545;
+    }
+    
+    .task-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .task-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .task-item:hover {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .task-item:last-child {
+        border-bottom: none;
+    }
+    
+    .task-priority {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+    
+    .task-priority.high {
+        background: #dc3545;
+    }
+    
+    .task-priority.medium {
+        background: #ffc107;
+    }
+    
+    .task-priority.low {
+        background: #28a745;
+    }
+    
+    .task-content {
+        flex: 1;
+    }
+    
+    .task-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .task-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .task-deadline {
+        color: #dc3545;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .upcoming-events {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .event-item {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .event-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .event-date {
+        background: #667eea;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .event-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .event-venue {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .quick-actions {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .action-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 15px 20px;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        margin: 5px;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .action-btn.success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .action-btn.success:hover {
+        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+    }
+    
+    .action-btn.warning {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    }
+    
+    .action-btn.warning:hover {
+        box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="manager-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-user-tie me-3"></i>Manager Dashboard
+                </h1>
+                <p class="lead mb-4">Welcome back, {{ user.get_full_name }}! Here's your event management overview.</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'managers:event_management' %}" class="btn btn-outline-light">
+                        <i class="fas fa-calendar me-2"></i>Manage Events
+                    </a>
+                    <a href="{% url 'managers:venue_management' %}" class="btn btn-light">
+                        <i class="fas fa-building me-2"></i>Manage Venues
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-user-tie" style="font-size: 6rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Overview -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-card events">
+                    <div class="stats-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stats-number">{{ total_events }}</div>
+                    <div class="stats-label">Total Events</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-card venues">
+                    <div class="stats-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stats-number">{{ total_venues }}</div>
+                    <div class="stats-label">Managed Venues</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-card revenue">
+                    <div class="stats-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stats-number">₹{{ total_revenue|floatformat:0 }}</div>
+                    <div class="stats-label">Total Revenue</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stats-card clients">
+                    <div class="stats-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stats-number">{{ total_clients }}</div>
+                    <div class="stats-label">Active Clients</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tasks and Events -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="task-container">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-tasks me-2 text-primary"></i>Today's Tasks
+                    </h3>
+                    
+                    {% for task in today_tasks %}
+                    <div class="task-item">
+                        <div class="task-priority {{ task.priority }}"></div>
+                        <div class="task-content">
+                            <div class="task-title">{{ task.title }}</div>
+                            <div class="task-description">{{ task.description }}</div>
+                        </div>
+                        <div class="task-deadline">{{ task.deadline|time:"g:i A" }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h5 class="text-success">All Caught Up!</h5>
+                        <p class="text-muted">No pending tasks for today.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="upcoming-events">
+                    <h3 class="fw-bold mb-4">
+                        <i class="fas fa-calendar me-2 text-primary"></i>Upcoming Events
+                    </h3>
+                    
+                    {% for event in upcoming_events %}
+                    <div class="event-item">
+                        <div class="event-date">{{ event.start_date|date:"M d" }}</div>
+                        <div class="event-title">{{ event.title }}</div>
+                        <div class="event-venue">{{ event.venue.name }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Upcoming Events</h5>
+                        <p class="text-muted">No events scheduled for the next few days.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions -->
+<section class="py-5">
+    <div class="container">
+        <div class="quick-actions">
+            <h3 class="fw-bold mb-4">
+                <i class="fas fa-bolt me-2 text-primary"></i>Quick Actions
+            </h3>
+            
+            <div class="d-flex flex-wrap">
+                <a href="{% url 'managers:create_event' %}" class="action-btn success">
+                    <i class="fas fa-plus me-2"></i>Create Event
+                </a>
+                <a href="{% url 'managers:event_management' %}" class="action-btn">
+                    <i class="fas fa-calendar me-2"></i>Manage Events
+                </a>
+                <a href="{% url 'managers:venue_management' %}" class="action-btn">
+                    <i class="fas fa-building me-2"></i>Manage Venues
+                </a>
+                <a href="{% url 'managers:client_management' %}" class="action-btn">
+                    <i class="fas fa-users me-2"></i>Manage Clients
+                </a>
+                <a href="{% url 'managers:reports' %}" class="action-btn warning">
+                    <i class="fas fa-chart-bar me-2"></i>View Reports
+                </a>
+                <a href="{% url 'managers:settings' %}" class="action-btn">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Activity -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="manager-container">
+            <h3 class="fw-bold mb-4">
+                <i class="fas fa-history me-2 text-primary"></i>Recent Activity
+            </h3>
+            
+            <div class="row">
+                {% for activity in recent_activities %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded-circle p-2 me-3">
+                                    <i class="fas fa-{{ activity.icon }}"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">{{ activity.title }}</h6>
+                                    <small class="text-muted">{{ activity.time|timesince }} ago</small>
+                                </div>
+                            </div>
+                            <p class="card-text text-muted">{{ activity.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No Recent Activity</h5>
+                    <p class="text-muted">Activity will appear here as you manage events and venues.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Stats cards hover effect
+    const statsCards = document.querySelectorAll('.stats-card');
+    statsCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Task items hover effect
+    const taskItems = document.querySelectorAll('.task-item');
+    taskItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+    
+    // Event items hover effect
+    const eventItems = document.querySelectorAll('.event-item');
+    eventItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %} 

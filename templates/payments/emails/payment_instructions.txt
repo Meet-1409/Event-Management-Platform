@@ -1,0 +1,13 @@
+Payment Instructions
+
+Dear {{ user.get_full_name|default:user.email }},
+
+Please complete your payment for {{ event.title|default:"Event Booking" }}
+
+Amount: ₹{{ payment.amount }}
+Payment ID: {{ payment.payment_id }}
+
+Payment instructions will be sent separately.
+
+Best regards,
+360° Event Manager Team

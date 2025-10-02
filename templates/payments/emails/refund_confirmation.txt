@@ -1,0 +1,23 @@
+Refund Confirmation - 360° Event Manager
+
+Dear {{ user.get_full_name|default:user.email }},
+
+Your refund has been successfully processed!
+
+Refund Details:
+- Event: {{ event.title|default:"Event Booking" }}
+- Refund Amount: ₹{{ refund.amount }}
+- Refund ID: {{ refund.refund_id }}
+- Original Payment: {{ payment.payment_id }}
+- Processed Date: {{ refund.refund_date|date:"F d, Y H:i" }}
+
+The refund amount will be credited to your original payment method within 5-7 business days.
+
+If you have any questions about this refund, please contact our support team:
+Phone: +91 98765 43210
+Email: info@360eventmanager.com
+
+Thank you for choosing 360° Event Manager.
+
+Best regards,
+360° Event Manager Team
