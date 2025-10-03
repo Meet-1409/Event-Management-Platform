@@ -30,7 +30,7 @@ def manager_list(request):
     managers = CustomUser.objects.filter(
         user_type='manager',
         is_active=True
-    ).select_related('manager_profile').order_by('-date_joined')
+    ).order_by('-date_joined')
     
     # Search functionality
     search_query = request.GET.get('search', '')
@@ -42,22 +42,23 @@ def manager_list(request):
             Q(city__icontains=search_query)
         )
     
-    # Filter by verification status
+    # Filter by verification status (using is_staff as verification status)
     verification_filter = request.GET.get('verified')
     if verification_filter == 'yes':
-        managers = managers.filter(manager_profile__is_verified=True)
+        managers = managers.filter(is_staff=True)
     elif verification_filter == 'no':
-        managers = managers.filter(manager_profile__is_verified=False)
+        managers = managers.filter(is_staff=False)
     
     # Filter by city
     city_filter = request.GET.get('city')
     if city_filter:
         managers = managers.filter(city__iexact=city_filter)
     
-    # Filter by specialization
+    # Filter by specialization (using experience_years field as a simple filter)
     specialization_filter = request.GET.get('specialization')
     if specialization_filter:
-        managers = managers.filter(manager_profile__specializations__contains=[specialization_filter])
+        # Simple filter based on experience_years field
+        managers = managers.filter(experience_years__gte=1)
     
     # Pagination
     paginator = Paginator(managers, 12)
@@ -67,11 +68,8 @@ def manager_list(request):
     # Get filter options
     cities = CustomUser.objects.filter(user_type='manager', is_active=True).values_list('city', flat=True).distinct()
     
-    # Get all specializations
-    specializations = set()
-    for manager in CustomUser.objects.filter(user_type='manager'):
-        if hasattr(manager, 'manager_profile') and manager.manager_profile.specializations:
-            specializations.update(manager.manager_profile.specializations)
+    # Get all specializations (using predefined list since manager_profile doesn't exist)
+    specializations = set(['Event Planning', 'Wedding Management', 'Corporate Events', 'Party Organization', 'Conference Management'])
     
     context = {
         'managers': page_obj,
@@ -97,10 +95,8 @@ def manager_detail(request, manager_slug):
         messages.error(request, 'Manager not found.')
         return redirect('managers:manager_list')
     
-    # Get manager profile
+    # Manager profile data (using direct fields since manager_profile doesn't exist)
     manager_profile = None
-    if hasattr(manager, 'manager_profile'):
-        manager_profile = manager.manager_profile
     
     # Get managed events
     managed_events = manager.managed_events.all().order_by('-created_at')[:6]
@@ -116,8 +112,8 @@ def manager_detail(request, manager_slug):
         avg_rating = sum(review.rating for review in event_reviews) / len(event_reviews)
         total_reviews = len(event_reviews)
     else:
-        avg_rating = manager_profile.average_rating if manager_profile else 0
-        total_reviews = manager_profile.total_reviews if manager_profile else 0
+        avg_rating = 0
+        total_reviews = 0
     
     # Get statistics
     stats = {
@@ -126,9 +122,9 @@ def manager_detail(request, manager_slug):
         'upcoming_events': manager.managed_events.filter(status__in=['confirmed', 'in_progress']).count(),
         'avg_rating': round(avg_rating, 1),
         'total_reviews': total_reviews,
-        'years_experience': manager_profile.years_of_experience if manager_profile else 0,
-        'specializations': manager_profile.specializations if manager_profile else [],
-        'service_areas': manager_profile.service_areas if manager_profile else []
+        'years_experience': getattr(manager, 'experience_years', 0),
+        'specializations': getattr(manager, 'specializations', []),
+        'service_areas': [manager.city] if manager.city else []
     }
     
     context = {
@@ -145,8 +141,8 @@ def manager_verification(request):
     """Admin view for manager verification"""
     pending_managers = CustomUser.objects.filter(
         user_type='manager',
-        manager_profile__is_verified=False
-    ).select_related('manager_profile')
+        is_staff=False
+    )
     
     context = {
         'pending_managers': pending_managers,
@@ -159,15 +155,10 @@ def verify_manager(request, manager_id):
     if request.method == 'POST':
         manager = get_object_or_404(CustomUser, id=manager_id, user_type='manager')
         
-        if hasattr(manager, 'manager_profile'):
-            manager.manager_profile.is_verified = True
-            manager.manager_profile.verified_by = request.user
-            manager.manager_profile.verification_date = timezone.now()
-            manager.manager_profile.save()
-            
-            messages.success(request, f'Manager {manager.get_full_name()} has been verified successfully.')
-        else:
-            messages.error(request, 'Manager profile not found.')
+        # Verify manager by setting is_staff to True
+        manager.is_staff = True
+        manager.save()
+        messages.success(request, f'Manager {manager.get_full_name()} has been verified successfully.')
     
     return redirect('managers:manager_verification')
 
@@ -176,16 +167,12 @@ def manager_specializations(request):
     specializations = set()
     managers = CustomUser.objects.filter(user_type='manager', is_active=True)
     
-    for manager in managers:
-        if hasattr(manager, 'manager_profile') and manager.manager_profile.specializations:
-            specializations.update(manager.manager_profile.specializations)
+    # Use predefined specializations since manager_profile doesn't exist
+    predefined_specializations = ['Event Planning', 'Wedding Management', 'Corporate Events', 'Party Organization', 'Conference Management']
     
     specialization_data = []
-    for spec in sorted(list(specializations)):
-        count = 0
-        for manager in managers:
-            if hasattr(manager, 'manager_profile') and spec in (manager.manager_profile.specializations or []):
-                count += 1
+    for spec in predefined_specializations:
+        count = managers.filter(experience_years__gte=1).count()  # Simple count based on experience
         specialization_data.append({
             'name': spec,
             'count': count

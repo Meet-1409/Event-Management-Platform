@@ -26,6 +26,53 @@
     .stats-card:hover {
         transform: translateY(-2px);
     }
+    
+    .card {
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .table th {
+        font-weight: 600;
+        color: #6c757d;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .list-group-item {
+        padding: 1rem;
+        border: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .bg-opacity-10 {
+        background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+    }
+
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding: 1rem;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -348,56 +395,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-.card {
-    border-radius: 12px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-}
-
-.table th {
-    font-weight: 600;
-    color: #6c757d;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.badge {
-    font-size: 0.75rem;
-    padding: 0.375rem 0.75rem;
-}
-
-
-.list-group-item {
-    padding: 1rem;
-    border: none;
-    transition: background-color 0.2s ease;
-}
-
-.list-group-item:hover {
-    background-color: #f8f9fa;
-}
-
-.bg-opacity-10 {
-    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
-}
-
-@media (max-width: 768px) {
-    .container-fluid {
-        padding: 1rem;
-    }
-    
-    .card-body {
-        padding: 1rem;
-    }
-}
-</style>
 {% endblock %} 

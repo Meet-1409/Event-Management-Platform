@@ -10,8 +10,8 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border-radius: 15px;
-        padding: 25px;
-        margin-bottom: 20px;
+        padding: 18px;
+        margin-bottom: 15px;
         transition: transform 0.3s ease;
     }
     
@@ -41,7 +41,7 @@
     .recent-activity {
         background: white;
         border-radius: 15px;
-        padding: 25px;
+        padding: 20px;
         box-shadow: 0 5px 20px rgba(0,0,0,0.08);
     }
     
@@ -75,38 +75,99 @@
         display: block;
         width: 100%;
         padding: 12px 16px;
-        margin-bottom: 8px;
+        margin-bottom: 15px;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         text-decoration: none;
         text-align: center;
         transition: all 0.3s ease;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
     .action-btn:hover {
-        transform: translateY(-1px);
+        transform: translateY(-2px);
         text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     
     .action-btn.btn-sm {
-        padding: 8px 12px;
+        padding: 10px 14px;
         font-size: 0.85rem;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
     }
     
     .priority-high {
         border-left: 4px solid #ffc107;
-        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+        box-shadow: 0 3px 12px rgba(255, 193, 7, 0.3);
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
     }
     
     .critical-actions {
-        border-bottom: 1px solid #e9ecef;
-        padding-bottom: 15px;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
     }
     
     .system-management {
-        padding-top: 10px;
+        padding-top: 15px;
+    }
+    
+    .admin-controls {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 0;
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+        min-height: 280px;
+    }
+    
+    .chart-placeholder {
+        height: 220px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #dee2e6;
+    }
+    
+    /* Reduce overall white space */
+    .container-fluid {
+        padding: 15px;
+    }
+    
+    .row {
+        margin-bottom: 15px;
+    }
+    
+    .row:last-child {
+        margin-bottom: 0;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 18px;
+        margin-bottom: 15px;
+        transition: transform 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
     }
 </style>
 {% endblock %}
@@ -134,7 +195,7 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="row mb-4">
+    <div class="row mb-3">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="stats-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="stats-number">{{ total_users }}</div>
@@ -166,7 +227,7 @@
     </div>
 
     <!-- Charts Row -->
-    <div class="row mb-4">
+    <div class="row mb-3">
         <div class="col-xl-8 col-lg-7">
             <div class="chart-container">
                 <h5 class="fw-bold mb-3">
@@ -270,33 +331,47 @@
                 </h5>
                 
                 <!-- Critical Actions -->
-                <div class="critical-actions mb-3">
-                    <a href="{% url 'users:admin_role_requests' %}" class="action-btn btn-warning priority-high">
-                        <i class="fas fa-user-check me-2"></i>
-                        Review Role Requests
-                        <span class="badge bg-danger ms-2" id="pending-requests-count">0</span>
-                    </a>
-                    <a href="{% url 'users:admin_user_management' %}" class="action-btn btn-primary">
-                        <i class="fas fa-users me-2"></i>
-                        Manage Users
-                    </a>
+                <div class="critical-actions mb-4">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <a href="{% url 'users:admin_role_requests' %}" class="action-btn btn-warning priority-high">
+                                <i class="fas fa-user-check me-2"></i>
+                                Review Role Requests
+                                <span class="badge bg-danger ms-2" id="pending-requests-count">0</span>
+                            </a>
+                        </div>
+                        <div class="col-12">
+                            <a href="{% url 'users:admin_user_management' %}" class="action-btn btn-primary">
+                                <i class="fas fa-users me-2"></i>
+                                Manage Users
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- System Management -->
                 <div class="system-management">
-                    <h6 class="text-muted mb-2 fw-bold">System Management</h6>
-                    <a href="{% url 'admin:index' %}" class="action-btn btn-secondary btn-sm">
-                        <i class="fas fa-cog me-2"></i>
-                        Django Admin
-                    </a>
-                    <a href="{% url 'venues:venue_list' %}" class="action-btn btn-info btn-sm">
-                        <i class="fas fa-building me-2"></i>
-                        Manage Venues
-                    </a>
-                    <a href="{% url 'payments:payment_list' %}" class="action-btn btn-secondary btn-sm">
-                        <i class="fas fa-credit-card me-2"></i>
-                        Payment Reports
-                    </a>
+                    <h6 class="text-muted mb-3 fw-bold">System Management</h6>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <a href="{% url 'admin:index' %}" class="action-btn btn-secondary btn-sm">
+                                <i class="fas fa-cog me-2"></i>
+                                Django Admin
+                            </a>
+                        </div>
+                        <div class="col-12">
+                            <a href="{% url 'venues:venue_list' %}" class="action-btn btn-info btn-sm">
+                                <i class="fas fa-building me-2"></i>
+                                Manage Venues
+                            </a>
+                        </div>
+                        <div class="col-12">
+                            <a href="{% url 'payments:payment_list' %}" class="action-btn btn-secondary btn-sm">
+                                <i class="fas fa-credit-card me-2"></i>
+                                Payment Reports
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

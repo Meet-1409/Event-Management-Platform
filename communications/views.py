@@ -184,7 +184,7 @@ def create_group(request):
             messages.success(request, 'Group chat created successfully!')
             return redirect('communications:group_chat_room', room_id=group.id)
     else:
-        form = GroupChatCreateForm()
+        form = GroupChatCreateForm(current_user=request.user)
     
     context = {
         'form': form,

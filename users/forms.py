@@ -83,7 +83,7 @@ class CustomUserChangeForm(UserChangeForm):
     last_name = forms.CharField(max_length=30, required=True)
     phone_number = forms.CharField(
         max_length=17, 
-        required=True,
+        required=False,  # Make phone number optional
         widget=forms.TextInput(attrs={'placeholder': '+91-9876543210'})
     )
     
@@ -91,8 +91,38 @@ class CustomUserChangeForm(UserChangeForm):
         model = CustomUser
         fields = ('username', 'email', 'first_name', 'last_name', 'phone_number')
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ensure form fields are properly initialized
+        if self.instance and self.instance.pk:
+            self.fields['first_name'].initial = self.instance.first_name
+            self.fields['last_name'].initial = self.instance.last_name
+            self.fields['email'].initial = self.instance.email
+            self.fields['phone_number'].initial = self.instance.phone_number
+    
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if CustomUser.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError('This email address is already in use.')
-        return email 
+        return email
+    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number:
+            # Basic phone number validation (allow various formats)
+            import re
+            if not re.match(r'^\+?[\d\s\-\(\)]{9,17}$', phone_number):
+                raise forms.ValidationError('Enter a valid phone number.')
+        return phone_number
+    
+    def save(self, commit=True):
+        """Override save to ensure proper saving"""
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+        user.phone_number = self.cleaned_data.get('phone_number', '')
+        
+        if commit:
+            user.save()
+        return user 

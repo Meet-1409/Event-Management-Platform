@@ -62,7 +62,7 @@
                 </div>
                 {% endif %}
                 
-                <form method="post" class="profile-form">
+                <form method="post" class="profile-form" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6">
@@ -147,9 +147,6 @@
                         </a>
                         <a href="{% url 'users:my_bookings' %}" class="action-item">
                             <i class="fas fa-calendar-check me-2"></i>My Bookings
-                        </a>
-                        <a href="{% url 'users:my_events' %}" class="action-item">
-                            <i class="fas fa-calendar-alt me-2"></i>My Events
                         </a>
                         <a href="{% url 'users:my_payments' %}" class="action-item">
                             <i class="fas fa-credit-card me-2"></i>Payment History

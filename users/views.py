@@ -126,13 +126,22 @@ def logout_view(request):
 def profile_view(request):
     """User profile view"""
     if request.method == 'POST':
+        # Create form with POST data and current user instance
         form = CustomUserChangeForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Profile updated successfully!')
+            # Save the form and get the updated user
+            user = form.save()
+            # Refresh the user from database to ensure we have the latest data
+            request.user.refresh_from_db()
+            messages.success(request, f'Profile updated successfully! Name: {user.first_name} {user.last_name}')
             return redirect('users:profile')
         else:
-            messages.error(request, 'Please correct the errors below.')
+            # Show specific form errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    error_messages.append(f"{field}: {error}")
+            messages.error(request, f'Please correct the errors: {", ".join(error_messages)}')
     else:
         form = CustomUserChangeForm(instance=request.user)
     
