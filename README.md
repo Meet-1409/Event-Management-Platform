@@ -1,16 +1,16 @@
-# 🎉 Event Manager Platform
+# Event Manager Platform
 
-A comprehensive, full-stack event management system built with Django, featuring AI-powered tools, real-time communication, and multi-role user management.
+A comprehensive event management system built with Django, featuring real-time communication, multi-role user management, and integrated payment processing.
 
-## 🌟 Features
+## Features
 
-### 🔐 **Authentication & User Management**
+### Authentication & User Management
 - Multi-role system (Users, Managers, Admins)
 - Secure authentication with email verification
 - Profile management with avatar uploads
 - OTP verification system
 
-### 🎪 **Event Management**
+### Event Management
 - Complete event lifecycle management
 - Event creation, editing, and deletion
 - Event registration and ticketing
@@ -18,38 +18,38 @@ A comprehensive, full-stack event management system built with Django, featuring
 - Event categories and filtering
 - Image gallery and media management
 
-### 💬 **Communication & Collaboration**
+### Communication & Collaboration
 - Real-time chat rooms
 - Team collaboration tools
 - Announcement system
 - Direct messaging
 - Email notifications
 
-### 🤖 **AI-Powered Features**
+### AI-Powered Features
 - AI Chatbot for customer support
 - AI Mood Designer for event themes
 - Smart recommendations
 - Automated responses
 
-### 💳 **Payment & Ticketing**
+### Payment & Ticketing
 - Secure payment processing
 - Multiple payment methods
 - Ticket generation and management
 - Refund handling
 
-### 📊 **Analytics & Reporting**
+### Analytics & Reporting
 - Event statistics and insights
 - User engagement metrics
 - Revenue tracking
 - Performance analytics
 
-### 🎨 **Modern UI/UX**
+### Modern UI/UX
 - Responsive design
 - Dark/Light theme support
 - Mobile-optimized interface
 - Professional dashboard layouts
 
-## 🚀 **Quick Start**
+## Quick Start
 
 ### Prerequisites
 - Python 3.8+
@@ -61,8 +61,8 @@ A comprehensive, full-stack event management system built with Django, featuring
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/event-manager-platform.git
-   cd event-manager-platform
+   git clone https://github.com/Meet-1409/Event-Management-Platform.git
+   cd Event-Management-Platform
    ```
 
 2. **Create virtual environment**
@@ -102,7 +102,7 @@ A comprehensive, full-stack event management system built with Django, featuring
    - Open http://127.0.0.1:8000 in your browser
    - Login with your superuser credentials
 
-## 🛠️ **Technology Stack**
+## Technology Stack
 
 - **Backend:** Django 4.0+, Python 3.8+
 - **Frontend:** HTML5, CSS3, JavaScript, Bootstrap 5
@@ -112,38 +112,27 @@ A comprehensive, full-stack event management system built with Django, featuring
 - **Payment:** Stripe, PayPal integration
 - **Deployment:** Docker, Heroku, AWS
 
-## 📱 **Screenshots**
+## User Roles
 
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-
-### Event Management
-![Event Management](screenshots/events.png)
-
-### AI Chatbot
-![AI Chatbot](screenshots/chatbot.png)
-
-## 🎯 **User Roles**
-
-### 👤 **Regular Users**
+### Regular Users
 - Browse and register for events
 - Manage personal profile
 - Access event galleries
 - Use AI chatbot support
 
-### 👨‍💼 **Managers**
+### Managers
 - Create and manage events
 - Handle venue bookings
 - Manage team communications
 - Access analytics dashboard
 
-### 👨‍💻 **Administrators**
+### Administrators
 - Full system access
 - User management
 - System configuration
 - Advanced analytics
 
-## 🔧 **Configuration**
+## Configuration
 
 ### Environment Variables
 ```env
@@ -162,7 +151,7 @@ The application supports multiple databases:
 - **SQLite** (development)
 - **MySQL** (alternative)
 
-## 📈 **Performance Features**
+## Performance Features
 
 - Database query optimization
 - Caching with Redis
@@ -170,7 +159,7 @@ The application supports multiple databases:
 - CDN integration for static files
 - Lazy loading for better performance
 
-## 🔒 **Security Features**
+## Security Features
 
 - CSRF protection
 - SQL injection prevention
@@ -179,7 +168,7 @@ The application supports multiple databases:
 - Rate limiting
 - Input validation and sanitization
 
-## 🤝 **Contributing**
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -187,31 +176,26 @@ The application supports multiple databases:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 **License**
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 **Author**
+## Author
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+**Meet Patel**
+- GitHub: [@Meet-1409](https://github.com/Meet-1409)
+- Email: meet.patel@example.com
 
-## 🙏 **Acknowledgments**
+## Acknowledgments
 
 - Django community for excellent documentation
 - Bootstrap team for the UI framework
 - OpenAI for AI integration capabilities
 - All contributors and testers
 
-## 📞 **Support**
+## Support
 
 If you have any questions or need help, please:
 - Open an issue on GitHub
 - Contact me via email
 - Check the documentation
-
----
-
-⭐ **Star this repository if you found it helpful!**

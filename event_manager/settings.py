@@ -436,7 +436,7 @@ STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET', default='whsec_dev_mode_
 # Payment Gateway Settings for Development
 PAYMENT_DEV_MODE = DEBUG and not STRIPE_SECRET_KEY.startswith('sk_live_')
 if PAYMENT_DEV_MODE:
-    print("🔧 Running in Payment Development Mode - Mock payments enabled")
+    print("Running in Payment Development Mode - Mock payments enabled")
 
 # Google Maps API
 GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default='')
