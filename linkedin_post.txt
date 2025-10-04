@@ -1,8 +1,8 @@
-🚀 Excited to share my latest project: Event Management Platform!
+Excited to share my latest project: Event Management Platform!
 
 I've built a comprehensive event management system using Django and Python that showcases full-stack development skills and modern web technologies.
 
-🔧 Technical Stack:
+Technical Stack:
 • Backend: Django 4.0+, Python 3.8+
 • Frontend: HTML5, CSS3, JavaScript, Bootstrap 5
 • Database: PostgreSQL, SQLite
@@ -11,7 +11,7 @@ I've built a comprehensive event management system using Django and Python that 
 • Payment Processing: Stripe integration
 • Security: CSRF protection, XSS prevention, rate limiting
 
-✨ Key Features:
+Key Features:
 • Multi-role authentication (Users, Managers, Admins)
 • Complete event lifecycle management
 • Real-time chat and collaboration tools
@@ -20,7 +20,7 @@ I've built a comprehensive event management system using Django and Python that 
 • Advanced analytics and reporting dashboard
 • Responsive design with dark/light theme support
 
-🎯 What I Learned:
+What I Learned:
 • Building scalable Django applications
 • Implementing secure authentication systems
 • Integrating third-party APIs (OpenAI, Stripe)
@@ -34,22 +34,3 @@ This project demonstrates my ability to build production-ready web applications 
 Check out the code: https://github.com/Meet-1409/Event-Management-Platform
 
 #Python #Django #WebDevelopment #FullStack #JavaScript #Bootstrap #OpenAI #Stripe #WebSockets #PostgreSQL #GitHub #Programming #SoftwareDevelopment #Tech
-
----
-
-Alternative Shorter Version:
-
-🎉 Just completed my Event Management Platform - a full-stack Django application!
-
-Built with Python, Django, JavaScript, and Bootstrap, featuring:
-• Multi-role user management
-• Real-time chat functionality
-• AI-powered chatbot integration
-• Secure payment processing
-• Advanced analytics dashboard
-
-This project showcases my skills in web development, API integration, and creating scalable applications.
-
-Repository: https://github.com/Meet-1409/Event-Management-Platform
-
-#Python #Django #WebDevelopment #FullStack #JavaScript #Programming #GitHub #Tech
