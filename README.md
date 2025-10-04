@@ -4,60 +4,60 @@ A comprehensive event management system built with Django, featuring real-time c
 
 ## Features
 
-### Authentication & User Management
-- Multi-role system (Users, Managers, Admins)
-- Secure authentication with email verification
-- Profile management with avatar uploads
-- OTP verification system
+**Authentication & User Management**
+    • Multi-role system (Users, Managers, Admins)
+    • Secure authentication with email verification
+    • Profile management with avatar uploads
+    • OTP verification system
 
-### Event Management
-- Complete event lifecycle management
-- Event creation, editing, and deletion
-- Event registration and ticketing
-- Venue booking and management
-- Event categories and filtering
-- Image gallery and media management
+**Event Management**
+    • Complete event lifecycle management
+    • Event creation, editing, and deletion
+    • Event registration and ticketing
+    • Venue booking and management
+    • Event categories and filtering
+    • Image gallery and media management
 
-### Communication & Collaboration
-- Real-time chat rooms
-- Team collaboration tools
-- Announcement system
-- Direct messaging
-- Email notifications
+**Communication & Collaboration**
+    • Real-time chat rooms
+    • Team collaboration tools
+    • Announcement system
+    • Direct messaging
+    • Email notifications
 
-### AI-Powered Features
-- AI Chatbot for customer support
-- AI Mood Designer for event themes
-- Smart recommendations
-- Automated responses
+**AI-Powered Features**
+    • AI Chatbot for customer support
+    • AI Mood Designer for event themes
+    • Smart recommendations
+    • Automated responses
 
-### Payment & Ticketing
-- Secure payment processing
-- Multiple payment methods
-- Ticket generation and management
-- Refund handling
+**Payment & Ticketing**
+    • Secure payment processing
+    • Multiple payment methods
+    • Ticket generation and management
+    • Refund handling
 
-### Analytics & Reporting
-- Event statistics and insights
-- User engagement metrics
-- Revenue tracking
-- Performance analytics
+**Analytics & Reporting**
+    • Event statistics and insights
+    • User engagement metrics
+    • Revenue tracking
+    • Performance analytics
 
-### Modern UI/UX
-- Responsive design
-- Dark/Light theme support
-- Mobile-optimized interface
-- Professional dashboard layouts
+**Modern UI/UX**
+    • Responsive design
+    • Dark/Light theme support
+    • Mobile-optimized interface
+    • Professional dashboard layouts
 
 ## Quick Start
 
-### Prerequisites
-- Python 3.8+
-- Django 4.0+
-- PostgreSQL (recommended)
-- Redis (for real-time features)
+**Prerequisites**
+    • Python 3.8+
+    • Django 4.0+
+    • PostgreSQL (recommended)
+    • Redis (for real-time features)
 
-### Installation
+**Installation**
 
 1. **Clone the repository**
    ```bash
@@ -114,27 +114,27 @@ A comprehensive event management system built with Django, featuring real-time c
 
 ## User Roles
 
-### Regular Users
-- Browse and register for events
-- Manage personal profile
-- Access event galleries
-- Use AI chatbot support
+**Regular Users**
+    • Browse and register for events
+    • Manage personal profile
+    • Access event galleries
+    • Use AI chatbot support
 
-### Managers
-- Create and manage events
-- Handle venue bookings
-- Manage team communications
-- Access analytics dashboard
+**Managers**
+    • Create and manage events
+    • Handle venue bookings
+    • Manage team communications
+    • Access analytics dashboard
 
-### Administrators
-- Full system access
-- User management
-- System configuration
-- Advanced analytics
+**Administrators**
+    • Full system access
+    • User management
+    • System configuration
+    • Advanced analytics
 
 ## Configuration
 
-### Environment Variables
+**Environment Variables**
 ```env
 DEBUG=True
 SECRET_KEY=your-secret-key
@@ -145,36 +145,36 @@ STRIPE_PUBLIC_KEY=your-stripe-public-key
 STRIPE_SECRET_KEY=your-stripe-secret-key
 ```
 
-### Database Configuration
+**Database Configuration**
 The application supports multiple databases:
-- **PostgreSQL** (production)
-- **SQLite** (development)
-- **MySQL** (alternative)
+    • **PostgreSQL** (production)
+    • **SQLite** (development)
+    • **MySQL** (alternative)
 
 ## Performance Features
 
-- Database query optimization
-- Caching with Redis
-- Image compression and optimization
-- CDN integration for static files
-- Lazy loading for better performance
+    • Database query optimization
+    • Caching with Redis
+    • Image compression and optimization
+    • CDN integration for static files
+    • Lazy loading for better performance
 
 ## Security Features
 
-- CSRF protection
-- SQL injection prevention
-- XSS protection
-- Secure password hashing
-- Rate limiting
-- Input validation and sanitization
+    • CSRF protection
+    • SQL injection prevention
+    • XSS protection
+    • Secure password hashing
+    • Rate limiting
+    • Input validation and sanitization
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+    1. Fork the repository
+    2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+    3. Commit your changes (`git commit -m 'Add amazing feature'`)
+    4. Push to the branch (`git push origin feature/amazing-feature`)
+    5. Open a Pull Request
 
 ## License
 
@@ -188,14 +188,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Django community for excellent documentation
-- Bootstrap team for the UI framework
-- OpenAI for AI integration capabilities
-- All contributors and testers
+    • Django community for excellent documentation
+    • Bootstrap team for the UI framework
+    • OpenAI for AI integration capabilities
+    • All contributors and testers
 
 ## Support
 
 If you have any questions or need help, please:
-- Open an issue on GitHub
-- Contact me via email
-- Check the documentation
+    • Open an issue on GitHub
+    • Contact me via email
+    • Check the documentation
