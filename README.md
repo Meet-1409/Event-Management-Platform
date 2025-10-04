@@ -184,7 +184,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Meet Patel**
 - GitHub: [@Meet-1409](https://github.com/Meet-1409)
-- Email: meet.patel@example.com
+- Email: meetsutariya@gmail.com
 
 ## Acknowledgments
 
