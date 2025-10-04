@@ -182,7 +182,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-**Meet Patel**
+**Meet Sutariya**
 - GitHub: [@Meet-1409](https://github.com/Meet-1409)
 - Email: meetsutariya@gmail.com
 
