@@ -1,4 +1,4 @@
-# Event Manager Platform
+# Event Management Platform
 
 A comprehensive event management system built with Django, featuring real-time communication, multi-role user management, and integrated payment processing.
 
