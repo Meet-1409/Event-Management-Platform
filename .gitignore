@@ -171,13 +171,17 @@ cython_debug/
 # Django specific
 media/
 staticfiles/
-static/
 *.log
 local_settings.py
+
+# Keep authored static assets; ignore only collected output above.
+# Local runtime logs are generated under this directory by settings.py.
+logs/
 
 # Database
 *.sqlite3
 *.db
+*.sqlite3-journal
 
 # OS generated files
 .DS_Store
@@ -213,3 +217,13 @@ yarn-error.log*
 *.rar
 *.tar
 *.zip
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Coverage and test artifacts
+.pytest_cache/
+htmlcov/
+coverage.xml

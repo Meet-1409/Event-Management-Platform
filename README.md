@@ -1,201 +1,104 @@
 # Event Management Platform
 
-A comprehensive event management system built with Django, featuring real-time communication, multi-role user management, and integrated payment processing.
+A Django event-management application for discovering events and venues, registering for events, coordinating through role-based dashboards, and recording payments. The project is a server-rendered monolith with Django REST Framework endpoints and a Channels WebSocket path for advanced chat.
 
-## Features
+## What is implemented
 
-**Authentication & User Management**
-    • Multi-role system (Users, Managers, Admins)
-    • Secure authentication with email verification
-    • Profile management with avatar uploads
-    • OTP verification system
+- Custom email-based user authentication with role-aware user, manager, vendor, and administrator workflows.
+- Event creation, category browsing, registration, galleries, reviews, and event dashboards.
+- Venue discovery, detail pages, galleries, availability, booking, and reviews.
+- REST endpoints grouped under `/api/` for the domain applications.
+- Conversation and chat-room views, plus an authenticated WebSocket route at `ws/advanced-chat/<room_id>/`.
+- Invoices, payment records, refunds, Stripe webhook handling, and a development payment mode that simulates successful payments.
+- Rule-based chatbot responses that read event and venue data. The chatbot page is present, but this repository does not contain an OpenAI model integration.
+- Analytics and administrative dashboards, email templates, media uploads, and PDF invoice/report generation.
 
-**Event Management**
-    • Complete event lifecycle management
-    • Event creation, editing, and deletion
-    • Event registration and ticketing
-    • Venue booking and management
-    • Event categories and filtering
-    • Image gallery and media management
+## Stack
 
-**Communication & Collaboration**
-    • Real-time chat rooms
-    • Team collaboration tools
-    • Announcement system
-    • Direct messaging
-    • Email notifications
+- Python 3.8+ and Django 4.2
+- Django REST Framework, django-allauth, django-axes, django-otp, and django-ckeditor-5
+- Django Channels with an in-memory channel layer in the checked-in settings
+- SQLite by default; MySQL is selected with `USE_MYSQL=True`
+- Server-rendered Django templates, CSS, and JavaScript
+- Stripe integration with safe development defaults
 
-**AI-Powered Features**
-    • AI Chatbot for customer support
-    • AI Mood Designer for event themes
-    • Smart recommendations
-    • Automated responses
+Optional packages in `requirements.txt` support deployment and integrations that are not enabled by default in the current settings, including Celery, Redis, S3 storage, PostgreSQL, and malware-scanning tooling.
 
-**Payment & Ticketing**
-    • Secure payment processing
-    • Multiple payment methods
-    • Ticket generation and management
-    • Refund handling
+## Local setup
 
-**Analytics & Reporting**
-    • Event statistics and insights
-    • User engagement metrics
-    • Revenue tracking
-    • Performance analytics
+### Prerequisites
 
-**Modern UI/UX**
-    • Responsive design
-    • Dark/Light theme support
-    • Mobile-optimized interface
-    • Professional dashboard layouts
+- Python 3.8 or newer
+- A virtual environment
+- SQLite for the default local configuration
 
-## Quick Start
+### Install and run
 
-**Prerequisites**
-    • Python 3.8+
-    • Django 4.0+
-    • PostgreSQL (recommended)
-    • Redis (for real-time features)
+```bash
+git clone https://github.com/Meet-1409/Event-Management-Platform.git
+cd Event-Management-Platform
+python -m venv .venv
+```
 
-**Installation**
+Activate the environment:
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Meet-1409/Event-Management-Platform.git
-   cd Event-Management-Platform
-   ```
+```bash
+# macOS/Linux
+source .venv/bin/activate
 
-2. **Create virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+```
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+Install dependencies and create a local environment file:
 
-4. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database and API keys
-   ```
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+copy .env.example .env  # Windows PowerShell
+# cp .env.example .env  # macOS/Linux
+```
 
-5. **Run migrations**
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
+For a local run, the defaults in `.env.example` are sufficient. Replace `SECRET_KEY`, set `DEBUG=False`, configure `ALLOWED_HOSTS`, and provide real email/payment values before deployment.
 
-6. **Create superuser**
-   ```bash
-   python manage.py createsuperuser
-   ```
+```bash
+python manage.py migrate
+python manage.py check
+python manage.py createsuperuser
+python manage.py runserver
+```
 
-7. **Run the server**
-   ```bash
-   python manage.py runserver
-   ```
-
-8. **Access the application**
-   - Open http://127.0.0.1:8000 in your browser
-   - Login with your superuser credentials
-
-## Technology Stack
-
-- **Backend:** Django 4.0+, Python 3.8+
-- **Frontend:** HTML5, CSS3, JavaScript, Bootstrap 5
-- **Database:** PostgreSQL, SQLite (development)
-- **Real-time:** WebSockets, Redis
-- **AI Integration:** OpenAI API, Custom AI models
-- **Payment:** Stripe, PayPal integration
-- **Deployment:** Docker, Heroku, AWS
-
-## User Roles
-
-**Regular Users**
-    • Browse and register for events
-    • Manage personal profile
-    • Access event galleries
-    • Use AI chatbot support
-
-**Managers**
-    • Create and manage events
-    • Handle venue bookings
-    • Manage team communications
-    • Access analytics dashboard
-
-**Administrators**
-    • Full system access
-    • User management
-    • System configuration
-    • Advanced analytics
+Open `http://127.0.0.1:8000/`. Development settings use the console email backend and mock payments unless a live Stripe key is configured.
 
 ## Configuration
 
-**Environment Variables**
-```env
-DEBUG=True
-SECRET_KEY=your-secret-key
-DATABASE_URL=postgresql://user:pass@localhost/eventmanager
-REDIS_URL=redis://localhost:6379
-OPENAI_API_KEY=your-openai-key
-STRIPE_PUBLIC_KEY=your-stripe-public-key
-STRIPE_SECRET_KEY=your-stripe-secret-key
+The application reads settings with `python-decouple`. The supported variables and their defaults are documented in `.env.example`, including:
+
+- `SECRET_KEY`, `DEBUG`, and `ALLOWED_HOSTS`
+- MySQL connection values enabled by `USE_MYSQL`
+- SMTP settings for non-debug mode
+- Stripe keys and webhook secret
+- `SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE`, and `CSRF_COOKIE_SECURE`
+- Celery and CORS settings retained for optional integrations
+
+Never commit `.env` or real credentials. The default development key and Stripe placeholders are deliberately non-production values.
+
+## Testing
+
+Run the Django test suite with:
+
+```bash
+python manage.py test
 ```
 
-**Database Configuration**
-The application supports multiple databases:
-    • **PostgreSQL** (production)
-    • **SQLite** (development)
-    • **MySQL** (alternative)
+The maintained tests live in `tests/` and cover smoke workflows, links and URL names, and theme visibility. See [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) for the current validation snapshot and known gaps.
 
-## Performance Features
+## Project documentation
 
-    • Database query optimization
-    • Caching with Redis
-    • Image compression and optimization
-    • CDN integration for static files
-    • Lazy loading for better performance
-
-## Security Features
-
-    • CSRF protection
-    • SQL injection prevention
-    • XSS protection
-    • Secure password hashing
-    • Rate limiting
-    • Input validation and sanitization
-
-## Contributing
-
-    1. Fork the repository
-    2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-    3. Commit your changes (`git commit -m 'Add amazing feature'`)
-    4. Push to the branch (`git push origin feature/amazing-feature`)
-    5. Open a Pull Request
+- [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md): repository map and ownership boundaries
+- [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md): architecture, runtime behavior, security posture, and limitations
+- [CONTRIBUTING.md](CONTRIBUTING.md): development and pull request workflow
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Author
-
-**Meet Sutariya**
-- GitHub: [@Meet-1409](https://github.com/Meet-1409)
-- Email: meetsutariya@gmail.com
-
-## Acknowledgments
-
-    • Django community for excellent documentation
-    • Bootstrap team for the UI framework
-    • OpenAI for AI integration capabilities
-    • All contributors and testers
-
-## Support
-
-If you have any questions or need help, please:
-    • Open an issue on GitHub
-    • Contact me via email
-    • Check the documentation
+This project is available under the [MIT License](LICENSE).

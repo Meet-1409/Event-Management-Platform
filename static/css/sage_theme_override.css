@@ -1,0 +1,177 @@
+/* 
+SAGE GREEN & WHITE THEME - COMPLETE OVERRIDE
+This file ensures EVERY element uses only sage green and white colors
+*/
+
+/* FORCE EVERY POSSIBLE COLOR TO SAGE GREEN VARIANTS */
+
+/* Text colors - only black and sage green variants */
+* {
+    color: #000000 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #000000 !important;
+}
+
+.text-primary, .text-success, .text-info { color: #22c55e !important; }
+.text-secondary, .text-warning, .text-danger { color: #16a34a !important; }
+.text-muted { color: #374151 !important; }
+.text-light { color: #86efac !important; }
+.text-dark { color: #000000 !important; }
+
+/* Background colors - only white and sage green */
+.bg-primary, .bg-success, .bg-info { background-color: #22c55e !important; }
+.bg-secondary, .bg-danger { background-color: #16a34a !important; }
+.bg-warning { background-color: #4ade80 !important; }
+.bg-light { background-color: #f0fdf4 !important; }
+.bg-dark { background-color: #15803d !important; }
+.bg-white { background-color: #ffffff !important; }
+
+/* ALL buttons - sage green variants only */
+.btn-primary { background-color: #22c55e !important; border-color: #22c55e !important; color: white !important; }
+.btn-secondary { background-color: #15803d !important; border-color: #15803d !important; color: white !important; }
+.btn-success { background-color: #22c55e !important; border-color: #22c55e !important; color: white !important; }
+.btn-danger { background-color: #16a34a !important; border-color: #16a34a !important; color: white !important; }
+.btn-warning { background-color: #4ade80 !important; border-color: #4ade80 !important; color: #000000 !important; }
+.btn-info { background-color: #86efac !important; border-color: #86efac !important; color: #000000 !important; }
+.btn-light { background-color: #f0fdf4 !important; border-color: #22c55e !important; color: #000000 !important; }
+.btn-dark { background-color: #15803d !important; border-color: #15803d !important; color: white !important; }
+
+/* ALL outline buttons - sage green variants only */
+.btn-outline-primary { color: #22c55e !important; border-color: #22c55e !important; }
+.btn-outline-secondary { color: #15803d !important; border-color: #15803d !important; }
+.btn-outline-success { color: #22c55e !important; border-color: #22c55e !important; }
+.btn-outline-danger { color: #16a34a !important; border-color: #16a34a !important; }
+.btn-outline-warning { color: #4ade80 !important; border-color: #4ade80 !important; }
+.btn-outline-info { color: #86efac !important; border-color: #86efac !important; }
+.btn-outline-light { color: #22c55e !important; border-color: #22c55e !important; }
+.btn-outline-dark { color: #15803d !important; border-color: #15803d !important; }
+
+/* ALL badges - sage green variants only */
+.badge { background-color: #22c55e !important; color: white !important; }
+.badge.bg-primary, .badge.bg-success { background-color: #22c55e !important; }
+.badge.bg-secondary, .badge.bg-danger { background-color: #16a34a !important; }
+.badge.bg-warning { background-color: #4ade80 !important; color: #000000 !important; }
+.badge.bg-info { background-color: #86efac !important; color: #000000 !important; }
+.badge.bg-light { background-color: #f0fdf4 !important; color: #000000 !important; }
+.badge.bg-dark { background-color: #15803d !important; }
+
+/* ALL cards - white background with sage green borders */
+.card { 
+    background-color: #ffffff !important; 
+    border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    color: #000000 !important;
+}
+
+.card-header { 
+    background-color: #f0fdf4 !important; 
+    border-bottom: 1px solid #22c55e !important;
+    color: #000000 !important;
+}
+
+.card-footer { 
+    background-color: #f0fdf4 !important; 
+    border-top: 1px solid #22c55e !important;
+    color: #000000 !important;
+}
+
+/* ALL tables - white and sage green only */
+.table { color: #000000 !important; background-color: #ffffff !important; }
+.table-light { background-color: #f0fdf4 !important; }
+.table-dark { background-color: #15803d !important; color: white !important; }
+.table-striped tbody tr:nth-of-type(odd) { background-color: rgba(240, 253, 244, 0.5) !important; }
+.table-hover tbody tr:hover { background-color: rgba(240, 253, 244, 0.8) !important; }
+
+/* ALL forms - sage green focus and borders */
+.form-control, .form-select, .form-check-input {
+    border-color: rgba(34, 197, 94, 0.3) !important;
+    color: #000000 !important;
+    background-color: #ffffff !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.25) !important;
+}
+
+/* ALL alerts - sage green variants only */
+.alert { color: #000000 !important; }
+.alert-primary { background-color: #dcfce7 !important; border-color: #22c55e !important; }
+.alert-secondary { background-color: #f0fdf4 !important; border-color: #15803d !important; }
+.alert-success { background-color: #dcfce7 !important; border-color: #22c55e !important; }
+.alert-danger { background-color: #f0fdf4 !important; border-color: #16a34a !important; }
+.alert-warning { background-color: #ecfdf5 !important; border-color: #4ade80 !important; }
+.alert-info { background-color: #f0fdf4 !important; border-color: #86efac !important; }
+
+/* ALL icons - sage green only */
+.fa, .fas, .far, .fab, .fal, .fad {
+    color: #22c55e !important;
+}
+
+/* Navigation - black text with sage green accents */
+.navbar { background-color: #ffffff !important; }
+.navbar-brand { color: #000000 !important; }
+.nav-link { color: #000000 !important; }
+.nav-link:hover { color: #22c55e !important; }
+
+/* Dropdowns - white background with black text */
+.dropdown-menu { background-color: #ffffff !important; color: #000000 !important; }
+.dropdown-item { color: #000000 !important; }
+.dropdown-item:hover { background-color: #f0fdf4 !important; color: #000000 !important; }
+
+/* Pagination - sage green */
+.page-link { color: #22c55e !important; border-color: #22c55e !important; }
+.page-item.active .page-link { background-color: #22c55e !important; }
+
+/* Progress bars - sage green */
+.progress { background-color: #f0fdf4 !important; }
+.progress-bar { background-color: #22c55e !important; }
+
+/* Spinners - sage green */
+.spinner-border { color: #22c55e !important; }
+
+/* Modals - white and sage green */
+.modal-content { background-color: #ffffff !important; color: #000000 !important; }
+.modal-header { background-color: #f0fdf4 !important; border-bottom-color: #22c55e !important; }
+
+/* Lists - sage green accents */
+.list-group-item { background-color: #ffffff !important; color: #000000 !important; }
+.list-group-item.active { background-color: #22c55e !important; color: white !important; }
+
+/* FORCE ALL CONTAINERS TO WHITE/SAGE BACKGROUND */
+body { background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #dcfce7 100%) !important; }
+.container, .container-fluid { background: transparent !important; }
+
+/* OVERRIDE ANY REMAINING COLORS */
+[class*="text-blue"], [class*="text-red"], [class*="text-yellow"], [class*="text-orange"], [class*="text-purple"], [class*="text-pink"], [class*="text-indigo"], [class*="text-violet"], [class*="text-cyan"], [class*="text-teal"] {
+    color: #22c55e !important;
+}
+
+[class*="bg-blue"], [class*="bg-red"], [class*="bg-yellow"], [class*="bg-orange"], [class*="bg-purple"], [class*="bg-pink"], [class*="bg-indigo"], [class*="bg-violet"], [class*="bg-cyan"], [class*="bg-teal"] {
+    background-color: #22c55e !important;
+}
+
+/* Status colors - all sage green variants */
+.badge.bg-confirmed, .badge.bg-active, .badge.bg-verified { background-color: #22c55e !important; }
+.badge.bg-pending, .badge.bg-draft { background-color: #4ade80 !important; color: #000000 !important; }
+.badge.bg-cancelled, .badge.bg-inactive { background-color: #16a34a !important; }
+.badge.bg-completed { background-color: #15803d !important; }
+
+/* Ensure all hover effects use sage green */
+.btn:hover, .card:hover, .nav-link:hover, a:hover {
+    color: #16a34a !important;
+    border-color: #22c55e !important;
+}
+
+/* Force all shadows to use sage green tints */
+.shadow, .shadow-sm, .shadow-lg {
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.15) !important;
+}
+
+/* Chat bubbles - sage green theme */
+.chat-bubble-user { background-color: #22c55e !important; color: white !important; }
+.chat-bubble-other { background-color: #f0fdf4 !important; color: #000000 !important; }
+
+/* Avatar backgrounds - sage green */
+.avatar, .avatar-circle, .avatar-sm { background-color: #22c55e !important; color: white !important; }

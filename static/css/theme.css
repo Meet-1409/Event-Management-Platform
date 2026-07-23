@@ -1,0 +1,159 @@
+/* static/css/theme.css */
+
+/* Sage palette */
+:root{
+  --sage-50:#f4f7f5;
+  --sage-100:#e7efe9;
+  --sage-200:#d5e4da;
+  --sage-300:#bdd3c4;
+  --sage-400:#9fbca7;
+  --sage-500:#7fa487;
+  --sage-600:#6b8f71; /* primary */
+  --sage-700:#58705d;
+  --white:#ffffff;
+  --black:#000000;
+
+  --bg-page:var(--white);
+  --bg-section:var(--sage-50);
+  --bg-accent:var(--sage-100);
+  --fg:var(--black);
+  --border:var(--sage-300);
+  --focus:var(--sage-600);
+}
+
+html,body{background:var(--bg-page); color:var(--fg);}
+
+/* Global text enforcement */
+body, p, h1,h2,h3,h4,h5,h6, small, label, span, li, th, td, a, .btn, .badge, .dropdown-item, .toast, .modal, .nav-link{
+  color:var(--fg) !important;
+  text-shadow:none !important;
+}
+
+/* Links */
+a, .nav-link{ color:var(--fg) !important; }
+a:hover, .nav-link:hover{ opacity:.85; }
+
+/* Buttons: sage backgrounds, black labels - NUCLEAR OVERRIDE */
+.btn, .btn-primary, .btn-secondary, .btn-success, .btn-info, .btn-warning, .btn-danger, .btn-light, .btn-dark, 
+.btn-outline-primary, .btn-outline-secondary, .btn-outline-success, .btn-outline-info, .btn-outline-warning, .btn-outline-danger,
+button, input[type="button"], input[type="submit"], a.btn {
+  background:var(--sage-600) !important;
+  border-color:var(--sage-600) !important;
+  color:var(--fg) !important;
+  border: 1px solid var(--sage-600) !important;
+}
+
+.btn:hover, .btn-primary:hover, .btn-secondary:hover, .btn-success:hover, .btn-info:hover, .btn-warning:hover, .btn-danger:hover,
+button:hover, input[type="button"]:hover, input[type="submit"]:hover, a.btn:hover { 
+  background:var(--sage-700) !important; 
+  border-color:var(--sage-700) !important; 
+  color:var(--fg) !important;
+}
+
+/* Cards, tables, sections */
+.card, .table, .list-group, .dropdown-menu, .modal-content{
+  background:var(--bg-section) !important;
+  border-color:var(--border) !important;
+}
+.table thead th{ background:var(--bg-accent) !important; }
+
+/* Forms */
+.form-control, .form-select{
+  background:var(--white) !important; color:var(--fg) !important; border-color:var(--border) !important;
+}
+.form-control::placeholder{ color:#333 !important; }
+.form-control:focus{ border-color:var(--focus) !important; box-shadow:0 0 0 .2rem rgba(107,143,113,.25) !important; }
+
+/* Badges, pills, alerts */
+.badge, .alert{
+  background:var(--sage-200) !important; color:var(--fg) !important; border:1px solid var(--border) !important;
+}
+
+/* Navbar, footer */
+.navbar, footer{ background:var(--bg-accent) !important; border-bottom:1px solid var(--border); }
+
+/* Pagination */
+.page-link{ color:var(--fg) !important; background:var(--bg-section) !important; border-color:var(--border) !important; }
+.page-item.active .page-link{ background:var(--sage-600) !important; border-color:var(--sage-600) !important; }
+
+/* Hero/overlay fixes */
+.hero, .jumbotron, .banner{
+  background:var(--bg-section) !important;
+}
+.hero .overlay, .banner::after{ content:none !important; }
+
+/* Chat components */
+.chat-container, .chat-window{ background:var(--bg-section) !important; }
+.chat-bubble.incoming{ background:var(--white) !important; color:var(--fg) !important; }
+.chat-bubble.outgoing{ background:var(--sage-200) !important; color:var(--fg) !important; }
+.chat-input, .chat-sidebar{ background:var(--bg-section) !important; color:var(--fg) !important; }
+
+/* Remove any forced white text from legacy classes */
+.text-white, .text-light{ color:var(--fg) !important; }
+
+/* Kill gradients */
+[class*="gradient"], [style*="gradient"]{ background:var(--bg-section) !important; }
+
+/* Images in heroes: avoid washout overlays */
+.hero img, .banner img{ filter:none !important; opacity:1 !important; }
+
+/* BOOTSTRAP OVERRIDE - FORCE ALL BOOTSTRAP COLORS TO SAGE */
+:root {
+  --bs-primary: var(--sage-600) !important;
+  --bs-primary-rgb: 107, 143, 113 !important;
+  --bs-secondary: var(--sage-700) !important;
+  --bs-secondary-rgb: 88, 112, 93 !important;
+  --bs-success: var(--sage-600) !important;
+  --bs-success-rgb: 107, 143, 113 !important;
+  --bs-info: var(--sage-500) !important;
+  --bs-info-rgb: 127, 164, 135 !important;
+  --bs-warning: var(--sage-400) !important;
+  --bs-warning-rgb: 159, 188, 167 !important;
+  --bs-danger: var(--sage-700) !important;
+  --bs-danger-rgb: 88, 112, 93 !important;
+  --bs-light: var(--sage-100) !important;
+  --bs-light-rgb: 231, 239, 233 !important;
+  --bs-dark: var(--sage-700) !important;
+  --bs-dark-rgb: 88, 112, 93 !important;
+}
+
+/* NUCLEAR BUTTON OVERRIDE */
+[class*="btn"] {
+  background-color: var(--sage-600) !important;
+  border-color: var(--sage-600) !important;
+  color: var(--black) !important;
+}
+
+[class*="btn"]:hover {
+  background-color: var(--sage-700) !important;
+  border-color: var(--sage-700) !important;
+  color: var(--black) !important;
+}
+
+/* FORCE ALL BOOTSTRAP UTILITY CLASSES */
+.text-primary { color: var(--sage-600) !important; }
+.text-secondary { color: var(--sage-700) !important; }
+.text-success { color: var(--sage-600) !important; }
+.text-info { color: var(--sage-500) !important; }
+.text-warning { color: var(--sage-400) !important; }
+.text-danger { color: var(--sage-700) !important; }
+.text-light { color: var(--sage-300) !important; }
+.text-dark { color: var(--black) !important; }
+.text-muted { color: #374151 !important; }
+
+.bg-primary { background-color: var(--sage-600) !important; }
+.bg-secondary { background-color: var(--sage-700) !important; }
+.bg-success { background-color: var(--sage-600) !important; }
+.bg-info { background-color: var(--sage-500) !important; }
+.bg-warning { background-color: var(--sage-400) !important; }
+.bg-danger { background-color: var(--sage-700) !important; }
+.bg-light { background-color: var(--sage-100) !important; }
+.bg-dark { background-color: var(--sage-700) !important; }
+
+/* OVERRIDE ANY REMAINING BOOTSTRAP CLASSES */
+.border-primary { border-color: var(--sage-600) !important; }
+.border-secondary { border-color: var(--sage-700) !important; }
+.border-success { border-color: var(--sage-600) !important; }
+.border-info { border-color: var(--sage-500) !important; }
+.border-warning { border-color: var(--sage-400) !important; }
+.border-danger { border-color: var(--sage-700) !important; }

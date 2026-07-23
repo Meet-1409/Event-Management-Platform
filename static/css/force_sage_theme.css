@@ -1,0 +1,325 @@
+/* 
+NUCLEAR SAGE GREEN & WHITE THEME OVERRIDE
+This CSS file FORCES every single element to use ONLY sage green and white
+*/
+
+/* FORCE EVERY ELEMENT TO USE SAGE GREEN AND WHITE ONLY */
+* {
+    /* Override any existing colors */
+    color: #000000 !important;
+    background-color: transparent !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+/* BODY AND CONTAINERS - PURE WHITE/SAGE */
+body, html {
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #dcfce7 100%) !important;
+    color: #000000 !important;
+}
+
+.container, .container-fluid, .container-sm, .container-md, .container-lg, .container-xl {
+    background: transparent !important;
+    color: #000000 !important;
+}
+
+/* HEADINGS - PURE BLACK */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: #000000 !important;
+    background: transparent !important;
+}
+
+/* PARAGRAPHS AND TEXT - PURE BLACK */
+p, span, div, td, th, li, a, label, small {
+    color: #000000 !important;
+    background: transparent !important;
+}
+
+/* LINKS - SAGE GREEN */
+a, .nav-link {
+    color: #22c55e !important;
+    background: transparent !important;
+}
+
+a:hover, .nav-link:hover {
+    color: #16a34a !important;
+}
+
+/* BUTTONS - FORCE SAGE GREEN VARIANTS */
+.btn, button {
+    color: white !important;
+    background-color: #22c55e !important;
+    border-color: #22c55e !important;
+}
+
+.btn:hover, button:hover {
+    background-color: #16a34a !important;
+    border-color: #16a34a !important;
+    color: white !important;
+}
+
+.btn-outline-primary, .btn-outline-secondary, .btn-outline-success, .btn-outline-danger, .btn-outline-warning, .btn-outline-info {
+    color: #22c55e !important;
+    background-color: transparent !important;
+    border-color: #22c55e !important;
+}
+
+.btn-outline-primary:hover, .btn-outline-secondary:hover, .btn-outline-success:hover, .btn-outline-danger:hover, .btn-outline-warning:hover, .btn-outline-info:hover {
+    background-color: #22c55e !important;
+    border-color: #22c55e !important;
+    color: white !important;
+}
+
+/* CARDS - PURE WHITE WITH SAGE BORDERS */
+.card {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    color: #000000 !important;
+}
+
+.card-header, .card-footer {
+    background-color: #f0fdf4 !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+    color: #000000 !important;
+}
+
+.card-body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+/* BADGES - SAGE GREEN VARIANTS ONLY */
+.badge {
+    background-color: #22c55e !important;
+    color: white !important;
+}
+
+.badge.bg-primary, .badge.bg-success, .badge.bg-info {
+    background-color: #22c55e !important;
+    color: white !important;
+}
+
+.badge.bg-secondary, .badge.bg-danger {
+    background-color: #16a34a !important;
+    color: white !important;
+}
+
+.badge.bg-warning {
+    background-color: #4ade80 !important;
+    color: #000000 !important;
+}
+
+/* NAVIGATION - WHITE WITH SAGE ACCENTS */
+.navbar {
+    background-color: #ffffff !important;
+    border-bottom: 2px solid #22c55e !important;
+}
+
+.navbar-brand {
+    color: #000000 !important;
+}
+
+.navbar-nav .nav-link {
+    color: #000000 !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #22c55e !important;
+}
+
+/* FORMS - WHITE WITH SAGE BORDERS */
+.form-control, .form-select, .form-check-input, input, select, textarea {
+    background-color: #ffffff !important;
+    border-color: rgba(34, 197, 94, 0.5) !important;
+    color: #000000 !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #ffffff !important;
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.25) !important;
+    color: #000000 !important;
+}
+
+/* TABLES - WHITE WITH SAGE ACCENTS */
+.table {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+.table th, .table td {
+    background-color: transparent !important;
+    color: #000000 !important;
+    border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.table-light {
+    background-color: #f0fdf4 !important;
+    color: #000000 !important;
+}
+
+.table-dark {
+    background-color: #15803d !important;
+    color: white !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(240, 253, 244, 0.8) !important;
+    color: #000000 !important;
+}
+
+/* ALERTS - SAGE GREEN VARIANTS */
+.alert {
+    color: #000000 !important;
+    background-color: #f0fdf4 !important;
+    border-color: #22c55e !important;
+}
+
+/* MODALS - WHITE WITH SAGE ACCENTS */
+.modal-content {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+.modal-header {
+    background-color: #f0fdf4 !important;
+    border-bottom-color: #22c55e !important;
+    color: #000000 !important;
+}
+
+/* ICONS - ALL SAGE GREEN */
+.fa, .fas, .far, .fab, .fal, .fad, i[class*="fa"] {
+    color: #22c55e !important;
+}
+
+/* OVERRIDE BOOTSTRAP UTILITY CLASSES */
+.text-primary, .text-success, .text-info { color: #22c55e !important; }
+.text-secondary, .text-danger { color: #16a34a !important; }
+.text-warning { color: #4ade80 !important; }
+.text-light { color: #86efac !important; }
+.text-dark { color: #000000 !important; }
+.text-muted { color: #374151 !important; }
+.text-white { color: #000000 !important; }
+
+.bg-primary, .bg-success, .bg-info { background-color: #22c55e !important; }
+.bg-secondary, .bg-danger { background-color: #16a34a !important; }
+.bg-warning { background-color: #4ade80 !important; }
+.bg-light { background-color: #f0fdf4 !important; }
+.bg-dark { background-color: #15803d !important; }
+.bg-white { background-color: #ffffff !important; }
+
+/* FORCE SECTIONS AND DIVS */
+section, div {
+    background-color: transparent !important;
+    color: #000000 !important;
+}
+
+/* FORCE ANY REMAINING BLUE ELEMENTS */
+[class*="blue"], [style*="blue"], [style*="#007"], [style*="#00f"], [style*="rgb(0,0,255)"] {
+    color: #22c55e !important;
+    background-color: #f0fdf4 !important;
+    border-color: #22c55e !important;
+}
+
+/* FORCE ANY REMAINING DARK BACKGROUNDS */
+[class*="bg-dark"], [style*="background: #"], [style*="background:#"], [class*="dark"] {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+/* FORCE FILTER SECTION TO BE WHITE/SAGE */
+.filter-section, .search-section, .hero-section {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+/* FORCE ALL EVENT CARDS */
+.event-card, .venue-card, .manager-card {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    color: #000000 !important;
+}
+
+/* PAGINATION - SAGE GREEN */
+.pagination .page-link {
+    color: #22c55e !important;
+    background-color: #ffffff !important;
+    border-color: #22c55e !important;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #22c55e !important;
+    border-color: #22c55e !important;
+    color: white !important;
+}
+
+/* DROPDOWN MENUS */
+.dropdown-menu {
+    background-color: #ffffff !important;
+    border-color: #22c55e !important;
+    color: #000000 !important;
+}
+
+.dropdown-item {
+    color: #000000 !important;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: #f0fdf4 !important;
+    color: #000000 !important;
+}
+
+/* BREADCRUMBS */
+.breadcrumb {
+    background-color: transparent !important;
+}
+
+.breadcrumb-item a {
+    color: #22c55e !important;
+}
+
+.breadcrumb-item.active {
+    color: #000000 !important;
+}
+
+/* PROGRESS AND LOADING */
+.progress {
+    background-color: #f0fdf4 !important;
+}
+
+.progress-bar {
+    background-color: #22c55e !important;
+}
+
+.spinner-border {
+    color: #22c55e !important;
+}
+
+/* OVERRIDE ANY INLINE STYLES */
+[style*="color:"], [style*="background:"], [style*="border:"] {
+    color: #000000 !important;
+    background: transparent !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+/* FORCE WHITE TEXT TO BE BLACK */
+[style*="color: white"], [style*="color: #fff"], [style*="color: #ffffff"] {
+    color: #000000 !important;
+}
+
+/* FORCE BLUE ELEMENTS TO SAGE GREEN */
+[style*="color: blue"], [style*="background: blue"], [class*="btn-primary"] {
+    color: white !important;
+    background-color: #22c55e !important;
+    border-color: #22c55e !important;
+}
+
+/* FINAL NUCLEAR OVERRIDE - CATCH EVERYTHING */
+body * {
+    border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+/* Ensure main content areas are white */
+.main-content, main {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
